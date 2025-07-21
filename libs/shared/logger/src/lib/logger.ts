@@ -1,3 +1,3 @@
-export function logger(): string {
-  return 'logger';
-}
+import pino from 'pino';
+
+export const logger = pino();
