@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "dev": "nx serve frontend"
+    "dev": "nx serve frontend",
+    "lint": "biome check apps"
   },
   "private": true,
   "dependencies": {
