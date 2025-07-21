@@ -61,7 +61,7 @@
       "defaultConfiguration": "development",
       "dependsOn": ["backend:serve"],
       "options": {
-        "proxyConfig": "apps/frontend/proxy.conf.json"
+        "proxyConfig": "apps/frontend/proxy.conf.js"
       }
     },
     "extract-i18n": {
