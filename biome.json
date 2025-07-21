@@ -23,6 +23,21 @@
       "quoteStyle": "single"
     }
   },
+  "overrides": [
+    {
+      "includes": [
+        "apps/backend/src/**/*.service.ts",
+        "apps/backend/src/**/*.controller.ts"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "useImportType": "off"
+          }
+        }
+      }
+    }
+  ],
   "assist": {
     "enabled": true,
     "actions": {
