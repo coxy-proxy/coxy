@@ -2,7 +2,9 @@
   "name": "@nx-template/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "dev": "nx serve frontend"
+  },
   "private": true,
   "dependencies": {
     "@angular/common": "~20.1.0",
