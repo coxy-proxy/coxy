@@ -4,6 +4,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "nx serve frontend",
+    "dev:backend": "nx serve backend",
     "lint": "biome check apps"
   },
   "private": true,
