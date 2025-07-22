@@ -1,0 +1,14 @@
+import { HttpModule } from '@nestjs/axios';
+import { Module } from '@nestjs/common';
+import { ApiKeysModule } from '../api-keys/api-keys.module';
+import { ApiKeyGuard } from './guards/api-key.guard';
+import { ProxyController } from './proxy.controller';
+import { ProxyService } from './proxy.service';
+
+@Module({
+  imports: [HttpModule, ApiKeysModule],
+  controllers: [ProxyController],
+  providers: [ProxyService, ApiKeyGuard],
+  exports: [ProxyService],
+})
+export class ProxyModule {}

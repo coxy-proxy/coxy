@@ -1,3 +1,11 @@
+jwt:
+  secret: ${JWT_SECRET:your-secret-key}
+  expiresIn: '24h'
+
+admin:
+  username: ${ADMIN_USERNAME:admin}
+  password: ${ADMIN_PASSWORD:admin123}
+
 github:
   deviceCodeApiUrl: https://github.com/login/device/code
   oauthApiUrl: https://github.com/login/oauth/access_token

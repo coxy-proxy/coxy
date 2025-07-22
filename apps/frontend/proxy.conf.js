@@ -1,8 +1,8 @@
 const port = process.env.PORT || 3000;
 
 export default {
-  "/api": {
+  '/api': {
     target: `http://localhost:${port}`,
-    secure: false
-  }
+    secure: false,
+  },
 };
