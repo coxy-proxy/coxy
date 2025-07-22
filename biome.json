@@ -28,10 +28,7 @@
   },
   "overrides": [
     {
-      "includes": [
-        "apps/backend/src/**/*.service.ts",
-        "apps/backend/src/**/*.controller.ts"
-      ],
+      "includes": ["apps/backend/src/**/*.ts"],
       "linter": {
         "rules": {
           "style": {
