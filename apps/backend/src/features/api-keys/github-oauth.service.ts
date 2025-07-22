@@ -1,6 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
-import * as allConfig from 'config';
+import allConfig from 'config';
 import { firstValueFrom } from 'rxjs';
 
 @Injectable()
