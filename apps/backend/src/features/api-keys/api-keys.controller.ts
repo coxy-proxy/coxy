@@ -1,19 +1,15 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Logger, Param, Post, Sse, UseGuards } from '@nestjs/common';
+import { Observable } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 import { AdminGuard } from '../admin/guards/admin.guard';
 import { ApiKeysService } from './api-keys.service';
 import { CreateApiKeyDto } from './dto/create-api-key.dto';
+import { DeviceFlowSSEEvent } from './dto/device-flow-sse-event.dto';
 
 @Controller('api-keys')
 @UseGuards(AdminGuard)
 export class ApiKeysController {
+  private logger = new Logger(ApiKeysController.name);
   constructor(private readonly apiKeysService: ApiKeysService) {}
 
   @Post()
@@ -31,15 +27,17 @@ export class ApiKeysController {
     return await this.apiKeysService.deleteApiKey(id);
   }
 
-  @Post('github-auth/device-flow')
-  async initiateGithubDeviceFlow() {
-    return await this.apiKeysService.initiateGithubDeviceFlow();
-  }
-
-  @Post('github-auth/verify')
-  async verifyGithubDeviceFlow(@Body() verifyDto: { device_code: string }) {
-    return await this.apiKeysService.verifyGithubDeviceFlow(
-      verifyDto.device_code,
+  @Sse('device-flow')
+  deviceFlowSSE(): Observable<MessageEvent<DeviceFlowSSEEvent>> {
+    return this.apiKeysService.executeDeviceFlowWithSSE().pipe(
+      tap((event) => this.logger.log('SSE event:', event)),
+      map(
+        (event: DeviceFlowSSEEvent) =>
+          ({
+            type: event.type,
+            data: event,
+          }) as MessageEvent<DeviceFlowSSEEvent>,
+      ),
     );
   }
 }

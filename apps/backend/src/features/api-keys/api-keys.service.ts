@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { randomBytes } from 'crypto';
+import { Observable } from 'rxjs';
+import { DeviceFlowSSEEvent } from './dto/device-flow-sse-event.dto';
 import { GithubOauthService } from './github-oauth.service';
 import { ApiKey } from './interfaces/api-key.interface';
 
@@ -49,12 +51,8 @@ export class ApiKeysService {
     return apiKey || null;
   }
 
-  async initiateGithubDeviceFlow(): Promise<any> {
-    return await this.githubOauthService.initiateDeviceFlow();
-  }
-
-  async verifyGithubDeviceFlow(deviceCode: string): Promise<any> {
-    return await this.githubOauthService.verifyDeviceFlow(deviceCode);
+  executeDeviceFlowWithSSE(): Observable<DeviceFlowSSEEvent> {
+    return this.githubOauthService.executeDeviceFlowWithPolling();
   }
 
   private generateApiKey(): string {
