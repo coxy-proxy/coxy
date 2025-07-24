@@ -1,9 +1,4 @@
-import {
-  type CallHandler,
-  type ExecutionContext,
-  Injectable,
-  type NestInterceptor,
-} from '@nestjs/common';
+import { type CallHandler, type ExecutionContext, Injectable, type NestInterceptor } from '@nestjs/common';
 import type { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
@@ -27,9 +22,7 @@ export class LoggingInterceptor implements NestInterceptor {
           statusCode: response.statusCode,
           responseTime: `${responseTime}ms`,
           userAgent: request.headers['user-agent'],
-          apiKey: request.apiKey
-            ? `${request.apiKey.key.substring(0, 8)}...`
-            : 'none',
+          apiKey: request.apiKey ? `${request.apiKey.key.substring(0, 8)}...` : 'none',
         });
       }),
     );

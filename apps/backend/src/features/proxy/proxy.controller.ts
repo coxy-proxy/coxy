@@ -1,13 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpException,
-  HttpStatus,
-  Post,
-  Request,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Post, Request, UseGuards } from '@nestjs/common';
 import { ChatCompletionDto } from './dto/chat-completion.dto';
 import { ApiKeyGuard } from './guards/api-key.guard';
 import { ProxyService } from './proxy.service';

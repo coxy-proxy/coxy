@@ -44,10 +44,7 @@ export class ProxyService {
 
       return response;
     } catch (error) {
-      throw new HttpException(
-        'Error forwarding to Copilot',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException('Error forwarding to Copilot', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -88,11 +85,7 @@ export class ProxyService {
     }
   }
 
-  private async logRequest(
-    apiKey: string,
-    request: any,
-    response: any,
-  ): Promise<void> {
+  private async logRequest(apiKey: string, request: any, response: any): Promise<void> {
     // TODO: Implement request logging for admin dashboard
     console.log(`Request logged for API key: ${apiKey.substring(0, 8)}...`);
   }

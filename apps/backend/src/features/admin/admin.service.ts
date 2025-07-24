@@ -5,10 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 export class AdminService {
   constructor(private readonly jwtService: JwtService) {}
 
-  async login(
-    username: string,
-    password: string,
-  ): Promise<{ access_token: string }> {
+  async login(username: string, password: string): Promise<{ access_token: string }> {
     // TODO: Implement proper admin authentication
     // This is a placeholder implementation
     if (username === 'admin' && password === 'admin123') {
