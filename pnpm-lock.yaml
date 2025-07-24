@@ -38,6 +38,9 @@ importers:
       axios:
         specifier: ^1.6.0
         version: 1.10.0
+      config:
+        specifier: 4.1.0
+        version: 4.1.0
       pino:
         specifier: 9.7.0
         version: 9.7.0
@@ -3683,6 +3686,10 @@ packages:
   concat-stream@2.0.0:
     resolution: {integrity: sha512-MWufYdFw53ccGjCA+Ol7XJYpAlW6/prSMzuPOTRnJGcGzuhLn4Scrz7qf6o8bROZ514ltazcIFJZevcfbo0x7A==}
     engines: {'0': node >= 6.0}
+
+  config@4.1.0:
+    resolution: {integrity: sha512-uxu0WQTPXwwkR9ZVNQm3ID3f39lWa9HEmppVC6q2HL6sOZszTBL/HGwIHG1dhnWW8006TkhHwZjX6yvAfkXp6Q==}
+    engines: {node: '>= 20.0.0'}
 
   confusing-browser-globals@1.0.11:
     resolution: {integrity: sha512-JsPKdmh8ZkmnHxDk55FZ1TqVLvEQTvoByJZRN9jzI0UjxK/QgAmsphz7PGtqgPieQZ/CQcHWXCR7ATDNhGe+YA==}
@@ -11917,6 +11924,10 @@ snapshots:
       inherits: 2.0.4
       readable-stream: 3.6.2
       typedarray: 0.0.6
+
+  config@4.1.0:
+    dependencies:
+      json5: 2.2.3
 
   confusing-browser-globals@1.0.11: {}
 
