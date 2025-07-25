@@ -50,7 +50,12 @@ export class GithubOauthService {
   private pollDeviceAuthorization = (initEvent: DeviceFlowSSEEvent): Observable<DeviceFlowSSEEvent> => {
     const deviceCode = initEvent.deviceCode;
 
-    const polling$ = interval(5500).pipe(switchMap(() => this.verifyDeviceFlow(deviceCode)));
+    const stopPolling$ = new Subject();
+    const polling$ = interval(5500).pipe(
+      takeUntil(stopPolling$),
+      switchMap(() => this.verifyDeviceFlow(deviceCode)),
+      tap((event) => event.type === 'success' && stopPolling$.next(void 0)),
+    );
 
     return polling$.pipe(
       startWith(initEvent),
