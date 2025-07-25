@@ -65,6 +65,9 @@ importers:
       postcss:
         specifier: 8.5.6
         version: 8.5.6
+      primeicons:
+        specifier: 7.0.0
+        version: 7.0.0
       primeng:
         specifier: 20.0.0
         version: 20.0.0(e830c6cc66103fe971d4a648b2ee7ae6)
@@ -6452,6 +6455,9 @@ packages:
   pretty-format@30.0.2:
     resolution: {integrity: sha512-yC5/EBSOrTtqhCKfLHqoUIAXVRZnukHPwWBJWR7h84Q3Be1DRQZLncwcfLoPA5RPQ65qfiCMqgYwdUuQ//eVpg==}
     engines: {node: ^18.14.0 || ^20.0.0 || ^22.0.0 || >=24.0.0}
+
+  primeicons@7.0.0:
+    resolution: {integrity: sha512-jK3Et9UzwzTsd6tzl2RmwrVY/b8raJ3QZLzoDACj+oTJ0oX7L9Hy+XnVwgo4QVKlKpnP/Ur13SXV/pVh4LzaDw==}
 
   primeng@20.0.0:
     resolution: {integrity: sha512-F0r7tWqIGKInKSPxyVTXkj+XP/4mz78cWECHuu045JV0O1n7YMgi/2AuEAAqhgKOReLLkRBHB0pafEtH1tnYCQ==}
@@ -15287,6 +15293,8 @@ snapshots:
       '@jest/schemas': 30.0.1
       ansi-styles: 5.2.0
       react-is: 18.3.1
+
+  primeicons@7.0.0: {}
 
   primeng@20.0.0(e830c6cc66103fe971d4a648b2ee7ae6):
     dependencies:
