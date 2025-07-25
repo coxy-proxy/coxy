@@ -59,6 +59,9 @@ importers:
       config:
         specifier: 4.1.0
         version: 4.1.0
+      node-persist:
+        specifier: 4.0.4
+        version: 4.0.4
       pino:
         specifier: 9.7.0
         version: 9.7.0
@@ -83,6 +86,9 @@ importers:
       tailwindcss-primeui:
         specifier: 0.6.1
         version: 0.6.1(tailwindcss@4.1.11)
+      uuid:
+        specifier: 11.1.0
+        version: 11.1.0
       zone.js:
         specifier: ~0.15.0
         version: 0.15.1
@@ -177,6 +183,9 @@ importers:
       '@types/node':
         specifier: 18.16.9
         version: 18.16.9
+      '@types/node-persist':
+        specifier: 3.1.8
+        version: 3.1.8
       '@typescript-eslint/utils':
         specifier: ^8.29.0
         version: 8.37.0(eslint@9.31.0(jiti@2.4.2))(typescript@5.8.3)
@@ -2969,6 +2978,9 @@ packages:
 
   '@types/node-forge@1.3.13':
     resolution: {integrity: sha512-zePQJSW5QkwSHKRApqWCVKeKoSOt4xvEnLENZPjyvm9Ezdf/EyDeJM7jqLzOwjVICQQzvLZ63T55MKdJB5H6ww==}
+
+  '@types/node-persist@3.1.8':
+    resolution: {integrity: sha512-QLidg6/SadZYPrTKxtxL1A85XBoQlG40bhoMdhu6DH6+eNCMr2j+RGfFZ9I9+IY8W/PDwQonJ+iBWD62jZjMfg==}
 
   '@types/node@18.16.9':
     resolution: {integrity: sha512-IeB32oIV4oGArLrd7znD2rkHQ6EDCM+2Sr76dJnrHwv9OHBTTM6nuDLK9bmikXzPa0ZlWMWtRGo/Uw4mrzQedA==}
@@ -5882,6 +5894,10 @@ packages:
   node-machine-id@1.1.12:
     resolution: {integrity: sha512-QNABxbrPa3qEIfrE6GOJ7BYIuignnJw7iQ2YPbc3Nla1HzRJjXzZOiikfF8m7eAMfichLt3M4VgLOetqgDmgGQ==}
 
+  node-persist@4.0.4:
+    resolution: {integrity: sha512-8sPAz/7tw1mCCc8xBG4f0wi+flHkSSgQeX998iQ75Pu27evA6UUWCjSE7xnrYTg2q33oU5leJ061EKPDv6BocQ==}
+    engines: {node: '>=10.12.0'}
+
   node-releases@2.0.19:
     resolution: {integrity: sha512-xxOWJsBKtzAq7DY0J+DTzuz58K8e7sJbdgwkbMWQe8UYB6ekmsQ45q0M/tJDsGaZmbC+l7n57UV8Hl5tHxO9uw==}
 
@@ -7525,6 +7541,10 @@ packages:
   utils-merge@1.0.1:
     resolution: {integrity: sha512-pMZTvIkT1d+TFGvDOqodOclx0QWkkgi6Tdoa8gC8ffGAAqz9pzPTZWAybbsHHoED/ztMtkv/VoYTYyShUn81hA==}
     engines: {node: '>= 0.4.0'}
+
+  uuid@11.1.0:
+    resolution: {integrity: sha512-0/A9rDy9P7cJ+8w1c9WD9V//9Wj15Ce2MPz8Ri6032usz+NfePxx5AcN3bN+r6ZL6jEo066/yNYB3tn4pQEx+A==}
+    hasBin: true
 
   uuid@8.3.2:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
@@ -11366,6 +11386,10 @@ snapshots:
     dependencies:
       '@types/node': 18.16.9
 
+  '@types/node-persist@3.1.8':
+    dependencies:
+      '@types/node': 18.16.9
+
   '@types/node@18.16.9': {}
 
   '@types/parse-json@4.0.2': {}
@@ -14666,6 +14690,10 @@ snapshots:
 
   node-machine-id@1.1.12: {}
 
+  node-persist@4.0.4:
+    dependencies:
+      p-limit: 3.1.0
+
   node-releases@2.0.19: {}
 
   node-schedule@2.1.1:
@@ -16460,6 +16488,8 @@ snapshots:
   util-deprecate@1.0.2: {}
 
   utils-merge@1.0.1: {}
+
+  uuid@11.1.0: {}
 
   uuid@8.3.2: {}
 
