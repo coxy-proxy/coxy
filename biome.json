@@ -43,7 +43,7 @@
   },
   "overrides": [
     {
-      "includes": ["apps/backend/src/**/*.ts"],
+      "includes": ["apps/backend/src/**/*.ts", "apps/frontend/src/**/*.ts"],
       "linter": {
         "rules": {
           "style": {

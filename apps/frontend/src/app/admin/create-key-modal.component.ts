@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Output } from '@angular/core';
-import { type FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
