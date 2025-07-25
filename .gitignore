@@ -51,3 +51,6 @@ vitest.config.*.timestamp*
 .env
 .env.local
 .env.*.local
+
+# for api keys
+.storage
