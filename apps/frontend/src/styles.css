@@ -2,6 +2,8 @@
 @plugin "tailwindcss-primeui";
 @custom-variant dark (&:where(.dark-mode, .dark-mode *));
 
+@import "primeicons/primeicons.css";
+
 * {
   box-sizing: border-box;
   margin: 0;
