@@ -2,7 +2,6 @@ export interface ApiKey {
   id: string;
   name: string;
   key: string;
-  isDefault: boolean;
   createdAt: Date;
   lastUsed?: Date;
   usageCount: number;
