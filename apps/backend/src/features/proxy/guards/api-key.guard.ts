@@ -1,20 +1,31 @@
-import { type CanActivate, type ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import { type CanActivate, type ExecutionContext, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import { maskKey } from 'apps/backend/src/shared/utils';
 import { ApiKeysService } from '../../api-keys/api-keys.service';
+
+const EMPTY_KEY = '_';
 
 @Injectable()
 export class ApiKeyGuard implements CanActivate {
+  private logger = new Logger(ApiKeyGuard.name);
+
   constructor(private readonly apiKeysService: ApiKeysService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    const authorization = request.headers.authorization;
+    const authHeader = request.headers.authorization;
 
-    if (!authorization || !authorization.startsWith('Bearer ')) {
+    const apiKey = authHeader?.replace(/^(token|Bearer) ?/, '') || EMPTY_KEY;
+    // TODO: Implement default API key
+    // const selectedToken = await getSelectedToken();
+    // const oauthToken = apiKey === EMPTY_KEY ? selectedToken?.token : apiKey;
+    // const oauthToken = apiKey;
+
+    if (!apiKey) {
       throw new UnauthorizedException('Invalid authorization header');
     }
+    this.logger.debug({ 'Use API key': maskKey(apiKey) });
 
-    const apiKey = authorization.substring(7); // Remove 'Bearer ' prefix
-    const validApiKey = await this.apiKeysService.validateApiKey(apiKey);
+    const validApiKey = await this.apiKeysService.findApiKey(apiKey);
 
     if (!validApiKey) {
       throw new UnauthorizedException('Invalid API key');

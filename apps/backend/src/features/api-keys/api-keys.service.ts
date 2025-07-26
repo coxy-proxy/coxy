@@ -36,10 +36,10 @@ export class ApiKeysService {
     await this.fileStorageService.remove(id);
   }
 
-  async validateApiKey(key: string): Promise<boolean> {
+  async findApiKey(key: string): Promise<ApiKey | null> {
     const apiKeys = await this.fileStorageService.findAll();
     const apiKey = apiKeys.find((apiKey) => apiKey.key === key);
-    return !!apiKey;
+    return apiKey;
   }
 
   executeDeviceFlowWithSSE(): Observable<DeviceFlowSSEEvent> {
