@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Logger, Param, Post, Sse, UseGuards } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { map, share, tap } from 'rxjs/operators';
 import { AdminGuard } from '../admin/guards/admin.guard';
 import { ApiKeysService } from './api-keys.service';
 import { CreateApiKeyDto } from './dto/create-api-key.dto';
@@ -10,6 +10,11 @@ import { DeviceFlowSSEEvent } from './dto/device-flow-sse-event.dto';
 @UseGuards(AdminGuard)
 export class ApiKeysController {
   private logger = new Logger(ApiKeysController.name);
+
+  // TODO: Implement user management
+  private currentUserId = 'abc';
+  private deviceFlowMap = new Map<string, Observable<MessageEvent<DeviceFlowSSEEvent>>>();
+
   constructor(private readonly apiKeysService: ApiKeysService) {}
 
   @Post()
@@ -29,8 +34,15 @@ export class ApiKeysController {
 
   @Sse('device-flow')
   deviceFlowSSE(): Observable<MessageEvent<DeviceFlowSSEEvent>> {
-    return this.apiKeysService.executeDeviceFlowWithSSE().pipe(
-      tap((event) => this.logger.log('SSE event:', event)),
+    if (this.deviceFlowMap.has(this.currentUserId)) {
+      return this.deviceFlowMap.get(this.currentUserId);
+    }
+
+    const deviceFlow$ = this.apiKeysService.executeDeviceFlowWithSSE().pipe(
+      tap((event) => {
+        this.logger.log('SSE event:', event);
+        event.type === 'success' && this.onDeviceFlowSuccess(event, this.currentUserId);
+      }),
       map(
         (event: DeviceFlowSSEEvent) =>
           ({
@@ -38,6 +50,16 @@ export class ApiKeysController {
             data: event,
           }) as MessageEvent<DeviceFlowSSEEvent>,
       ),
+      share(),
     );
+    this.deviceFlowMap.set(this.currentUserId, deviceFlow$);
+
+    return deviceFlow$;
   }
+
+  private onDeviceFlowSuccess = (event: DeviceFlowSSEEvent, userId: string) => {
+    this.apiKeysService.createApiKey({ name: `Key:${Date.now()}`, key: event.accessToken });
+    this.deviceFlowMap.delete(userId);
+    this.logger.log('Stored API key by device flow');
+  };
 }

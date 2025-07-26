@@ -1,7 +1,19 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import allConfig from 'config';
-import { catchError, firstValueFrom, interval, map, Observable, of, startWith, switchMap } from 'rxjs';
+import {
+  catchError,
+  firstValueFrom,
+  interval,
+  map,
+  Observable,
+  of,
+  Subject,
+  startWith,
+  switchMap,
+  takeUntil,
+  tap,
+} from 'rxjs';
 import { DeviceFlowSSEEvent } from './dto/device-flow-sse-event.dto';
 
 interface GithubDeviceFlowResponse {
@@ -20,6 +32,7 @@ interface GithubOAuthResponse {
 
 @Injectable()
 export class GithubOauthService {
+  private readonly logger = new Logger(GithubOauthService.name);
   private readonly config = allConfig.get<any>('github');
 
   constructor(private readonly httpService: HttpService) {}
@@ -60,6 +73,7 @@ export class GithubOauthService {
     return polling$.pipe(
       startWith(initEvent),
       catchError((error) => {
+        this.logger.error(`Polling device authorization error:`, error);
         return of({
           type: 'error' as const,
           message: `Failed to poll device authorization: ${error.message}`,
