@@ -1,5 +1,5 @@
 import { type CanActivate, type ExecutionContext, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
-import { maskKey } from 'apps/backend/src/shared/utils';
+import { maskKey } from '_/shared/utils';
 import { ApiKeysService } from '../../api-keys/api-keys.service';
 
 const EMPTY_KEY = '_';

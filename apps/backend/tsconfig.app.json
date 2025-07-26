@@ -8,7 +8,12 @@
     ],
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "target": "es2021"
+    "target": "es2021",
+    "paths": {
+      "_/*": [
+        "apps/backend/src/*"
+      ]
+    }
   },
   "include": [
     "src/**/*.ts"
