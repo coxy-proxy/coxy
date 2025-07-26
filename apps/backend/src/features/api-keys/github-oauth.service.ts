@@ -15,6 +15,7 @@ import {
   tap,
 } from 'rxjs';
 import { DeviceFlowSSEEvent } from './dto/device-flow-sse-event.dto';
+import { CopilotMeta } from './interfaces/api-key.interface';
 
 interface GithubDeviceFlowResponse {
   device_code: string;
@@ -30,6 +31,16 @@ interface GithubOAuthResponse {
   error_description?: string;
 }
 
+interface GithubCopilotTokenApiResponse {
+  token: string;
+  expires_at: string;
+  limited_user_quotas: {
+    chat: number;
+    completions: number;
+  } | null;
+  limited_user_reset_date: number | null;
+}
+
 @Injectable()
 export class GithubOauthService {
   private readonly logger = new Logger(GithubOauthService.name);
@@ -37,20 +48,20 @@ export class GithubOauthService {
 
   constructor(private readonly httpService: HttpService) {}
 
-  async getCopilotTokenDetails(accessToken: string): Promise<any> {
+  async fetchCopilotMeta(key: string): Promise<CopilotMeta> {
     try {
       // TODO: Implement GitHub Copilot internal API call to get token details
       // This would be used to validate the token and get user information
       const response = await firstValueFrom(
         this.httpService.get(this.config.copilot.tokenApiUrl, {
           headers: {
-            Authorization: `Bearer ${accessToken}`,
+            Authorization: `token ${key}`,
             ...this.config.copilot.headers,
           },
         }),
       );
 
-      return response.data;
+      return this.tokenApiResponseToMeta(response.data);
     } catch (error) {
       throw new Error(`Failed to get token details: ${error.message}`);
     }
@@ -151,5 +162,17 @@ export class GithubOauthService {
       message: 'Authorization successful!',
       accessToken: response.access_token,
     };
+  };
+
+  private tokenApiResponseToMeta = (response: GithubCopilotTokenApiResponse): CopilotMeta => {
+    const { token, expires_at, limited_user_quotas, limited_user_reset_date } = response;
+
+    const chatQuota = limited_user_quotas?.chat ?? null;
+    const completionsQuota = limited_user_quotas?.completions ?? null;
+    const resetTime =
+      limited_user_reset_date !== null && limited_user_reset_date !== undefined ? limited_user_reset_date * 1000 : null;
+    const expiresAt = expires_at ? new Date(expires_at).getTime() : Date.now() + 60 * 60 * 1000;
+
+    return { token, expiresAt, resetTime, chatQuota, completionsQuota };
   };
 }
