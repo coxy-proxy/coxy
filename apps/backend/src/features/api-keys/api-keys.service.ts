@@ -1,65 +1,50 @@
 import { Injectable } from '@nestjs/common';
 import { randomBytes } from 'crypto';
 import { Observable } from 'rxjs';
+import { ApiKeysFileStorageService } from './api-keys-file-storage.service';
+import { CreateApiKeyDto } from './dto/create-api-key.dto';
 import { DeviceFlowSSEEvent } from './dto/device-flow-sse-event.dto';
 import { GithubOauthService } from './github-oauth.service';
-import { ApiKey } from './interfaces/api-key.interface';
+import { ApiKey, ApiKeyResponse } from './interfaces/api-key.interface';
+
+function maskKey(key: string) {
+  if (!key) {
+    return '';
+  }
+  return `${key.slice(0, 10)}...${key.slice(-5)}`;
+}
 
 @Injectable()
 export class ApiKeysService {
-  private apiKeys: ApiKey[] = []; // TODO: Replace with database storage
+  constructor(
+    private readonly githubOauthService: GithubOauthService,
+    private readonly fileStorageService: ApiKeysFileStorageService,
+  ) {}
 
-  constructor(private readonly githubOauthService: GithubOauthService) {}
-
-  async createApiKey(name: string): Promise<ApiKey> {
-    const apiKey: ApiKey = {
-      id: this.generateId(),
-      name,
-      key: this.generateApiKey(),
-      isActive: true,
-      createdAt: new Date(),
-      usageCount: 0,
-    };
-
-    this.apiKeys.push(apiKey);
-    return apiKey;
+  async createApiKey(dto: CreateApiKeyDto): Promise<ApiKey> {
+    return this.fileStorageService.create(dto);
   }
 
-  async listApiKeys(): Promise<Omit<ApiKey, 'key'>[]> {
+  async listApiKeys(): Promise<ApiKeyResponse[]> {
+    const apiKeys = await this.fileStorageService.findAll();
     // Return API keys without exposing the actual key values
-    return this.apiKeys.map(({ key, ...apiKey }) => ({
+    return apiKeys.map(({ key, ...apiKey }) => ({
       ...apiKey,
-      keyPreview: `${key.substring(0, 8)}...${key.substring(key.length - 4)}`,
+      maskedKey: maskKey(key),
     }));
   }
 
   async deleteApiKey(id: string): Promise<void> {
-    const index = this.apiKeys.findIndex((key) => key.id === id);
-    if (index === -1) {
-      throw new Error('API key not found');
-    }
-    this.apiKeys.splice(index, 1);
+    await this.fileStorageService.remove(id);
   }
 
-  async validateApiKey(key: string): Promise<ApiKey | null> {
-    const apiKey = this.apiKeys.find((k) => k.key === key && k.isActive);
-    if (apiKey) {
-      // Update usage statistics
-      apiKey.usageCount++;
-      apiKey.lastUsed = new Date();
-    }
-    return apiKey || null;
+  async validateApiKey(key: string): Promise<boolean> {
+    const apiKeys = await this.fileStorageService.findAll();
+    const apiKey = apiKeys.find((apiKey) => apiKey.key === key);
+    return !!apiKey;
   }
 
   executeDeviceFlowWithSSE(): Observable<DeviceFlowSSEEvent> {
     return this.githubOauthService.executeDeviceFlowWithPolling();
-  }
-
-  private generateApiKey(): string {
-    return `sk-${randomBytes(32).toString('hex')}`;
-  }
-
-  private generateId(): string {
-    return randomBytes(16).toString('hex');
   }
 }

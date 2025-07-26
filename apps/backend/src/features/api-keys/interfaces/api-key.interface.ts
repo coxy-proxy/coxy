@@ -2,8 +2,13 @@ export interface ApiKey {
   id: string;
   name: string;
   key: string;
-  isActive: boolean;
+  isDefault: boolean;
   createdAt: Date;
   lastUsed?: Date;
   usageCount: number;
+}
+
+export interface ApiKeyResponse extends Omit<ApiKey, 'key'> {
+  isDefault: boolean;
+  maskedKey: string;
 }
