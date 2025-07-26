@@ -42,7 +42,7 @@ export class ApiKeysController {
     const deviceFlow$ = this.apiKeysService.executeDeviceFlowWithSSE().pipe(
       tap((event) => {
         this.logger.log('SSE event:', event);
-        event.type === 'success' && this.onDeviceFlowSuccess(event, this.currentUserId);
+        event.type === 'success' && this.deviceFlowMap.delete(this.currentUserId);
       }),
       map(
         (event: DeviceFlowSSEEvent) =>
@@ -57,10 +57,4 @@ export class ApiKeysController {
 
     return deviceFlow$;
   }
-
-  private onDeviceFlowSuccess = (event: DeviceFlowSSEEvent, userId: string) => {
-    this.apiKeysService.createApiKey({ name: `Key:${Date.now()}`, key: event.accessToken });
-    this.deviceFlowMap.delete(userId);
-    this.logger.log('Stored API key by device flow');
-  };
 }
