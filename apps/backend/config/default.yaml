@@ -1,3 +1,6 @@
+api:
+  prefix: api
+
 jwt:
   secret: ${JWT_SECRET:your-secret-key}
   expiresIn: '24h'
@@ -19,9 +22,10 @@ github:
   copilot:
     clientId: Iv1.b507a08c87ecfe98
     tokenApiUrl: https://api.github.com/copilot_internal/v2/token
-    host: api.githubcopilot.com
+    copilotApiUrl: https://api.githubcopilot.com
     headers:
       'Editor-Version': 'CopilotProxy/0.1.0'
       'Copilot-Integration-Id': 'vscode-chat'
       'Copilot-Vision-Request': 'true'
       'User-Agent': 'CopilotProxy'
+      'host': 'api.githubcopilot.com'

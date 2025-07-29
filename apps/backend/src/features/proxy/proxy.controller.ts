@@ -1,6 +1,6 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Post, Request, UseGuards } from '@nestjs/common';
-import { ChatCompletionDto } from './dto/chat-completion.dto';
-import { ApiKeyGuard } from './guards/api-key.guard';
+import { Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { ApiKeyGuard } from '_/shared/api-keys';
+import { Request, Response } from 'express';
 import { ProxyService } from './proxy.service';
 
 @Controller()
@@ -9,21 +9,12 @@ export class ProxyController {
   constructor(private readonly proxyService: ProxyService) {}
 
   @Post('chat/completions')
-  async chatCompletions(@Body() body: ChatCompletionDto, @Request() req: any) {
-    try {
-      // API key is already validated by the guard and available in req.apiKey
-      return await this.proxyService.forwardToCopilot(body, req.apiKey.key);
-    } catch (error) {
-      if (error.message === 'Malformed request') {
-        throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
-      }
-      throw error;
-    }
+  async chatCompletions(@Req() req: Request, @Res() res: Response) {
+    return this.proxyService.proxyRequest(req, res);
   }
 
   @Get('models')
-  async getModels(@Request() req: any) {
-    // API key is already validated by the guard
-    return await this.proxyService.getAvailableModels();
+  async getModels(@Req() req: Request, @Res() res: Response) {
+    return this.proxyService.proxyRequest(req, res);
   }
 }
