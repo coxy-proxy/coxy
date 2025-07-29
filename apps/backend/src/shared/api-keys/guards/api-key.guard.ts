@@ -29,7 +29,7 @@ export class ApiKeyGuard implements CanActivate {
     const validApiKey = await this.findApiKey(apiKey);
 
     if (!validApiKey) {
-      throw new UnauthorizedException('Invalid API key');
+      throw new UnauthorizedException(`Invalid API key: ${apiKey}`);
     }
 
     // Add the validated API key to the request for later use
