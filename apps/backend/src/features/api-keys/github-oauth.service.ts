@@ -1,5 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
+import { CopilotMeta } from '_/shared/api-keys';
 import allConfig from 'config';
 import {
   catchError,
@@ -15,7 +16,6 @@ import {
   tap,
 } from 'rxjs';
 import { DeviceFlowSSEEvent } from './dto/device-flow-sse-event.dto';
-import { CopilotMeta } from './interfaces/api-key.interface';
 
 interface GithubDeviceFlowResponse {
   device_code: string;

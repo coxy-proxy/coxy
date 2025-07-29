@@ -1,6 +1,7 @@
 import { type CanActivate, type ExecutionContext, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { maskKey } from '_/shared/utils';
-import { ApiKeysService } from '../../api-keys/api-keys.service';
+import { ApiKeysFileStorageService } from '../api-keys-file-storage.service';
+import { ApiKey } from '../interfaces/api-key.interface';
 
 const EMPTY_KEY = '_';
 
@@ -8,7 +9,7 @@ const EMPTY_KEY = '_';
 export class ApiKeyGuard implements CanActivate {
   private logger = new Logger(ApiKeyGuard.name);
 
-  constructor(private readonly apiKeysService: ApiKeysService) {}
+  constructor(private readonly fileStorageService: ApiKeysFileStorageService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
@@ -25,7 +26,7 @@ export class ApiKeyGuard implements CanActivate {
     }
     this.logger.debug({ 'Use API key': maskKey(apiKey) });
 
-    const validApiKey = await this.apiKeysService.findApiKey(apiKey);
+    const validApiKey = await this.findApiKey(apiKey);
 
     if (!validApiKey) {
       throw new UnauthorizedException('Invalid API key');
@@ -34,5 +35,11 @@ export class ApiKeyGuard implements CanActivate {
     // Add the validated API key to the request for later use
     request.apiKey = validApiKey;
     return true;
+  }
+
+  private async findApiKey(key: string): Promise<ApiKey | null> {
+    const apiKeys = await this.fileStorageService.findAll();
+    const apiKey = apiKeys.find((apiKey) => apiKey.key === key);
+    return apiKey;
   }
 }

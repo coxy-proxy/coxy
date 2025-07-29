@@ -1,11 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { ApiKey, ApiKeysFileStorageService } from '_/shared/api-keys';
 import { Observable, tap } from 'rxjs';
 import { maskKey } from '../../shared/utils';
-import { ApiKeysFileStorageService } from './api-keys-file-storage.service';
 import { CreateApiKeyDto } from './dto/create-api-key.dto';
 import { DeviceFlowSSEEvent } from './dto/device-flow-sse-event.dto';
 import { GithubOauthService } from './github-oauth.service';
-import { ApiKey, ApiKeyResponse } from './interfaces/api-key.interface';
+import { ApiKeyResponse } from './interfaces/api-key-response.interface';
 
 @Injectable()
 export class ApiKeysService {
@@ -34,12 +34,6 @@ export class ApiKeysService {
 
   async deleteApiKey(id: string): Promise<void> {
     await this.fileStorageService.remove(id);
-  }
-
-  async findApiKey(key: string): Promise<ApiKey | null> {
-    const apiKeys = await this.fileStorageService.findAll();
-    const apiKey = apiKeys.find((apiKey) => apiKey.key === key);
-    return apiKey;
   }
 
   executeDeviceFlowWithSSE(): Observable<DeviceFlowSSEEvent> {

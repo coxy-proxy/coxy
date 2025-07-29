@@ -15,8 +15,3 @@ export interface CopilotMeta {
   chatQuota: number | null;
   completionsQuota: number | null;
 }
-
-export interface ApiKeyResponse extends Omit<ApiKey, 'key'> {
-  isDefault: boolean;
-  maskedKey: string;
-}
