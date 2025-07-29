@@ -47,6 +47,9 @@ importers:
       '@tailwindcss/postcss':
         specifier: 4.1.11
         version: 4.1.11
+      '@types/express':
+        specifier: 5.0.3
+        version: 5.0.3
       axios:
         specifier: ^1.6.0
         version: 1.10.0
@@ -59,6 +62,9 @@ importers:
       config:
         specifier: 4.1.0
         version: 4.1.0
+      express:
+        specifier: 5.1.0
+        version: 5.1.0
       node-persist:
         specifier: 4.0.4
         version: 4.0.4
@@ -131,7 +137,7 @@ importers:
         version: 11.1.5(@nestjs/common@11.1.5(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@11.1.5)(@nestjs/platform-express@11.1.5)
       '@nx/angular':
         specifier: 21.3.1
-        version: 21.3.1(3b876ec09bb6843c1899cdc7bd76bdd4)
+        version: 21.3.1(b3cb58ecc8f9c9f2cbee8f92e0838ea8)
       '@nx/devkit':
         specifier: 21.3.1
         version: 21.3.1(nx@21.3.1(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.17))(@swc/types@0.1.23)(typescript@5.8.3))(@swc/core@1.5.29(@swc/helpers@0.5.17)))
@@ -2955,8 +2961,14 @@ packages:
   '@types/express-serve-static-core@4.19.6':
     resolution: {integrity: sha512-N4LZ2xG7DatVqhCZzOGb1Yi5lMbXSZcmdLDe9EzSndPV2HpWYWzRbaerl2n27irrm94EPpprqa8KpskPT085+A==}
 
+  '@types/express-serve-static-core@5.0.7':
+    resolution: {integrity: sha512-R+33OsgWw7rOhD1emjU7dzCDHucJrgJXMA5PYCzJxVil0dsyx5iBEPHqpPfiKNJQb7lZ1vxwoLR4Z87bBUpeGQ==}
+
   '@types/express@4.17.23':
     resolution: {integrity: sha512-Crp6WY9aTYP3qPi2wGDo9iUe/rceX01UMhnF1jmwDcKCFM6cx7YhGP/Mpr3y9AASpfHixIG0E6azCcL5OcDHsQ==}
+
+  '@types/express@5.0.3':
+    resolution: {integrity: sha512-wGA0NX93b19/dZC1J18tKWVIYWyyF2ZjT9vin/NRu0qzzvfVzWjs04iq2rQ3H65vCTQYlRqs3YHfY7zjdV+9Kw==}
 
   '@types/http-errors@2.0.5':
     resolution: {integrity: sha512-r8Tayk8HJnX0FztbZN7oVqGccWgw98T/0neJphO91KkmOzug1KkofZURD4UaD5uH8AqcFLfdPErnBod0u71/qg==}
@@ -10254,7 +10266,7 @@ snapshots:
     dependencies:
       consola: 3.4.2
 
-  '@nx/angular@21.3.1(3b876ec09bb6843c1899cdc7bd76bdd4)':
+  '@nx/angular@21.3.1(b3cb58ecc8f9c9f2cbee8f92e0838ea8)':
     dependencies:
       '@angular-devkit/core': 20.1.1(chokidar@4.0.3)
       '@angular-devkit/schematics': 20.1.1(chokidar@4.0.3)
@@ -10262,7 +10274,7 @@ snapshots:
       '@nx/eslint': 21.3.1(@babel/traverse@7.28.0)(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.17))(@swc/types@0.1.23)(typescript@5.8.3))(@swc/core@1.5.29(@swc/helpers@0.5.17))(@zkochan/js-yaml@0.0.7)(eslint@9.31.0(jiti@2.4.2))(nx@21.3.1(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.17))(@swc/types@0.1.23)(typescript@5.8.3))(@swc/core@1.5.29(@swc/helpers@0.5.17)))
       '@nx/js': 21.3.1(@babel/traverse@7.28.0)(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.17))(@swc/types@0.1.23)(typescript@5.8.3))(@swc/core@1.5.29(@swc/helpers@0.5.17))(nx@21.3.1(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.17))(@swc/types@0.1.23)(typescript@5.8.3))(@swc/core@1.5.29(@swc/helpers@0.5.17)))
       '@nx/module-federation': 21.3.1(@babel/traverse@7.28.0)(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.17))(@swc/types@0.1.23)(typescript@5.8.3))(@swc/core@1.5.29(@swc/helpers@0.5.17))(@swc/helpers@0.5.17)(nx@21.3.1(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.17))(@swc/types@0.1.23)(typescript@5.8.3))(@swc/core@1.5.29(@swc/helpers@0.5.17)))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(typescript@5.8.3)(webpack-cli@5.1.4)
-      '@nx/rspack': 21.3.1(@babel/traverse@7.28.0)(@module-federation/enhanced@0.17.0(@rspack/core@1.4.8(@swc/helpers@0.5.17))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(typescript@5.8.3)(webpack@5.99.9))(@module-federation/node@2.7.9(@rspack/core@1.4.8(@swc/helpers@0.5.17))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(typescript@5.8.3)(webpack@5.99.9))(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.17))(@swc/types@0.1.23)(typescript@5.8.3))(@swc/core@1.5.29(@swc/helpers@0.5.17))(@swc/helpers@0.5.17)(@types/express@4.17.23)(less@4.4.0)(nx@21.3.1(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.17))(@swc/types@0.1.23)(typescript@5.8.3))(@swc/core@1.5.29(@swc/helpers@0.5.17)))(react-dom@19.1.0(react@19.1.0))(react-refresh@0.17.0)(react@19.1.0)(typescript@5.8.3)(webpack-cli@5.1.4)
+      '@nx/rspack': 21.3.1(@babel/traverse@7.28.0)(@module-federation/enhanced@0.17.0(@rspack/core@1.4.8(@swc/helpers@0.5.17))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(typescript@5.8.3)(webpack@5.99.9))(@module-federation/node@2.7.9(@rspack/core@1.4.8(@swc/helpers@0.5.17))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(typescript@5.8.3)(webpack@5.99.9))(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.17))(@swc/types@0.1.23)(typescript@5.8.3))(@swc/core@1.5.29(@swc/helpers@0.5.17))(@swc/helpers@0.5.17)(@types/express@5.0.3)(less@4.4.0)(nx@21.3.1(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.17))(@swc/types@0.1.23)(typescript@5.8.3))(@swc/core@1.5.29(@swc/helpers@0.5.17)))(react-dom@19.1.0(react@19.1.0))(react-refresh@0.17.0)(react@19.1.0)(typescript@5.8.3)(webpack-cli@5.1.4)
       '@nx/web': 21.3.1(@babel/traverse@7.28.0)(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.17))(@swc/types@0.1.23)(typescript@5.8.3))(@swc/core@1.5.29(@swc/helpers@0.5.17))(nx@21.3.1(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.17))(@swc/types@0.1.23)(typescript@5.8.3))(@swc/core@1.5.29(@swc/helpers@0.5.17)))
       '@nx/webpack': 21.3.1(@babel/traverse@7.28.0)(@rspack/core@1.4.8(@swc/helpers@0.5.17))(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.17))(@swc/types@0.1.23)(typescript@5.8.3))(@swc/core@1.5.29(@swc/helpers@0.5.17))(lightningcss@1.30.1)(nx@21.3.1(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.17))(@swc/types@0.1.23)(typescript@5.8.3))(@swc/core@1.5.29(@swc/helpers@0.5.17)))(typescript@5.8.3)(webpack-cli@5.1.4)
       '@nx/workspace': 21.3.1(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.17))(@swc/types@0.1.23)(typescript@5.8.3))(@swc/core@1.5.29(@swc/helpers@0.5.17))
@@ -10583,7 +10595,7 @@ snapshots:
       - typescript
       - verdaccio
 
-  '@nx/rspack@21.3.1(@babel/traverse@7.28.0)(@module-federation/enhanced@0.17.0(@rspack/core@1.4.8(@swc/helpers@0.5.17))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(typescript@5.8.3)(webpack@5.99.9))(@module-federation/node@2.7.9(@rspack/core@1.4.8(@swc/helpers@0.5.17))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(typescript@5.8.3)(webpack@5.99.9))(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.17))(@swc/types@0.1.23)(typescript@5.8.3))(@swc/core@1.5.29(@swc/helpers@0.5.17))(@swc/helpers@0.5.17)(@types/express@4.17.23)(less@4.4.0)(nx@21.3.1(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.17))(@swc/types@0.1.23)(typescript@5.8.3))(@swc/core@1.5.29(@swc/helpers@0.5.17)))(react-dom@19.1.0(react@19.1.0))(react-refresh@0.17.0)(react@19.1.0)(typescript@5.8.3)(webpack-cli@5.1.4)':
+  '@nx/rspack@21.3.1(@babel/traverse@7.28.0)(@module-federation/enhanced@0.17.0(@rspack/core@1.4.8(@swc/helpers@0.5.17))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(typescript@5.8.3)(webpack@5.99.9))(@module-federation/node@2.7.9(@rspack/core@1.4.8(@swc/helpers@0.5.17))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(typescript@5.8.3)(webpack@5.99.9))(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.17))(@swc/types@0.1.23)(typescript@5.8.3))(@swc/core@1.5.29(@swc/helpers@0.5.17))(@swc/helpers@0.5.17)(@types/express@5.0.3)(less@4.4.0)(nx@21.3.1(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.17))(@swc/types@0.1.23)(typescript@5.8.3))(@swc/core@1.5.29(@swc/helpers@0.5.17)))(react-dom@19.1.0(react@19.1.0))(react-refresh@0.17.0)(react@19.1.0)(typescript@5.8.3)(webpack-cli@5.1.4)':
     dependencies:
       '@module-federation/enhanced': 0.17.0(@rspack/core@1.4.8(@swc/helpers@0.5.17))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(typescript@5.8.3)(webpack@5.99.9)
       '@module-federation/node': 2.7.9(@rspack/core@1.4.8(@swc/helpers@0.5.17))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(typescript@5.8.3)(webpack@5.99.9)
@@ -10593,7 +10605,7 @@ snapshots:
       '@nx/web': 21.3.1(@babel/traverse@7.28.0)(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.17))(@swc/types@0.1.23)(typescript@5.8.3))(@swc/core@1.5.29(@swc/helpers@0.5.17))(nx@21.3.1(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.17))(@swc/types@0.1.23)(typescript@5.8.3))(@swc/core@1.5.29(@swc/helpers@0.5.17)))
       '@phenomnomnominal/tsquery': 5.0.1(typescript@5.8.3)
       '@rspack/core': 1.4.8(@swc/helpers@0.5.17)
-      '@rspack/dev-server': 1.1.3(@rspack/core@1.4.8(@swc/helpers@0.5.17))(@types/express@4.17.23)(webpack-cli@5.1.4)(webpack@5.100.2(@swc/core@1.5.29(@swc/helpers@0.5.17))(webpack-cli@5.1.4))
+      '@rspack/dev-server': 1.1.3(@rspack/core@1.4.8(@swc/helpers@0.5.17))(@types/express@5.0.3)(webpack-cli@5.1.4)(webpack@5.100.2(@swc/core@1.5.29(@swc/helpers@0.5.17))(webpack-cli@5.1.4))
       '@rspack/plugin-react-refresh': 1.4.3(react-refresh@0.17.0)
       autoprefixer: 10.4.21(postcss@8.5.6)
       browserslist: 4.25.1
@@ -11026,11 +11038,11 @@ snapshots:
     optionalDependencies:
       '@swc/helpers': 0.5.17
 
-  '@rspack/dev-server@1.1.3(@rspack/core@1.4.8(@swc/helpers@0.5.17))(@types/express@4.17.23)(webpack-cli@5.1.4)(webpack@5.100.2(@swc/core@1.5.29(@swc/helpers@0.5.17))(webpack-cli@5.1.4))':
+  '@rspack/dev-server@1.1.3(@rspack/core@1.4.8(@swc/helpers@0.5.17))(@types/express@5.0.3)(webpack-cli@5.1.4)(webpack@5.100.2(@swc/core@1.5.29(@swc/helpers@0.5.17))(webpack-cli@5.1.4))':
     dependencies:
       '@rspack/core': 1.4.8(@swc/helpers@0.5.17)
       chokidar: 3.6.0
-      http-proxy-middleware: 2.0.9(@types/express@4.17.23)
+      http-proxy-middleware: 2.0.9(@types/express@5.0.3)
       p-retry: 6.2.1
       webpack-dev-server: 5.2.2(webpack-cli@5.1.4)(webpack@5.100.2(@swc/core@1.5.29(@swc/helpers@0.5.17))(webpack-cli@5.1.4))
       ws: 8.18.3
@@ -11359,11 +11371,24 @@ snapshots:
       '@types/range-parser': 1.2.7
       '@types/send': 0.17.5
 
+  '@types/express-serve-static-core@5.0.7':
+    dependencies:
+      '@types/node': 18.16.9
+      '@types/qs': 6.14.0
+      '@types/range-parser': 1.2.7
+      '@types/send': 0.17.5
+
   '@types/express@4.17.23':
     dependencies:
       '@types/body-parser': 1.19.6
       '@types/express-serve-static-core': 4.19.6
       '@types/qs': 6.14.0
+      '@types/serve-static': 1.15.8
+
+  '@types/express@5.0.3':
+    dependencies:
+      '@types/body-parser': 1.19.6
+      '@types/express-serve-static-core': 5.0.7
       '@types/serve-static': 1.15.8
 
   '@types/http-errors@2.0.5': {}
@@ -11417,7 +11442,7 @@ snapshots:
 
   '@types/serve-index@1.9.4':
     dependencies:
-      '@types/express': 4.17.23
+      '@types/express': 5.0.3
 
   '@types/serve-static@1.15.8':
     dependencies:
@@ -13479,6 +13504,18 @@ snapshots:
       micromatch: 4.0.8
     optionalDependencies:
       '@types/express': 4.17.23
+    transitivePeerDependencies:
+      - debug
+
+  http-proxy-middleware@2.0.9(@types/express@5.0.3):
+    dependencies:
+      '@types/http-proxy': 1.17.16
+      http-proxy: 1.18.1(debug@4.4.1)
+      is-glob: 4.0.3
+      is-plain-obj: 3.0.0
+      micromatch: 4.0.8
+    optionalDependencies:
+      '@types/express': 5.0.3
     transitivePeerDependencies:
       - debug
 
