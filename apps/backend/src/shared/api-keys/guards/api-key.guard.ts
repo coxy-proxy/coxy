@@ -15,26 +15,27 @@ export class ApiKeyGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const authHeader = request.headers.authorization;
 
-    const apiKey = authHeader?.replace(/^(token|Bearer) ?/, '') || EMPTY_KEY;
-    // TODO: Implement default API key
-    // const selectedToken = await getSelectedToken();
-    // const oauthToken = apiKey === EMPTY_KEY ? selectedToken?.token : apiKey;
-    // const oauthToken = apiKey;
+    const token: string = authHeader?.replace(/^(token|Bearer) ?/, '') || (await this.findDefaultToken());
 
-    if (!apiKey) {
-      throw new UnauthorizedException('Invalid authorization header');
+    if (!token) {
+      throw new UnauthorizedException(`Invalid authorization header: ${authHeader}`);
     }
-    this.logger.debug({ 'Use API key': maskKey(apiKey) });
+    this.logger.debug({ 'Use API key': maskKey(token) });
 
-    const validApiKey = await this.findApiKey(apiKey);
+    const validApiKey = await this.findApiKey(token);
 
     if (!validApiKey) {
-      throw new UnauthorizedException(`Invalid API key: ${apiKey}`);
+      throw new UnauthorizedException(`Invalid API key: ${token}`);
     }
 
     // Add the validated API key to the request for later use
     request.apiKey = validApiKey;
     return true;
+  }
+
+  private async findDefaultToken(): Promise<string | null> {
+    const apiKey = await this.fileStorageService.getDefault();
+    return apiKey?.key || null;
   }
 
   private async findApiKey(key: string): Promise<ApiKey | null> {

@@ -49,4 +49,13 @@ export class ApiKeysFileStorageService {
   async remove(id: ApiKey['id']) {
     await tokenStorage.removeItem(id);
   }
+
+  async updateDefault(id: ApiKey['id']) {
+    await selectedTokenStorage.setItem('selected-token-id', id);
+  }
+
+  async getDefault(): Promise<ApiKey | null> {
+    const id = await selectedTokenStorage.getItem('selected-token-id');
+    return id ? await tokenStorage.getItem(id) : null;
+  }
 }

@@ -5,6 +5,7 @@ import { AdminGuard } from '../admin/guards/admin.guard';
 import { ApiKeysService } from './api-keys.service';
 import { CreateApiKeyDto } from './dto/create-api-key.dto';
 import { DeviceFlowSSEEvent } from './dto/device-flow-sse-event.dto';
+import { SetDefaultApiKeyDto } from './dto/set-default-api-key.dto';
 
 @Controller('api-keys')
 // TODO: Uncomment this line to enable admin access
@@ -56,5 +57,10 @@ export class ApiKeysController {
     this.deviceFlowMap.set(this.currentUserId, deviceFlow$);
 
     return deviceFlow$;
+  }
+
+  @Post('default')
+  async setDefaultApiKey(@Body() setDefaultApiKeyDto: SetDefaultApiKeyDto) {
+    return await this.apiKeysService.setDefaultApiKey(setDefaultApiKeyDto);
   }
 }

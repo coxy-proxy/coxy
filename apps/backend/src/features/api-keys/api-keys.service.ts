@@ -4,6 +4,7 @@ import { Observable, tap } from 'rxjs';
 import { maskKey } from '../../shared/utils';
 import { CreateApiKeyDto } from './dto/create-api-key.dto';
 import { DeviceFlowSSEEvent } from './dto/device-flow-sse-event.dto';
+import { SetDefaultApiKeyDto } from './dto/set-default-api-key.dto';
 import { GithubOauthService } from './github-oauth.service';
 import { ApiKeyResponse } from './interfaces/api-key-response.interface';
 
@@ -11,8 +12,7 @@ import { ApiKeyResponse } from './interfaces/api-key-response.interface';
 export class ApiKeysService {
   private logger = new Logger(ApiKeysService.name);
 
-  // TODO: Implement default API key
-  private defaultApiKeyId = 'default';
+  private defaultApiKeyId = null;
 
   constructor(
     private readonly githubOauthService: GithubOauthService,
@@ -28,7 +28,8 @@ export class ApiKeysService {
 
   async listApiKeys(): Promise<ApiKeyResponse[]> {
     const apiKeys = await this.fileStorageService.findAll();
-    // Return API keys without exposing the actual key values
+    this.defaultApiKeyId = (await this.fileStorageService.getDefault())?.id;
+
     return apiKeys.map(this.toApiKeyResponse);
   }
 
@@ -42,6 +43,16 @@ export class ApiKeysService {
         event.type === 'success' && this.onDeviceFlowSuccess(event);
       }),
     );
+  }
+
+  async setDefaultApiKey(dto: SetDefaultApiKeyDto): Promise<ApiKeyResponse> {
+    const apiKey = await this.fileStorageService.findOne(dto.id);
+    if (!apiKey) {
+      throw new Error('API key not found');
+    }
+    await this.fileStorageService.updateDefault(apiKey.id);
+    this.defaultApiKeyId = apiKey.id;
+    return this.toApiKeyResponse(apiKey);
   }
 
   private onDeviceFlowSuccess = (event: DeviceFlowSSEEvent) => {
