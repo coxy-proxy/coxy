@@ -15,7 +15,9 @@ export class ApiKeyGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const authHeader = request.headers.authorization;
 
-    const token: string = authHeader?.replace(/^(token|Bearer) ?/, '') || (await this.findDefaultToken());
+    const providedToken = authHeader?.replace(/^(token|Bearer) ?/, '') || EMPTY_KEY;
+    const defaultToken = await this.findDefaultToken();
+    const token = providedToken === EMPTY_KEY ? defaultToken : providedToken;
 
     if (!token) {
       throw new UnauthorizedException(`Invalid authorization header: ${authHeader}`);
@@ -28,8 +30,7 @@ export class ApiKeyGuard implements CanActivate {
       throw new UnauthorizedException(`Invalid API key: ${token}`);
     }
 
-    // Add the validated API key to the request for later use
-    request.apiKey = validApiKey;
+    request.headers.authorization = `Bearer ${validApiKey.key}`;
     return true;
   }
 
