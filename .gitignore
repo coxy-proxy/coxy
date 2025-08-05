@@ -54,3 +54,7 @@ vitest.config.*.timestamp*
 
 # for api keys
 .storage
+
+# Next.js
+.next
+out
