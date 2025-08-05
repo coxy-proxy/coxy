@@ -88,6 +88,12 @@
       "linter": "eslint",
       "style": "scss",
       "unitTestRunner": "vitest"
+    },
+    "@nx/next": {
+      "application": {
+        "style": "tailwind",
+        "linter": "none"
+      }
     }
   }
 }
