@@ -50,13 +50,10 @@ export class GithubOauthService {
 
   async fetchCopilotMeta(key: string): Promise<CopilotMeta> {
     try {
-      // TODO: Implement GitHub Copilot internal API call to get token details
-      // This would be used to validate the token and get user information
       const response = await firstValueFrom(
-        this.httpService.get(this.config.copilot.tokenApiUrl, {
+        this.httpService.get(this.config.copilot_internal.tokenApiUrl, {
           headers: {
             Authorization: `token ${key}`,
-            ...this.config.copilot.headers,
           },
         }),
       );

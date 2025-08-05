@@ -21,7 +21,6 @@ github:
     'accept-encoding': 'gzip,deflate,br'
   copilot:
     clientId: Iv1.b507a08c87ecfe98
-    tokenApiUrl: https://api.github.com/copilot_internal/v2/token
     copilotApiUrl: https://api.githubcopilot.com
     headers:
       'Editor-Version': 'CopilotProxy/0.1.0'
@@ -29,3 +28,5 @@ github:
       'Copilot-Vision-Request': 'true'
       'User-Agent': 'CopilotProxy'
       'host': 'api.githubcopilot.com'
+  copilot_internal:
+    tokenApiUrl: https://api.github.com/copilot_internal/v2/token
