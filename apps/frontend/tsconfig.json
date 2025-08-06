@@ -23,7 +23,12 @@
       {
         "name": "next"
       }
-    ]
+    ],
+    "paths": {
+      "_/*": [
+        "apps/frontend/src/*"
+      ]
+    }
   },
   "include": [
     "**/*.js",
