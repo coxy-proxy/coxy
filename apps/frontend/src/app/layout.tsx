@@ -1,7 +1,16 @@
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+import { ClerkProvider } from '@clerk/nextjs';
+import './global.css';
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html lang="en">
-      <body>{children}</body>
-    </html>
+    <ClerkProvider>
+      <html lang="en">
+        <body>{children}</body>
+      </html>
+    </ClerkProvider>
   );
 }
