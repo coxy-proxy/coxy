@@ -15,6 +15,7 @@
     "@angular/forms": "~20.1.0",
     "@angular/platform-browser": "~20.1.0",
     "@angular/router": "~20.1.0",
+    "@clerk/nextjs": "6.28.1",
     "@nestjs/axios": "4.0.1",
     "@nestjs/common": "^11.0.0",
     "@nestjs/core": "^11.0.0",
