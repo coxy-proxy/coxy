@@ -1,5 +1,5 @@
-import axios from 'axios';
 import { auth } from '@clerk/nextjs/server';
+import axios from 'axios';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -12,14 +12,14 @@ export const apiClient = axios.create({
 // Request interceptor to add auth token
 apiClient.interceptors.request.use(
   async (config) => {
-    const { getToken } = auth();
+    const { getToken } = await auth();
     const token = await getToken();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 
 // Response interceptor for error handling
@@ -31,5 +31,5 @@ apiClient.interceptors.response.use(
       window.location.href = '/sign-in';
     }
     return Promise.reject(error);
-  }
+  },
 );
