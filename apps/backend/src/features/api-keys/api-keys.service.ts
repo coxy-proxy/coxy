@@ -34,7 +34,8 @@ export class ApiKeysService {
     const apiKeys = await this.fileStorageService.findAll();
     this.defaultApiKeyId = (await this.fileStorageService.getDefault())?.id;
 
-    return apiKeys.map(this.toApiKeyResponse);
+    // Sort by createdAt in descending order
+    return apiKeys.map(this.toApiKeyResponse).sort((a, b) => b.createdAt - a.createdAt);
   }
 
   async updateApiKey(id: string, dto: UpdateApiKeyDto): Promise<ApiKeyResponse> {

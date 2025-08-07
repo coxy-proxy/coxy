@@ -2,8 +2,8 @@ export interface ApiKey {
   id: string;
   name: string;
   key: string;
-  createdAt: Date;
-  lastUsed?: Date;
+  createdAt: number;
+  lastUsed?: number;
   usageCount: number;
   meta?: CopilotMeta;
 }
