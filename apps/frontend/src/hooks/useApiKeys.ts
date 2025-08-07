@@ -1,6 +1,6 @@
 'use client';
 
-import { useApiKeyService } from '_/services/api-keys';
+import { useApiKeyService } from '_/hooks/useApiKeyService';
 import { ApiKey, CreateApiKeyRequest } from '_/types/api-key';
 import { useCallback, useEffect, useState } from 'react';
 

@@ -1,4 +1,4 @@
-import { useApiClient } from '_/lib/api';
+import { useApiClient } from '_/hooks/useApiClient';
 import { ApiKey, CreateApiKeyRequest } from '_/types/api-key';
 import { AxiosInstance } from 'axios';
 
