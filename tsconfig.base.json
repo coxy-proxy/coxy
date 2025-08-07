@@ -20,6 +20,9 @@
     "paths": {
       "@/shared/logger": [
         "libs/shared/logger/src/index.ts"
+      ],
+      "@/shared/types": [
+        "libs/shared/types/src/index.ts"
       ]
     }
   },
