@@ -1,4 +1,4 @@
-import { auth } from '@clerk/nextjs/server';
+import { useAuth } from '@clerk/nextjs';
 import axios from 'axios';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -12,7 +12,7 @@ export const apiClient = axios.create({
 // Request interceptor to add auth token
 apiClient.interceptors.request.use(
   async (config) => {
-    const { getToken } = await auth();
+    const { getToken } = useAuth();
     const token = await getToken();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
