@@ -3,19 +3,14 @@
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
     "module": "esnext",
-    "types": [
-      "node"
-    ],
+    "types": ["node"],
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "target": "es2021",
     "paths": {
-      "_/*": [
-        "apps/backend/src/*"
-      ]
+      "_/*": ["apps/backend/src/*"],
+      "@/shared/types/*": ["libs/shared/types/src/*"]
     }
   },
-  "include": [
-    "src/**/*.ts"
-  ]
+  "include": ["src/**/*.ts"]
 }

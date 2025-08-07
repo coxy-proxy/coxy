@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import storage from 'node-persist';
 import { v4 as uuid } from 'uuid';
-import { ApiKey } from './interfaces/api-key.interface';
+import { ApiKey } from '@/shared/types/api-key';
 
 const STORAGE_DIR = process.env.STORAGE_DIR || '.storage';
 

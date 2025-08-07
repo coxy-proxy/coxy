@@ -1,12 +1,15 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ApiKey, ApiKeysFileStorageService } from '_/shared/api-keys';
+import { ApiKeysFileStorageService } from '_/shared/api-keys';
 import { Observable, tap } from 'rxjs';
+import {
+  ApiKey,
+  ApiKeyResponse,
+  CreateApiKeyDto,
+  DeviceFlowSSEEvent,
+  SetDefaultApiKeyDto,
+} from '@/shared/types/api-key';
 import { maskKey } from '../../shared/utils';
-import { CreateApiKeyDto } from './dto/create-api-key.dto';
-import { DeviceFlowSSEEvent } from './dto/device-flow-sse-event.dto';
-import { SetDefaultApiKeyDto } from './dto/set-default-api-key.dto';
 import { GithubOauthService } from './github-oauth.service';
-import { ApiKeyResponse } from './interfaces/api-key-response.interface';
 
 @Injectable()
 export class ApiKeysService {

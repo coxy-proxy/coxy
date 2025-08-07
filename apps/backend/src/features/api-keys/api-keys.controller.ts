@@ -1,11 +1,9 @@
 import { Body, Controller, Delete, Get, Logger, Param, Post, Sse, UseGuards } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { map, share, tap } from 'rxjs/operators';
+import { CreateApiKeyDto, DeviceFlowSSEEvent, SetDefaultApiKeyDto } from '@/shared/types/api-key';
 import { AdminGuard } from '../admin/guards/admin.guard';
 import { ApiKeysService } from './api-keys.service';
-import { CreateApiKeyDto } from './dto/create-api-key.dto';
-import { DeviceFlowSSEEvent } from './dto/device-flow-sse-event.dto';
-import { SetDefaultApiKeyDto } from './dto/set-default-api-key.dto';
 
 @Controller('api-keys')
 // TODO: Uncomment this line to enable admin access
