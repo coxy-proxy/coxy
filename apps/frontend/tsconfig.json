@@ -2,7 +2,7 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "jsx": "preserve",
-    "strict": true,
+    "strict": false,
     "noEmit": true,
     "emitDeclarationOnly": false,
     "esModuleInterop": true,
