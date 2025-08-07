@@ -1,7 +1,7 @@
-import { Body, Controller, Delete, Get, Logger, Param, Post, Sse, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Logger, Param, Patch, Post, Sse, UseGuards } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { map, share, tap } from 'rxjs/operators';
-import { CreateApiKeyDto, DeviceFlowSSEEvent, SetDefaultApiKeyDto } from '@/shared/types/api-key';
+import { CreateApiKeyDto, DeviceFlowSSEEvent, SetDefaultApiKeyDto, UpdateApiKeyDto } from '@/shared/types/api-key';
 import { AdminGuard } from '../admin/guards/admin.guard';
 import { ApiKeysService } from './api-keys.service';
 
@@ -25,6 +25,11 @@ export class ApiKeysController {
   @Get()
   async listApiKeys() {
     return await this.apiKeysService.listApiKeys();
+  }
+
+  @Patch(':id')
+  async updateApiKey(@Param('id') id: string, @Body() updateApiKeyDto: UpdateApiKeyDto) {
+    return await this.apiKeysService.updateApiKey(id, updateApiKeyDto);
   }
 
   @Delete(':id')

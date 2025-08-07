@@ -44,6 +44,7 @@ export class ApiKeysFileStorageService {
       throw new Error('Token not found');
     }
     await tokenStorage.setItem(item.id, { ...item, ...apiKey });
+    return await tokenStorage.getItem(id);
   }
 
   async remove(id: ApiKey['id']) {

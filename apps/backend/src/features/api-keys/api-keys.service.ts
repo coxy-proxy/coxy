@@ -7,6 +7,7 @@ import {
   CreateApiKeyDto,
   DeviceFlowSSEEvent,
   SetDefaultApiKeyDto,
+  UpdateApiKeyDto,
 } from '@/shared/types/api-key';
 import { maskKey } from '../../shared/utils';
 import { GithubOauthService } from './github-oauth.service';
@@ -34,6 +35,15 @@ export class ApiKeysService {
     this.defaultApiKeyId = (await this.fileStorageService.getDefault())?.id;
 
     return apiKeys.map(this.toApiKeyResponse);
+  }
+
+  async updateApiKey(id: string, dto: UpdateApiKeyDto): Promise<ApiKeyResponse> {
+    const apiKey = await this.fileStorageService.findOne(id);
+    if (!apiKey) {
+      throw new Error('API key not found');
+    }
+    const newKey = await this.fileStorageService.update(id, dto);
+    return this.toApiKeyResponse(newKey);
   }
 
   async deleteApiKey(id: string): Promise<void> {
