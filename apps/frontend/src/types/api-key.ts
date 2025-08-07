@@ -1,8 +1,19 @@
 export interface ApiKey {
   id: string;
   name: string;
-  key: string; // Should be masked in UI
-  created: Date;
+  key: string; // Full key (masked in UI)
+  createdAt: Date;
   lastUsed?: Date;
-  status: 'active' | 'disabled';
+  usageCount: number;
+  isDefault: boolean;
+  quota?: {
+    used: number;
+    limit: number;
+    renewAt: Date; // When quota will be renewed
+  };
+}
+
+export interface CreateApiKeyRequest {
+  name: string;
+  key?: string; // Optional for manual entry
 }

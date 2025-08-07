@@ -1,50 +1,126 @@
 'use client';
 
+import { useApiKeys } from '_/hooks/useApiKeys';
+import type { ApiKey, CreateApiKeyRequest } from '_/types/api-key';
 import { useState } from 'react';
-import { ApiKey } from '_/types/api-key';
 import ApiKeyTable from './ApiKeyTable';
-import CreateApiKeyForm from './CreateApiKeyForm';
-import { createApiKey, deleteApiKey } from '_/services/api-keys';
+import CreateApiKeyModal from './CreateApiKeyModal';
+import DeleteConfirmDialog from './DeleteConfirmDialog';
+import EditApiKeyModal from './EditApiKeyModal';
+import EmptyState from './EmptyState';
 
 export default function ApiKeyManager({ initialApiKeys }: { initialApiKeys: ApiKey[] }) {
-  const [apiKeys, setApiKeys] = useState<ApiKey[]>(initialApiKeys);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { apiKeys, loading, error, createApiKey, updateApiKey, deleteApiKey, setDefaultKey } =
+    useApiKeys(initialApiKeys);
 
-  const handleCreateKey = async (name: string) => {
-    setIsLoading(true);
-    setError(null);
+  const [isCreateModalOpen, setCreateModalOpen] = useState(false);
+  const [isEditModalOpen, setEditModalOpen] = useState(false);
+  const [isDeleteDialogValid, setDeleteDialog] = useState(false);
+  const [selectedKey, setSelectedKey] = useState<ApiKey | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleCreate = async (name: string, key?: string) => {
+    setIsSubmitting(true);
     try {
-      const newKey = await createApiKey(name);
-      setApiKeys((prevKeys) => [...prevKeys, newKey]);
-    } catch (err) {
-      setError('Failed to create API key. Please try again.');
-      console.error(err);
+      const request: CreateApiKeyRequest = { name, key: key || undefined };
+      await createApiKey(request);
+      setCreateModalOpen(false);
+    } catch (e) {
+      console.error(e);
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
 
-  const handleDeleteKey = async (id: string) => {
-    // Optimistic UI update
-    const originalKeys = apiKeys;
-    setApiKeys((prevKeys) => prevKeys.filter((key) => key.id !== id));
+  const handleEdit = (key: ApiKey) => {
+    setSelectedKey(key);
+    setEditModalOpen(true);
+  };
 
+  const handleSave = async (name: string) => {
+    if (!selectedKey) return;
+    setIsSubmitting(true);
     try {
-      await deleteApiKey(id);
-    } catch (err) {
-      setError('Failed to delete API key. Please try again.');
-      console.error(err);
-      // Rollback on error
-      setApiKeys(originalKeys);
+      await updateApiKey(selectedKey.id, name);
+      setEditModalOpen(false);
+      setSelectedKey(null);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsSubmitting(false);
     }
   };
+
+  const handleDelete = (key: ApiKey) => {
+    setSelectedKey(key);
+    setDeleteDialog(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!selectedKey) return;
+    setIsSubmitting(true);
+    try {
+      await deleteApiKey(selectedKey.id);
+      setDeleteDialog(false);
+      setSelectedKey(null);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  if (loading) {
+    return <p>Loading...</p>; // Replace with Skeleton Loader
+  }
+
+  if (error) {
+    return <p className="text-red-500">{error}</p>;
+  }
 
   return (
     <div className="space-y-8">
-      <CreateApiKeyForm onCreate={handleCreateKey} isLoading={isLoading} />
-      {error && <p className="text-red-500">{error}</p>}
-      <ApiKeyTable apiKeys={apiKeys} onDelete={handleDeleteKey} />
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-bold">API Keys</h1>
+          <p className="text-gray-600">Manage your API keys for accessing the service.</p>
+        </div>
+        <button
+          onClick={() => setCreateModalOpen(true)}
+          className="px-4 py-2 text-white bg-indigo-600 rounded-md hover:bg-indigo-700"
+        >
+          Create Key
+        </button>
+      </div>
+
+      {apiKeys.length === 0 ? (
+        <EmptyState onNewKeyClick={() => setCreateModalOpen(true)} />
+      ) : (
+        <ApiKeyTable apiKeys={apiKeys} onEdit={handleEdit} onDelete={handleDelete} onSetDefault={setDefaultKey} />
+      )}
+
+      <CreateApiKeyModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setCreateModalOpen(false)}
+        onCreate={handleCreate}
+        isCreating={isSubmitting}
+      />
+
+      <EditApiKeyModal
+        isOpen={isEditModalOpen}
+        onClose={() => setEditModalOpen(false)}
+        onSave={handleSave}
+        apiKey={selectedKey}
+        isSaving={isSubmitting}
+      />
+
+      <DeleteConfirmDialog
+        isOpen={isDeleteDialogValid}
+        onClose={() => setDeleteDialog(false)}
+        onConfirm={handleConfirmDelete}
+        apiKeyName={selectedKey?.name || ''}
+        isDeleting={isSubmitting}
+      />
     </div>
   );
 }

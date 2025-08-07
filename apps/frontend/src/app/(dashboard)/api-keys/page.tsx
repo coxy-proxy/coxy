@@ -1,14 +1,9 @@
-import { getApiKeys } from '_/services/api-keys';
 import ApiKeyManager from '_/components/api-keys/ApiKeyManager';
+import { ApiKeyService } from '_/services/api-keys';
 
 export default async function ApiKeysPage() {
-  const apiKeys = await getApiKeys();
+  // Fetching data on the server component
+  const apiKeys = await ApiKeyService.getApiKeys();
 
-  return (
-    <div>
-      <h1 className="text-2xl font-bold mb-4">API Keys</h1>
-      <p className="mb-6 text-gray-600">Manage your API keys for accessing the service.</p>
-      <ApiKeyManager initialApiKeys={apiKeys} />
-    </div>
-  );
+  return <ApiKeyManager initialApiKeys={apiKeys} />;
 }
