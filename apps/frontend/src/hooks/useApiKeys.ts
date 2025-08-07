@@ -35,7 +35,7 @@ export function useApiKeys(initialKeys: ApiKey[] = []) {
   const createApiKey = useCallback(
     async (request: CreateApiKeyRequest) => {
       const newKey = await apiKeyService.createApiKey(request);
-      setApiKeys((prev) => [...prev, newKey]);
+      setApiKeys((prev) => [newKey, ...prev]);
       return newKey;
     },
     [apiKeyService],
