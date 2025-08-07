@@ -27,6 +27,9 @@
     "paths": {
       "_/*": [
         "apps/frontend/src/*"
+      ],
+      "@/shared/types/*": [
+        "libs/shared/types/src/*"
       ]
     }
   },
