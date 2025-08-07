@@ -25,7 +25,7 @@ export class ApiKeysService {
 
   async createApiKey(dto: CreateApiKeyDto): Promise<ApiKeyResponse> {
     const apiKey = await this.fileStorageService.create(dto);
-    apiKey.meta = await this.githubOauthService.fetchCopilotMeta(apiKey.key);
+    apiKey.meta = await this.githubOauthService.fetchCopilotMeta(apiKey.key).catch(() => null);
 
     return this.toApiKeyResponse(apiKey);
   }
