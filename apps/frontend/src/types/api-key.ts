@@ -1,19 +1,17 @@
+import { CopilotMeta } from '@/shared/types/api-key';
+
 export interface ApiKey {
   id: string;
   name: string;
-  key: string; // Full key (masked in UI)
+  maskedKey: string;
   createdAt: Date;
   lastUsed?: Date;
   usageCount: number;
   isDefault: boolean;
-  quota?: {
-    used: number;
-    limit: number;
-    renewAt: Date; // When quota will be renewed
-  };
+  meta?: CopilotMeta;
 }
 
 export interface CreateApiKeyRequest {
   name: string;
-  key?: string; // Optional for manual entry
+  key?: string;
 }

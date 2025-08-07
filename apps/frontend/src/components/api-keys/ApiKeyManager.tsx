@@ -4,6 +4,7 @@ import { useApiKeys } from '_/hooks/useApiKeys';
 import type { ApiKey, CreateApiKeyRequest } from '_/types/api-key';
 import { useState } from 'react';
 import ApiKeyTable from './ApiKeyTable';
+import ApiKeyTableSkeleton from './ApiKeyTableSkeleton';
 import CreateApiKeyModal from './CreateApiKeyModal';
 import DeleteConfirmDialog from './DeleteConfirmDialog';
 import EditApiKeyModal from './EditApiKeyModal';
@@ -71,7 +72,7 @@ export default function ApiKeyManager({ initialApiKeys }: { initialApiKeys: ApiK
   };
 
   if (loading) {
-    return <p>Loading...</p>; // Replace with Skeleton Loader
+    return <ApiKeyTableSkeleton />;
   }
 
   if (error) {
