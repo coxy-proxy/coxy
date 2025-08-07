@@ -1,4 +1,3 @@
-import { apiClient } from '_/lib/api';
 import type { ChatMessage } from '_/types/chat';
 
 export async function sendMessage(message: string): Promise<ChatMessage> {
