@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
 import ChatHistory from '_/components/chat/ChatHistory';
 import ChatInput from '_/components/chat/ChatInput';
-import { ChatMessage } from '_/types/chat';
 import { sendMessage } from '_/services/chat';
+import type { ChatMessage } from '_/types/chat';
+import { useState } from 'react';
 
 export default function ChatPage() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -13,10 +13,10 @@ export default function ChatPage() {
   const handleSendMessage = async (text: string) => {
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
-      role: 'user',
+      role: 'user' as const,
       text,
     };
-    
+
     setMessages((prev) => [...prev, userMessage]);
     setIsLoading(true);
 
