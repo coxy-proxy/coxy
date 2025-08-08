@@ -1,8 +1,8 @@
 'use client';
 
-import { useChatStore } from './useChatStore';
 import { sendMessage } from '_/services/chat';
 import { v4 as uuidv4 } from 'uuid';
+import { useChatStore } from './useChatStore';
 
 export function useChat(sessionId?: string) {
   const {
@@ -18,10 +18,7 @@ export function useChat(sessionId?: string) {
 
   const messages = sessionId ? sessions[sessionId] || [] : [];
 
-  const handleSendMessage = async (
-    currentSessionId: string,
-    content: string,
-  ) => {
+  const handleSendMessage = async (currentSessionId: string, content: string) => {
     const userMessage = {
       id: uuidv4(),
       content,
@@ -46,18 +43,10 @@ export function useChat(sessionId?: string) {
     setLoading(true);
 
     try {
-      // Call API that streams the response; we'll append progressively in this scope
-      const responsePromise = sendMessage({
-        message: content,
-        sessionId: currentSessionId,
-        history: sessions[currentSessionId],
-        model: useChatStore.getState().selectedModel ?? undefined,
-      });
-
       const response = await sendMessage({
         message: content,
         sessionId: currentSessionId,
-        history: sessions[currentSessionId],
+        history: sessions[currentSessionId] || [],
         model: useChatStore.getState().selectedModel ?? undefined,
         onDelta: (delta) => {
           // Append streamed tokens to the assistant placeholder
@@ -68,8 +57,7 @@ export function useChat(sessionId?: string) {
       updateMessageStatus(currentSessionId, userMessage.id, 'sent');
       updateMessageContent(currentSessionId, assistantMessageId, response.content);
       updateMessageStatus(currentSessionId, assistantMessageId, 'sent');
-    } catch (error)
-    {
+    } catch (error) {
       console.error('Failed to send message:', error);
       updateMessageStatus(currentSessionId, userMessage.id, 'error');
       updateMessageStatus(currentSessionId, assistantMessageId, 'error');
