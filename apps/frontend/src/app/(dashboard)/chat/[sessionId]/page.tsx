@@ -4,9 +4,14 @@ import { ChatHeader } from '_/components/chat/ChatHeader';
 import { ChatInput } from '_/components/chat/ChatInput';
 import { MessageList } from '_/components/chat/MessageList';
 import { useChatStore } from '_/hooks/useChatStore';
+import { use } from 'react';
 
-export default function ChatSessionPage({ params }: { params: { sessionId: string } }) {
-  const { sessionId } = params;
+interface ChatSessionPageProps {
+  params: Promise<{ sessionId: string }>;
+}
+
+export default function ChatSessionPage({ params }: ChatSessionPageProps) {
+  const { sessionId } = use(params);
   const { sessions, addMessage, isLoading } = useChatStore();
   const messages = sessions[sessionId] || [];
 
