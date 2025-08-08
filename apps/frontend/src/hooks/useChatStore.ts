@@ -17,6 +17,16 @@ interface ChatActions {
     messageId: string,
     status: Message['status'],
   ) => void;
+  updateMessageContent: (
+    sessionId: string,
+    messageId: string,
+    content: string,
+  ) => void;
+  appendMessageContent: (
+    sessionId: string,
+    messageId: string,
+    delta: string,
+  ) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   setCurrentSession: (sessionId: string) => void;
@@ -57,6 +67,32 @@ export const useChatStore = create<ChatState & ChatActions>((set, get) => ({
           ...state.sessions,
           [sessionId]: sessionMessages.map((msg) =>
             msg.id === messageId ? { ...msg, status } : msg,
+          ),
+        },
+      };
+    });
+  },
+  updateMessageContent: (sessionId, messageId, content) => {
+    set((state) => {
+      const sessionMessages = state.sessions[sessionId] || [];
+      return {
+        sessions: {
+          ...state.sessions,
+          [sessionId]: sessionMessages.map((msg) =>
+            msg.id === messageId ? { ...msg, content } : msg,
+          ),
+        },
+      };
+    });
+  },
+  appendMessageContent: (sessionId, messageId, delta) => {
+    set((state) => {
+      const sessionMessages = state.sessions[sessionId] || [];
+      return {
+        sessions: {
+          ...state.sessions,
+          [sessionId]: sessionMessages.map((msg) =>
+            msg.id === messageId ? { ...msg, content: (msg.content || '') + delta } : msg,
           ),
         },
       };

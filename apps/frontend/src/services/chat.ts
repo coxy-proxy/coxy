@@ -6,6 +6,7 @@ interface SendMessageRequest {
   history: Message[];
   model?: string;
   copilotKey?: string; // optional override
+  onDelta?: (delta: string) => void; // streaming callback
 }
 
 interface SendMessageResponse {
@@ -15,7 +16,7 @@ interface SendMessageResponse {
   timestamp: string;
 }
 
-export async function sendMessage({ message, sessionId, history, model, copilotKey }: SendMessageRequest): Promise<SendMessageResponse> {
+export async function sendMessage({ message, sessionId, history, model, copilotKey, onDelta }: SendMessageRequest): Promise<SendMessageResponse> {
   const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
   if (!baseUrl) {
     throw new Error('NEXT_PUBLIC_API_BASE_URL is not set');
@@ -27,7 +28,7 @@ export async function sendMessage({ message, sessionId, history, model, copilotK
       ...history.map((m) => ({ role: m.role, content: m.content })),
       { role: 'user', content: message },
     ],
-    stream: false,
+    stream: true,
   } as const;
 
   const headers: Record<string, string> = { 'Content-Type': 'application/json' };
@@ -41,21 +42,46 @@ export async function sendMessage({ message, sessionId, history, model, copilotK
     body: JSON.stringify(payload),
   });
 
-  if (!res.ok) {
+  if (!res.ok || !res.body) {
     const text = await res.text().catch(() => '');
     throw new Error(`Failed to send message: ${res.status} ${res.statusText} ${text}`);
   }
 
+  // Read as stream and accumulate content; caller will manage progressive updates via callbacks elsewhere
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder('utf-8');
+  let done = false;
   let content = '';
-  const contentType = res.headers.get('content-type') || '';
-  if (contentType.includes('application/json')) {
-    const data = await res.json();
-    content = data?.choices?.[0]?.message?.content
-      ?? data?.message?.content
-      ?? JSON.stringify(data);
-  } else {
-    // Fallback: read as text
-    content = await res.text();
+
+  while (!done) {
+    const { value, done: readerDone } = await reader.read();
+    done = readerDone;
+    if (value) {
+      const chunk = decoder.decode(value, { stream: true });
+      // Support SSE style "data: {json}" or raw text
+      const lines = chunk.split(/\r?\n/);
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed) continue;
+        if (trimmed.startsWith('data:')) {
+          const dataStr = trimmed.replace(/^data:\s*/, '');
+          if (dataStr === '[DONE]') continue;
+          try {
+            const parsed = JSON.parse(dataStr);
+            const delta = parsed?.choices?.[0]?.delta?.content ?? parsed?.message?.content ?? '';
+            if (delta) {
+              content += delta;
+              onDelta?.(delta);
+            }
+          } catch {
+            // Not JSON; append raw
+            content += dataStr;
+          }
+        } else {
+          content += trimmed;
+        }
+      }
+    }
   }
 
   return {
