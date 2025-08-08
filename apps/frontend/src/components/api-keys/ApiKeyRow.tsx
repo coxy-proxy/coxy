@@ -1,10 +1,10 @@
-import type { ApiKey } from '_/types/api-key';
+import type { ApiKeyResponse } from '@/shared/types/api-key';
 import DefaultKeyBadge from './DefaultKeyBadge';
 
 interface ApiKeyRowProps {
-  apiKey: ApiKey;
-  onEdit: (key: ApiKey) => void;
-  onDelete: (key: ApiKey) => void;
+  apiKey: ApiKeyResponse;
+  onEdit: (key: ApiKeyResponse) => void;
+  onDelete: (key: ApiKeyResponse) => void;
   onSetDefault: (id: string) => void;
 }
 

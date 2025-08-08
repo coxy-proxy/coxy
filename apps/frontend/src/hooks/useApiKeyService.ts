@@ -1,6 +1,6 @@
 import { useApiClient } from '_/hooks/useApiClient';
-import { ApiKey, CreateApiKeyRequest } from '_/types/api-key';
 import { AxiosInstance } from 'axios';
+import { ApiKey, CreateApiKeyDto } from '@/shared/types/api-key';
 
 class ApiKeyService {
   static instance: ApiKeyService;
@@ -18,7 +18,7 @@ class ApiKeyService {
     return response.data;
   }
 
-  async createApiKey(request: CreateApiKeyRequest): Promise<ApiKey> {
+  async createApiKey(request: CreateApiKeyDto): Promise<ApiKey> {
     const response = await this.apiClient.post('/api-keys', request);
     return response.data;
   }

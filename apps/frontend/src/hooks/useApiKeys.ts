@@ -1,8 +1,8 @@
 'use client';
 
 import { useApiKeyService } from '_/hooks/useApiKeyService';
-import { ApiKey, CreateApiKeyRequest } from '_/types/api-key';
 import { useCallback, useEffect, useState } from 'react';
+import { ApiKey, CreateApiKeyDto } from '@/shared/types/api-key';
 
 export function useApiKeys(initialKeys: ApiKey[] = []) {
   const [apiKeys, setApiKeys] = useState<ApiKey[]>(initialKeys);
@@ -33,7 +33,7 @@ export function useApiKeys(initialKeys: ApiKey[] = []) {
   }, [fetchApiKeys, initialKeys]);
 
   const createApiKey = useCallback(
-    async (request: CreateApiKeyRequest) => {
+    async (request: CreateApiKeyDto) => {
       const newKey = await apiKeyService.createApiKey(request);
       setApiKeys((prev) => [newKey, ...prev]);
       return newKey;

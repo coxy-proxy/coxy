@@ -1,8 +1,8 @@
 'use client';
 
 import { useApiKeys } from '_/hooks/useApiKeys';
-import type { ApiKey, CreateApiKeyRequest } from '_/types/api-key';
 import { useState } from 'react';
+import type { ApiKey, CreateApiKeyDto } from '@/shared/types/api-key';
 import ApiKeyTable from './ApiKeyTable';
 import ApiKeyTableSkeleton from './ApiKeyTableSkeleton';
 import CreateApiKeyModal from './CreateApiKeyModal';
@@ -23,7 +23,7 @@ export default function ApiKeyManager({ initialApiKeys }: { initialApiKeys: ApiK
   const handleCreate = async (name: string, key?: string) => {
     setIsSubmitting(true);
     try {
-      const request: CreateApiKeyRequest = { name, key: key || undefined };
+      const request: CreateApiKeyDto = { name, key: key || undefined };
       await createApiKey(request);
       setCreateModalOpen(false);
     } catch (e) {

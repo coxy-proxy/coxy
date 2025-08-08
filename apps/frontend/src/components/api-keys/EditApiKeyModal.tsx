@@ -1,7 +1,7 @@
 'use client';
 
-import type { ApiKey } from '_/types/api-key';
 import { useEffect, useState } from 'react';
+import type { ApiKey } from '@/shared/types/api-key';
 
 interface EditApiKeyModalProps {
   isOpen: boolean;

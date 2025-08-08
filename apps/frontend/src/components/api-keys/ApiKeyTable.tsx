@@ -1,4 +1,4 @@
-import type { ApiKey } from '_/types/api-key';
+import type { ApiKey } from '@/shared/types/api-key';
 import ApiKeyRow from './ApiKeyRow';
 
 interface ApiKeyTableProps {
