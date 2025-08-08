@@ -6,6 +6,7 @@ interface ChatState {
   currentSession: string | null;
   isLoading: boolean;
   error: string | null;
+  selectedModel: string | null;
 }
 
 interface ChatActions {
@@ -19,6 +20,7 @@ interface ChatActions {
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   setCurrentSession: (sessionId: string) => void;
+  setSelectedModel: (modelId: string) => void;
 }
 
 export const useChatStore = create<ChatState & ChatActions>((set, get) => ({
@@ -26,6 +28,7 @@ export const useChatStore = create<ChatState & ChatActions>((set, get) => ({
   currentSession: null,
   isLoading: false,
   error: null,
+  selectedModel: null,
   createSession: () => {
     const { sessions } = get();
     const newSessionId = `session-${Object.keys(sessions).length + 1}`;
@@ -62,4 +65,5 @@ export const useChatStore = create<ChatState & ChatActions>((set, get) => ({
   setLoading: (loading) => set({ isLoading: loading }),
   setError: (error) => set({ error }),
   setCurrentSession: (sessionId) => set({ currentSession: sessionId }),
+  setSelectedModel: (modelId) => set({ selectedModel: modelId }),
 }));
