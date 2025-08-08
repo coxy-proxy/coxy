@@ -2,7 +2,7 @@
 
 import { useApiKeys } from '_/hooks/useApiKeys';
 import { useState } from 'react';
-import type { ApiKey, CreateApiKeyDto } from '@/shared/types/api-key';
+import type { ApiKeyResponse, CreateApiKeyDto } from '@/shared/types/api-key';
 import ApiKeyTable from './ApiKeyTable';
 import ApiKeyTableSkeleton from './ApiKeyTableSkeleton';
 import CreateApiKeyModal from './CreateApiKeyModal';
@@ -10,14 +10,14 @@ import DeleteConfirmDialog from './DeleteConfirmDialog';
 import EditApiKeyModal from './EditApiKeyModal';
 import EmptyState from './EmptyState';
 
-export default function ApiKeyManager({ initialApiKeys }: { initialApiKeys: ApiKey[] }) {
+export default function ApiKeyManager({ initialApiKeys }: { initialApiKeys: ApiKeyResponse[] }) {
   const { apiKeys, loading, error, createApiKey, updateApiKey, deleteApiKey, setDefaultKey } =
     useApiKeys(initialApiKeys);
 
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [isDeleteDialogValid, setDeleteDialog] = useState(false);
-  const [selectedKey, setSelectedKey] = useState<ApiKey | null>(null);
+  const [selectedKey, setSelectedKey] = useState<ApiKeyResponse | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleCreate = async (name: string, key?: string) => {
@@ -33,7 +33,7 @@ export default function ApiKeyManager({ initialApiKeys }: { initialApiKeys: ApiK
     }
   };
 
-  const handleEdit = (key: ApiKey) => {
+  const handleEdit = (key: ApiKeyResponse) => {
     setSelectedKey(key);
     setEditModalOpen(true);
   };
@@ -52,7 +52,7 @@ export default function ApiKeyManager({ initialApiKeys }: { initialApiKeys: ApiK
     }
   };
 
-  const handleDelete = (key: ApiKey) => {
+  const handleDelete = (key: ApiKeyResponse) => {
     setSelectedKey(key);
     setDeleteDialog(true);
   };

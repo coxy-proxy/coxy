@@ -1,13 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import type { ApiKey } from '@/shared/types/api-key';
+import type { ApiKeyResponse } from '@/shared/types/api-key';
 
 interface EditApiKeyModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (name: string) => Promise<void>;
-  apiKey: ApiKey | null;
+  apiKey: ApiKeyResponse | null;
   isSaving: boolean;
 }
 

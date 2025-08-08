@@ -2,10 +2,10 @@
 
 import { useApiKeyService } from '_/hooks/useApiKeyService';
 import { useCallback, useEffect, useState } from 'react';
-import { ApiKey, CreateApiKeyDto } from '@/shared/types/api-key';
+import { ApiKeyResponse, CreateApiKeyDto } from '@/shared/types/api-key';
 
-export function useApiKeys(initialKeys: ApiKey[] = []) {
-  const [apiKeys, setApiKeys] = useState<ApiKey[]>(initialKeys);
+export function useApiKeys(initialKeys: ApiKeyResponse[] = []) {
+  const [apiKeys, setApiKeys] = useState<ApiKeyResponse[]>(initialKeys);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const apiKeyService = useApiKeyService();

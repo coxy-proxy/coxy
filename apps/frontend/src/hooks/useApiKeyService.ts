@@ -1,6 +1,6 @@
 import { useApiClient } from '_/hooks/useApiClient';
 import { AxiosInstance } from 'axios';
-import { ApiKey, CreateApiKeyDto } from '@/shared/types/api-key';
+import { ApiKeyResponse, CreateApiKeyDto } from '@/shared/types/api-key';
 
 class ApiKeyService {
   static instance: ApiKeyService;
@@ -13,17 +13,17 @@ class ApiKeyService {
 
   constructor(private readonly apiClient: AxiosInstance) {}
 
-  async getApiKeys(): Promise<ApiKey[]> {
+  async getApiKeys(): Promise<ApiKeyResponse[]> {
     const response = await this.apiClient.get('/api-keys');
     return response.data;
   }
 
-  async createApiKey(request: CreateApiKeyDto): Promise<ApiKey> {
+  async createApiKey(request: CreateApiKeyDto): Promise<ApiKeyResponse> {
     const response = await this.apiClient.post('/api-keys', request);
     return response.data;
   }
 
-  async updateApiKey(id: string, name: string): Promise<ApiKey> {
+  async updateApiKey(id: string, name: string): Promise<ApiKeyResponse> {
     const response = await this.apiClient.patch(`/api-keys/${id}`, { name });
     return response.data;
   }

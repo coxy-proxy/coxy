@@ -1,10 +1,10 @@
-import type { ApiKey } from '@/shared/types/api-key';
+import type { ApiKeyResponse } from '@/shared/types/api-key';
 import ApiKeyRow from './ApiKeyRow';
 
 interface ApiKeyTableProps {
-  apiKeys: ApiKey[];
-  onEdit: (key: ApiKey) => void;
-  onDelete: (key: ApiKey) => void;
+  apiKeys: ApiKeyResponse[];
+  onEdit: (key: ApiKeyResponse) => void;
+  onDelete: (key: ApiKeyResponse) => void;
   onSetDefault: (id: string) => void;
 }
 
