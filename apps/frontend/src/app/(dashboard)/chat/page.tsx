@@ -1,36 +1,25 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useChatStore } from '_/hooks/useChatStore';
 import { ChatInput } from '_/components/chat/ChatInput';
 import { TypingIndicator } from '_/components/chat/TypingIndicator';
 import { ModelSelector } from '_/components/chat/ModelSelector';
 import { createChatSession } from '_/services/sessions';
+import { useChat } from '_/hooks/useChat';
 
 export default function ChatPage() {
   const router = useRouter();
-  const { addMessage } = useChatStore();
-  const [isLoading, setIsLoading] = useState(false);
+  const { sendMessage, isLoading } = useChat();
 
   const handleFirstMessage = async (message: string) => {
-    setIsLoading(true);
     try {
       const { sessionId } = createChatSession();
-      const userMessage = {
-        id: Date.now().toString(),
-        content: message,
-        role: 'user' as const,
-        timestamp: new Date(),
-        status: 'pending' as const,
-        sessionId,
-      };
-      addMessage(sessionId, userMessage);
+      // Kick off sending and immediately navigate to the session page
+      // The session page will display the streaming assistant response.
+      void sendMessage(sessionId, message);
       router.push(`/chat/${sessionId}`);
     } catch (error) {
       console.error('Failed to send message:', error);
-    } finally {
-      setIsLoading(false);
     }
   };
 

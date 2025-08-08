@@ -5,6 +5,7 @@ import { ChatInput } from '_/components/chat/ChatInput';
 import { MessageList } from '_/components/chat/MessageList';
 import { useChatStore } from '_/hooks/useChatStore';
 import { use } from 'react';
+import { useChat } from '_/hooks/useChat';
 
 interface ChatSessionPageProps {
   params: Promise<{ sessionId: string }>;
@@ -12,19 +13,12 @@ interface ChatSessionPageProps {
 
 export default function ChatSessionPage({ params }: ChatSessionPageProps) {
   const { sessionId } = use(params);
-  const { sessions, addMessage, isLoading } = useChatStore();
+  const { sessions } = useChatStore();
+  const { sendMessage, isLoading } = useChat(sessionId);
   const messages = sessions[sessionId] || [];
 
   const handleSendMessage = async (content: string) => {
-    const userMessage = {
-      id: Date.now().toString(),
-      content,
-      role: 'user' as const,
-      timestamp: new Date(),
-      status: 'pending' as const,
-      sessionId,
-    };
-    addMessage(sessionId, userMessage);
+    await sendMessage(sessionId, content);
   };
 
   return (
