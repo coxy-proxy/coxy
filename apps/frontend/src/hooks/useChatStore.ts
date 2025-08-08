@@ -1,0 +1,65 @@
+import { create } from 'zustand';
+import { Message } from '_/types/chat';
+
+interface ChatState {
+  sessions: Record<string, Message[]>;
+  currentSession: string | null;
+  isLoading: boolean;
+  error: string | null;
+}
+
+interface ChatActions {
+  createSession: () => string;
+  addMessage: (sessionId: string, message: Message) => void;
+  updateMessageStatus: (
+    sessionId: string,
+    messageId: string,
+    status: Message['status'],
+  ) => void;
+  setLoading: (loading: boolean) => void;
+  setError: (error: string | null) => void;
+  setCurrentSession: (sessionId: string) => void;
+}
+
+export const useChatStore = create<ChatState & ChatActions>((set, get) => ({
+  sessions: {},
+  currentSession: null,
+  isLoading: false,
+  error: null,
+  createSession: () => {
+    const { sessions } = get();
+    const newSessionId = `session-${Object.keys(sessions).length + 1}`;
+    set((state) => ({
+      sessions: {
+        ...state.sessions,
+        [newSessionId]: [],
+      },
+      currentSession: newSessionId,
+    }));
+    return newSessionId;
+  },
+  addMessage: (sessionId, message) => {
+    set((state) => ({
+      sessions: {
+        ...state.sessions,
+        [sessionId]: [...(state.sessions[sessionId] || []), message],
+      },
+    }));
+  },
+  updateMessageStatus: (sessionId, messageId, status) => {
+    set((state) => {
+      const sessionMessages = state.sessions[sessionId] || [];
+      return {
+        sessions: {
+          ...state.sessions,
+          [sessionId]: sessionMessages.map((msg) =>
+            msg.id === messageId ? { ...msg, status } : msg,
+          ),
+        },
+      };
+    });
+  },
+  setLoading: (loading) => set({ isLoading: loading }),
+  setError: (error) => set({ error }),
+  setCurrentSession: (sessionId) => set({ currentSession: sessionId }),
+}));

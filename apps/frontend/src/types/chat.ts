@@ -1,5 +1,8 @@
-export interface ChatMessage {
+export interface Message {
   id: string;
+  content: string;
   role: 'user' | 'assistant';
-  text: string;
+  timestamp: Date;
+  status: 'pending' | 'sent' | 'error';
+  sessionId: string;
 }
