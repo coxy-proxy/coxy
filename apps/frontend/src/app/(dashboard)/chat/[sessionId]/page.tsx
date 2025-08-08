@@ -3,9 +3,9 @@
 import { ChatHeader } from '_/components/chat/ChatHeader';
 import { ChatInput } from '_/components/chat/ChatInput';
 import { MessageList } from '_/components/chat/MessageList';
+import { useChat } from '_/hooks/useChat';
 import { useChatStore } from '_/hooks/useChatStore';
 import { use } from 'react';
-import { useChat } from '_/hooks/useChat';
 
 interface ChatSessionPageProps {
   params: Promise<{ sessionId: string }>;
@@ -14,7 +14,7 @@ interface ChatSessionPageProps {
 export default function ChatSessionPage({ params }: ChatSessionPageProps) {
   const { sessionId } = use(params);
   const { sessions } = useChatStore();
-  const { sendMessage, isLoading } = useChat(sessionId);
+  const { sendMessage, retryAssistantMessage, isLoading } = useChat(sessionId);
   const messages = sessions[sessionId] || [];
 
   const handleSendMessage = async (content: string) => {
@@ -26,7 +26,12 @@ export default function ChatSessionPage({ params }: ChatSessionPageProps) {
       <ChatHeader sessionId={sessionId} />
 
       <div className="flex-1 overflow-hidden">
-        <MessageList messages={messages} isLoading={isLoading} className="h-full" />
+        <MessageList
+          messages={messages}
+          isLoading={isLoading}
+          onRetry={(assistantMessageId) => retryAssistantMessage(sessionId, assistantMessageId)}
+          className="h-full"
+        />
       </div>
 
       <div className="border-t bg-white p-4">
