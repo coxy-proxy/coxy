@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useChatStore } from '_/hooks/useChatStore';
 import { ChatInput } from '_/components/chat/ChatInput';
 import { TypingIndicator } from '_/components/chat/TypingIndicator';
+import { ModelSelector } from '_/components/chat/ModelSelector';
 import { createChatSession } from '_/services/sessions';
 
 export default function ChatPage() {
@@ -43,6 +44,11 @@ export default function ChatPage() {
           <p className="text-gray-600">
             Ask me anything to begin our chat
           </p>
+        </div>
+
+        <div className="flex items-center justify-between">
+          <div />
+          <ModelSelector />
         </div>
 
         <ChatInput

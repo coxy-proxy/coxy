@@ -36,6 +36,7 @@ export function useChat(sessionId?: string) {
         message: content,
         sessionId: currentSessionId,
         history: sessions[currentSessionId],
+        model: useChatStore.getState().selectedModel ?? undefined,
       });
       updateMessageStatus(currentSessionId, userMessage.id, 'sent');
 
