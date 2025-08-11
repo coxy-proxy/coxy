@@ -22,7 +22,8 @@
     ],
     "paths": {
       "_/*": ["apps/frontend/src/*"],
-      "@/shared/types/*": ["libs/shared/types/src/*"]
+      "@/shared/types/*": ["libs/shared/types/src/*"],
+      "@/shared/ui/*": ["libs/shared/ui/src/*"]
     }
   },
   "include": [
