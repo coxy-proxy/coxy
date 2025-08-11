@@ -1,4 +1,5 @@
 import type { ApiKeyResponse } from '@/shared/types/api-key';
+import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/shared/ui/components/table';
 import ApiKeyRow from './ApiKeyRow';
 
 interface ApiKeyTableProps {
@@ -11,33 +12,21 @@ interface ApiKeyTableProps {
 export default function ApiKeyTable({ apiKeys, onEdit, onDelete, onSetDefault }: ApiKeyTableProps) {
   return (
     <div className="overflow-x-auto bg-white rounded-lg shadow">
-      <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-50">
-          <tr>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Name
-            </th>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Key
-            </th>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Created
-            </th>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Default
-            </th>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Quota
-            </th>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Renew At
-            </th>
-            <th scope="col" className="relative px-6 py-3">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Name</TableHead>
+            <TableHead>Key</TableHead>
+            <TableHead>Created</TableHead>
+            <TableHead>Default</TableHead>
+            <TableHead>Quota</TableHead>
+            <TableHead>Renew At</TableHead>
+            <TableHead>
               <span className="sr-only">Actions</span>
-            </th>
-          </tr>
-        </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
+            </TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {apiKeys.map((apiKey) => (
             <ApiKeyRow
               key={apiKey.id}
@@ -47,8 +36,8 @@ export default function ApiKeyTable({ apiKeys, onEdit, onDelete, onSetDefault }:
               onSetDefault={onSetDefault}
             />
           ))}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
     </div>
   );
 }

@@ -3,6 +3,7 @@
 import { useApiKeys } from '_/hooks/useApiKeys';
 import { useState } from 'react';
 import type { ApiKeyResponse, CreateApiKeyDto } from '@/shared/types/api-key';
+import { Button } from '@/shared/ui/components/button';
 import ApiKeyTable from './ApiKeyTable';
 import ApiKeyTableSkeleton from './ApiKeyTableSkeleton';
 import CreateApiKeyModal from './CreateApiKeyModal';
@@ -86,12 +87,7 @@ export default function ApiKeyManager({ initialApiKeys }: { initialApiKeys: ApiK
           <h1 className="text-2xl font-bold">API Keys</h1>
           <p className="text-gray-600">Manage your API keys for accessing the service.</p>
         </div>
-        <button
-          onClick={() => setCreateModalOpen(true)}
-          className="px-4 py-2 text-white bg-indigo-600 rounded-md hover:bg-indigo-700"
-        >
-          Create Key
-        </button>
+        <Button onClick={() => setCreateModalOpen(true)}>Create Key</Button>
       </div>
 
       {apiKeys.length === 0 ? (
