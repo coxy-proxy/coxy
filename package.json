@@ -6,8 +6,8 @@
     "build": "nx build frontend",
     "dev": "nx dev frontend",
     "dev:backend": "nx serve backend",
-    "lint": "biome check apps",
-    "lint:staged": "biome check apps --staged"
+    "lint": "biome check apps libs",
+    "lint:staged": "biome check apps libs --staged"
   },
   "private": true,
   "dependencies": {
