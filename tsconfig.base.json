@@ -10,24 +10,15 @@
     "importHelpers": true,
     "target": "es2015",
     "module": "esnext",
-    "lib": [
-      "es2020",
-      "dom"
-    ],
+    "lib": ["es2020", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@/shared/logger": [
-        "libs/shared/logger/src/index.ts"
-      ],
-      "@/shared/types": [
-        "libs/shared/types/src/index.ts"
-      ]
+      "@/shared/logger": ["libs/shared/logger/src/index.ts"],
+      "@/shared/types": ["libs/shared/types/src/index.ts"],
+      "@/shared/ui/*": ["libs/shared/ui/src/*"]
     }
   },
-  "exclude": [
-    "node_modules",
-    "tmp"
-  ]
+  "exclude": ["node_modules", "tmp"]
 }
