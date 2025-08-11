@@ -6,6 +6,7 @@ import { MessageList } from '_/components/chat/MessageList';
 import { useChat } from '_/hooks/useChat';
 import { useChatStore } from '_/hooks/useChatStore';
 import { use } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/ui/components/card';
 
 interface ChatSessionPageProps {
   params: Promise<{ sessionId: string }>;
@@ -22,21 +23,25 @@ export default function ChatSessionPage({ params }: ChatSessionPageProps) {
   };
 
   return (
-    <div className="flex h-full flex-col">
-      <ChatHeader sessionId={sessionId} />
+    <Card className="flex h-full flex-col">
+      <CardHeader className="border-b">
+        <CardTitle className="sr-only">Chat Session</CardTitle>
+        <CardDescription className="sr-only">Conversation and input</CardDescription>
+        <ChatHeader sessionId={sessionId} />
+      </CardHeader>
 
-      <div className="flex-1 overflow-hidden">
+      <CardContent className="flex-1 overflow-hidden p-0">
         <MessageList
           messages={messages}
           isLoading={isLoading}
           onRetry={(assistantMessageId) => retryAssistantMessage(sessionId, assistantMessageId)}
           className="h-full"
         />
-      </div>
+      </CardContent>
 
-      <div className="border-t bg-white p-4">
+      <div className="border-t p-4">
         <ChatInput onSend={handleSendMessage} disabled={isLoading} placeholder="Send a follow-up message..." />
       </div>
-    </div>
+    </Card>
   );
 }
