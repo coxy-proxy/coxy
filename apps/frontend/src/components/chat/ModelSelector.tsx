@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { listModels, type Model } from '_/services/models';
 import { useChatStore } from '_/hooks/useChatStore';
+import { listModels, type Model } from '_/services/models';
+import { useEffect, useState } from 'react';
 
 export function ModelSelector({ className = '' }: { className?: string }) {
   const { selectedModel, setSelectedModel } = useChatStore();
@@ -51,7 +51,9 @@ export function ModelSelector({ className = '' }: { className?: string }) {
           onChange={(e) => setSelectedModel(e.target.value)}
         >
           {models.map((m) => (
-            <option key={m.id} value={m.id}>{m.id}</option>
+            <option key={m.id} value={m.id}>
+              {m.id}
+            </option>
           ))}
         </select>
       )}

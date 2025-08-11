@@ -16,7 +16,14 @@ interface SendMessageResponse {
   timestamp: string;
 }
 
-export async function sendMessage({ message, sessionId, history, model, copilotKey, onDelta }: SendMessageRequest): Promise<SendMessageResponse> {
+export async function sendMessage({
+  message,
+  sessionId,
+  history,
+  model,
+  copilotKey,
+  onDelta,
+}: SendMessageRequest): Promise<SendMessageResponse> {
   const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
   if (!baseUrl) {
     throw new Error('NEXT_PUBLIC_API_BASE_URL is not set');
@@ -24,10 +31,7 @@ export async function sendMessage({ message, sessionId, history, model, copilotK
 
   const payload = {
     model: model ?? 'gpt-4o-mini',
-    messages: [
-      ...history.map((m) => ({ role: m.role, content: m.content })),
-      { role: 'user', content: message },
-    ],
+    messages: [...history.map((m) => ({ role: m.role, content: m.content })), { role: 'user', content: message }],
     stream: true,
   } as const;
 

@@ -1,5 +1,5 @@
-import { create } from 'zustand';
 import { Message } from '_/types/chat';
+import { create } from 'zustand';
 
 interface ChatState {
   sessions: Record<string, Message[]>;
@@ -12,21 +12,9 @@ interface ChatState {
 interface ChatActions {
   createSession: () => string;
   addMessage: (sessionId: string, message: Message) => void;
-  updateMessageStatus: (
-    sessionId: string,
-    messageId: string,
-    status: Message['status'],
-  ) => void;
-  updateMessageContent: (
-    sessionId: string,
-    messageId: string,
-    content: string,
-  ) => void;
-  appendMessageContent: (
-    sessionId: string,
-    messageId: string,
-    delta: string,
-  ) => void;
+  updateMessageStatus: (sessionId: string, messageId: string, status: Message['status']) => void;
+  updateMessageContent: (sessionId: string, messageId: string, content: string) => void;
+  appendMessageContent: (sessionId: string, messageId: string, delta: string) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   setCurrentSession: (sessionId: string) => void;
@@ -65,9 +53,7 @@ export const useChatStore = create<ChatState & ChatActions>((set, get) => ({
       return {
         sessions: {
           ...state.sessions,
-          [sessionId]: sessionMessages.map((msg) =>
-            msg.id === messageId ? { ...msg, status } : msg,
-          ),
+          [sessionId]: sessionMessages.map((msg) => (msg.id === messageId ? { ...msg, status } : msg)),
         },
       };
     });
@@ -78,9 +64,7 @@ export const useChatStore = create<ChatState & ChatActions>((set, get) => ({
       return {
         sessions: {
           ...state.sessions,
-          [sessionId]: sessionMessages.map((msg) =>
-            msg.id === messageId ? { ...msg, content } : msg,
-          ),
+          [sessionId]: sessionMessages.map((msg) => (msg.id === messageId ? { ...msg, content } : msg)),
         },
       };
     });
