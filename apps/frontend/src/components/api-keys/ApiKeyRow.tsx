@@ -16,13 +16,17 @@ export default function ApiKeyRow({ apiKey, onEdit, onDelete, onSetDefault }: Ap
   const quotaRenewDate = apiKey.meta?.resetTime ? new Date(apiKey.meta.resetTime * 1000).toLocaleDateString() : 'N/A';
 
   return (
-    <TableRow>
-      <TableCell className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{apiKey.name}</TableCell>
-      <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">{apiKey.maskedKey}</TableCell>
-      <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+    <TableRow className="hover:bg-muted/50 data-[state=selected]:bg-muted border-b-2 transition-colors">
+      <TableCell className="p-2 align-middle whitespace-nowrap text-sm font-medium text-foreground">
+        {apiKey.name}
+      </TableCell>
+      <TableCell className="p-2 align-middle whitespace-nowrap text-sm text-muted-foreground font-mono">
+        {apiKey.maskedKey}
+      </TableCell>
+      <TableCell className="p-2 align-middle whitespace-nowrap text-sm text-muted-foreground">
         {new Date(apiKey.createdAt).toLocaleDateString()}
       </TableCell>
-      <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+      <TableCell className="p-2 align-middle whitespace-nowrap text-sm text-muted-foreground">
         {apiKey.isDefault ? (
           <DefaultKeyBadge />
         ) : (
@@ -31,9 +35,11 @@ export default function ApiKeyRow({ apiKey, onEdit, onDelete, onSetDefault }: Ap
           </Button>
         )}
       </TableCell>
-      <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{`${quotaUsed} / ${quotaLimit}`}</TableCell>
-      <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{quotaRenewDate}</TableCell>
-      <TableCell className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-4">
+      <TableCell className="p-2 align-middle whitespace-nowrap text-sm text-muted-foreground">{`${quotaUsed} / ${quotaLimit}`}</TableCell>
+      <TableCell className="p-2 align-middle whitespace-nowrap text-sm text-muted-foreground">
+        {quotaRenewDate}
+      </TableCell>
+      <TableCell className="p-2 align-middle whitespace-nowrap text-right text-sm font-medium space-x-2">
         <Button variant="link" onClick={() => onEdit(apiKey)}>
           Edit
         </Button>

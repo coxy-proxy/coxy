@@ -11,33 +11,47 @@ interface ApiKeyTableProps {
 
 export default function ApiKeyTable({ apiKeys, onEdit, onDelete, onSetDefault }: ApiKeyTableProps) {
   return (
-    <div className="overflow-x-auto bg-white rounded-lg shadow">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>Key</TableHead>
-            <TableHead>Created</TableHead>
-            <TableHead>Default</TableHead>
-            <TableHead>Quota</TableHead>
-            <TableHead>Renew At</TableHead>
-            <TableHead>
-              <span className="sr-only">Actions</span>
-            </TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {apiKeys.map((apiKey) => (
-            <ApiKeyRow
-              key={apiKey.id}
-              apiKey={apiKey}
-              onEdit={onEdit}
-              onDelete={onDelete}
-              onSetDefault={onSetDefault}
-            />
-          ))}
-        </TableBody>
-      </Table>
+    <div className="overflow-hidden rounded-lg border">
+      <div data-slot="table-container" className="relative w-full overflow-x-auto">
+        <Table data-slot="table" className="w-full caption-bottom text-sm">
+          <TableHeader data-slot="table-header" className="[&_tr]:border-b-2 bg-muted sticky top-0 z-10">
+            <TableRow className="border-b-2 transition-colors">
+              <TableHead className="text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap">
+                Name
+              </TableHead>
+              <TableHead className="text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap">
+                Key
+              </TableHead>
+              <TableHead className="text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap">
+                Created
+              </TableHead>
+              <TableHead className="text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap">
+                Default
+              </TableHead>
+              <TableHead className="text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap">
+                Quota
+              </TableHead>
+              <TableHead className="text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap">
+                Renew At
+              </TableHead>
+              <TableHead className="text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap">
+                <span className="sr-only">Actions</span>
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody data-slot="table-body" className="[&_tr:last-child]:border-0">
+            {apiKeys.map((apiKey) => (
+              <ApiKeyRow
+                key={apiKey.id}
+                apiKey={apiKey}
+                onEdit={onEdit}
+                onDelete={onDelete}
+                onSetDefault={onSetDefault}
+              />
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 }
