@@ -2,6 +2,8 @@
 
 import type { Message as MessageType } from '_/types/chat';
 import { format } from 'date-fns';
+import { Loader2 } from 'lucide-react';
+import { Button } from '@/shared/ui/components/button';
 
 interface MessageProps {
   message: MessageType;
@@ -25,15 +27,11 @@ export function Message({ message, onRetry }: MessageProps) {
         <div className="mt-2 flex items-center justify-between text-xs opacity-70">
           <span>{format(message.timestamp, 'HH:mm')}</span>
 
-          {isPending && (
-            <div
-              className={`h-4 w-4 animate-spin rounded-full border-2 border-t-transparent ${isUser ? 'border-white' : 'border-gray-600'}`}
-            />
-          )}
+          {isPending && <Loader2 className={`size-4 animate-spin ${isUser ? 'text-white' : 'text-gray-600'}`} />}
           {isError && (
-            <button onClick={onRetry} className="text-red-500 underline hover:text-red-600">
+            <Button variant="link" onClick={onRetry} className="text-red-600 hover:text-red-700 h-auto p-0">
               Retry
-            </button>
+            </Button>
           )}
         </div>
       </div>

@@ -2,6 +2,7 @@
 
 import type { Message as MessageType } from '_/types/chat';
 import { useEffect, useRef } from 'react';
+import { ScrollArea } from '@/shared/ui/components/scroll-area';
 import { Message } from './Message';
 import { TypingIndicator } from './TypingIndicator';
 
@@ -22,18 +23,20 @@ export function MessageList({ messages, isLoading, onRetry, className = '' }: Me
   }, [messages, isLoading]);
 
   return (
-    <div ref={scrollRef} className={`overflow-y-auto p-4 ${className}`}>
-      {messages.map((msg) => (
-        <Message key={msg.id} message={msg} onRetry={() => onRetry?.(msg.id)} />
-      ))}
-      {isLoading && (
-        <div className="flex justify-start">
-          <TypingIndicator />
-        </div>
-      )}
-      {!isLoading && messages.length === 0 && (
-        <div className="text-center text-sm text-gray-500 py-6">No messages yet.</div>
-      )}
-    </div>
+    <ScrollArea className={`p-4 ${className}`}>
+      <div ref={scrollRef} className="max-h-[60vh] overflow-y-auto">
+        {messages.map((msg) => (
+          <Message key={msg.id} message={msg} onRetry={() => onRetry?.(msg.id)} />
+        ))}
+        {isLoading && (
+          <div className="flex justify-start">
+            <TypingIndicator />
+          </div>
+        )}
+        {!isLoading && messages.length === 0 && (
+          <div className="text-center text-sm text-gray-500 py-6">No messages yet.</div>
+        )}
+      </div>
+    </ScrollArea>
   );
 }

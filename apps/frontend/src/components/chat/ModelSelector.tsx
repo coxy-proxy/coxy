@@ -3,6 +3,8 @@
 import { useChatStore } from '_/hooks/useChatStore';
 import { listModels, type Model } from '_/services/models';
 import { useEffect, useState } from 'react';
+import { Label } from '@/shared/ui/components/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/ui/components/select';
 
 export function ModelSelector({ className = '' }: { className?: string }) {
   const { selectedModel, setSelectedModel } = useChatStore();
@@ -37,25 +39,30 @@ export function ModelSelector({ className = '' }: { className?: string }) {
     };
   }, [setSelectedModel, selectedModel]);
 
+  const controlId = 'model-select';
+
   return (
     <div className={`flex items-center gap-2 ${className}`}>
-      <label className="text-sm text-gray-600">Model</label>
+      <Label htmlFor={controlId} className="text-sm text-gray-600">
+        Model
+      </Label>
       {loading ? (
         <span className="text-sm text-gray-500">Loading...</span>
       ) : error ? (
         <span className="text-sm text-red-600">{error}</span>
       ) : (
-        <select
-          className="text-sm border rounded px-2 py-1"
-          value={selectedModel ?? ''}
-          onChange={(e) => setSelectedModel(e.target.value)}
-        >
-          {models.map((m) => (
-            <option key={m.id} value={m.id}>
-              {m.id}
-            </option>
-          ))}
-        </select>
+        <Select value={selectedModel ?? ''} onValueChange={(v) => setSelectedModel(v)}>
+          <SelectTrigger id={controlId} className="w-56 h-8">
+            <SelectValue placeholder="Select a model" />
+          </SelectTrigger>
+          <SelectContent>
+            {models.map((m) => (
+              <SelectItem key={m.id} value={m.id}>
+                {m.id}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       )}
     </div>
   );

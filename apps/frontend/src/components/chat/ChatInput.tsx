@@ -1,6 +1,9 @@
 'use client';
 
+import { Send } from 'lucide-react';
 import { type FormEvent, type KeyboardEvent, useRef, useState } from 'react';
+import { Button } from '@/shared/ui/components/button';
+import { Textarea } from '@/shared/ui/components/textarea';
 
 interface ChatInputProps {
   onSend: (message: string) => void;
@@ -38,7 +41,7 @@ export function ChatInput({
 
   return (
     <form onSubmit={handleSubmit} className={`relative ${className}`}>
-      <textarea
+      <Textarea
         ref={textareaRef}
         value={message}
         onChange={(e) => setMessage(e.target.value)}
@@ -47,20 +50,19 @@ export function ChatInput({
         autoFocus={autoFocus}
         disabled={disabled}
         rows={1}
-        className="w-full resize-none rounded-lg border border-gray-300 px-4 py-3 pr-12 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:opacity-50"
-        style={{
-          minHeight: '52px',
-          maxHeight: '120px',
-        }}
+        className="w-full resize-none pr-12"
+        style={{ minHeight: '52px', maxHeight: '120px' }}
       />
 
-      <button
+      <Button
         type="submit"
+        size="icon"
         disabled={!message.trim() || disabled}
-        className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md bg-blue-600 p-2 text-white transition-colors hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="absolute right-2 top-1/2 -translate-y-1/2"
+        aria-label="Send message"
       >
-        <i className="pi pi-send" />
-      </button>
+        <Send className="size-4" />
+      </Button>
     </form>
   );
 }
