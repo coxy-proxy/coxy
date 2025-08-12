@@ -23,11 +23,10 @@ import {
 
 function AppSidebar({ onClose }: { onClose: () => void }) {
   return (
-    <UiSidebar variant="inset" collapsible="icon">
+    <UiSidebar variant="inset" collapsible="offcanvas">
       <SidebarHeader>
         <div className="flex items-center gap-2 px-2 py-1">
-          <MessageSquare className="size-5" />
-          <span className="font-semibold">AI Chatbot</span>
+          <span className="font-semibold">Copilot Proxy</span>
         </div>
       </SidebarHeader>
       <SidebarContent>
@@ -82,7 +81,16 @@ function MenuIcon() {
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <SidebarProvider>
-      <div className="group/sidebar-wrapper has-data-[variant=inset]:bg-sidebar-background flex min-h-svh w-full">
+      <div
+        className="group/sidebar-wrapper has-data-[variant=inset]:bg-sidebar-background flex min-h-svh w-full bg-sidebar"
+        style={
+          {
+            '--sidebar-width': 'calc(var(--spacing) * 60)',
+            '--sidebar-width-icon': '3rem',
+            '--header-height': 'calc(var(--spacing) * 14)',
+          } as React.CSSProperties
+        }
+      >
         {/* Sidebar */}
         <AppSidebar onClose={() => {}} />
 
