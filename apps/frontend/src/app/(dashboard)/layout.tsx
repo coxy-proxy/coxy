@@ -4,7 +4,6 @@ import { UserButton } from '@clerk/nextjs';
 import { Home, Key, MessageSquare, PanelLeft } from 'lucide-react';
 
 import Link from 'next/link';
-import { useState } from 'react';
 import {
   SidebarContent,
   SidebarFooter,
@@ -24,7 +23,7 @@ import {
 
 function AppSidebar({ onClose }: { onClose: () => void }) {
   return (
-    <UiSidebar>
+    <UiSidebar variant="inset" collapsible="icon">
       <SidebarHeader>
         <div className="flex items-center gap-2 px-2 py-1">
           <MessageSquare className="size-5" />
@@ -81,37 +80,28 @@ function MenuIcon() {
 }
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-
   return (
     <SidebarProvider>
-      <div className="flex h-screen bg-gray-50">
-        {/* Mobile sidebar overlay retained for now (UiSidebar supports its own offcanvas) */}
-        <div
-          className={`fixed inset-0 z-50 lg:hidden ${sidebarOpen ? 'block' : 'hidden'}`}
-          onClick={() => setSidebarOpen(false)}
-        >
-          <div className="fixed inset-y-0 left-0 w-64 bg-gray-800" onClick={(e) => e.stopPropagation()}>
-            <AppSidebar onClose={() => setSidebarOpen(false)} />
-          </div>
-        </div>
+      <div className="group/sidebar-wrapper has-data-[variant=inset]:bg-sidebar-background flex min-h-svh w-full">
+        {/* Sidebar */}
+        <AppSidebar onClose={() => {}} />
 
-        {/* Desktop sidebar */}
-        <div className="hidden lg:flex lg:w-64 lg:flex-col">
-          <AppSidebar onClose={() => {}} />
-        </div>
-
-        {/* Main content */}
-        <div className="flex flex-1 flex-col overflow-hidden">
-          <header className="flex items-center justify-between px-4 py-3 bg-white border-b">
-            <button onClick={() => setSidebarOpen(true)} className="lg:hidden">
-              <MenuIcon />
-            </button>
-            <div className="flex-1" />
-            <UserButton afterSignOutUrl="/" />
+        {/* Inset main area */}
+        <SidebarInset className="bg-background border">
+          <header className="flex h-(--header-height) shrink-0 items-center gap-2 border-b-2 transition-[width,height] ease-linear">
+            <div className="flex w-full items-center gap-1 px-4 lg:gap-2 lg:px-6">
+              <SidebarTrigger />
+              <div className="bg-border/60 shrink-0 mx-2 w-0.5 h-4" />
+              <h1 className="text-base font-medium">Dashboard</h1>
+              <div className="ml-auto flex items-center gap-2">
+                <UserButton afterSignOutUrl="/" />
+              </div>
+            </div>
           </header>
-          <main className="flex-1 overflow-y-auto p-4">{children}</main>
-        </div>
+          <div className="flex flex-1 flex-col">
+            <div className="@container/main flex flex-1 flex-col gap-2 p-4">{children}</div>
+          </div>
+        </SidebarInset>
       </div>
     </SidebarProvider>
   );
