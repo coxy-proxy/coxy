@@ -18,7 +18,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={`${nunito.variable} ${ptSans.variable} antialiased relative`}>{children}</body>
+        <body className={`${nunito.variable} ${ptSans.variable} antialiased relative`}>
+          <div className="texture" />
+          {children}
+        </body>
       </html>
     </ClerkProvider>
   );
