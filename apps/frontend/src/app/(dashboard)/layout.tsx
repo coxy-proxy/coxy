@@ -1,9 +1,18 @@
 'use client';
 
-import { UserButton } from '@clerk/nextjs';
-import { Home, Key, MessageSquare, PanelLeft } from 'lucide-react';
+import { SignOutButton, UserButton, useUser } from '@clerk/nextjs';
+import { Home, Key, MessageSquare, MoreVertical } from 'lucide-react';
 
 import Link from 'next/link';
+import { Avatar, AvatarFallback, AvatarImage } from '@/shared/ui/components/avatar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/shared/ui/components/dropdown-menu';
 import {
   SidebarContent,
   SidebarFooter,
@@ -22,6 +31,11 @@ import {
 } from '@/shared/ui/components/sidebar';
 
 function AppSidebar({ onClose }: { onClose: () => void }) {
+  const { user } = useUser();
+  const fullName = user?.fullName ?? user?.firstName ?? 'User';
+  const email = user?.primaryEmailAddress?.emailAddress ?? '';
+  const imageUrl = user?.imageUrl ?? undefined;
+
   return (
     <UiSidebar variant="inset" collapsible="offcanvas">
       <SidebarHeader>
@@ -62,9 +76,43 @@ function AppSidebar({ onClose }: { onClose: () => void }) {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarSeparator />
       <SidebarFooter>
-        <div className="px-2 py-2 text-xs text-muted-foreground">Press ⌘B to toggle</div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button
+              className="peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-3 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] focus-visible:ring-2 h-12 text-sm data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              type="button"
+            >
+              <Avatar className="h-8 w-8 rounded-lg">
+                <AvatarImage src={imageUrl} alt={fullName} />
+                <AvatarFallback className="rounded-lg">{fullName?.charAt(0) ?? 'U'}</AvatarFallback>
+              </Avatar>
+              <div className="grid flex-1 text-left text-sm leading-tight">
+                <span className="truncate font-medium">{fullName}</span>
+                <span className="text-muted-foreground truncate text-xs">{email}</span>
+              </div>
+              <MoreVertical className="ml-auto size-4" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" side="right" className="w-56">
+            <DropdownMenuLabel className="font-normal">
+              <div className="flex flex-col space-y-1">
+                <p className="text-sm font-medium leading-none">{fullName}</p>
+                <p className="text-xs leading-none text-muted-foreground">{email}</p>
+              </div>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <Link href="https://github.com/hankchiutw/copilot-proxy/issues" target="_blank">
+                Get Help
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <SignOutButton />
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </SidebarFooter>
     </UiSidebar>
   );
