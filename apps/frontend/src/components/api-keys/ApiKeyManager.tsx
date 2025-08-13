@@ -2,6 +2,7 @@
 
 import { useApiKeys } from '_/hooks/useApiKeys';
 import { useState } from 'react';
+import { toast } from 'sonner';
 import type { ApiKeyResponse, CreateApiKeyDto } from '@/shared/types/api-key';
 import { Button } from '@/shared/ui/components/button';
 import ApiKeyTable from './ApiKeyTable';
@@ -63,6 +64,7 @@ export default function ApiKeyManager({ initialApiKeys }: { initialApiKeys: ApiK
       await refreshMeta(key.id);
     } catch (e) {
       console.error(e);
+      toast.error(`Failed to refresh meta: ${e.message}`);
     }
   };
 
