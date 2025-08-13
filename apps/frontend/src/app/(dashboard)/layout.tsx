@@ -80,7 +80,7 @@ function AppSidebar({ onClose }: { onClose: () => void }) {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button
-              className="peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-3 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] focus-visible:ring-2 h-12 text-sm data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              className="peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-3 text-left outline-hidden  transition-[width,height,padding] h-12 text-sm data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
               type="button"
             >
               <Avatar className="h-8 w-8 rounded-lg">
@@ -94,7 +94,7 @@ function AppSidebar({ onClose }: { onClose: () => void }) {
               <MoreVertical className="ml-auto size-4" />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" side="right" className="w-56">
+          <DropdownMenuContent align="end" side="right" className="w-56">
             <DropdownMenuLabel className="font-normal">
               <div className="flex flex-col space-y-1">
                 <p className="text-sm font-medium leading-none">{fullName}</p>
