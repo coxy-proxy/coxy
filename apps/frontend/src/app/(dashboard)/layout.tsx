@@ -1,7 +1,7 @@
 'use client';
 
 import { SignOutButton, useUser } from '@clerk/nextjs';
-import { Home, Key, MessageSquare, MoreVertical } from 'lucide-react';
+import { Key, MessageSquare, MoreVertical } from 'lucide-react';
 
 import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/ui/components/avatar';
@@ -39,7 +39,9 @@ function AppSidebar({ onClose }: { onClose: () => void }) {
     <UiSidebar variant="inset" collapsible="offcanvas">
       <SidebarHeader>
         <div className="flex items-center gap-2 px-2 py-1">
-          <span className="font-semibold">Copilot Proxy</span>
+          <Link href="/">
+            <span className="font-semibold">Copilot Proxy</span>
+          </Link>
         </div>
       </SidebarHeader>
       <SidebarContent>
@@ -49,9 +51,9 @@ function AppSidebar({ onClose }: { onClose: () => void }) {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <Link href="/">
-                    <Home />
-                    <span>Home</span>
+                  <Link href="/api-keys">
+                    <Key />
+                    <span>API Keys</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -60,14 +62,6 @@ function AppSidebar({ onClose }: { onClose: () => void }) {
                   <Link href="/chat">
                     <MessageSquare />
                     <span>Chat</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/api-keys">
-                    <Key />
-                    <span>API Keys</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
