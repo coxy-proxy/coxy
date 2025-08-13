@@ -1,5 +1,13 @@
+import { MoreVertical } from 'lucide-react';
 import type { ApiKeyResponse } from '@/shared/types/api-key';
 import { Button } from '@/shared/ui/components/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/shared/ui/components/dropdown-menu';
 import { TableCell, TableRow } from '@/shared/ui/components/table';
 import DefaultKeyBadge from './DefaultKeyBadge';
 
@@ -27,25 +35,30 @@ export default function ApiKeyRow({ apiKey, onEdit, onDelete, onSetDefault }: Ap
         {new Date(apiKey.createdAt).toLocaleDateString()}
       </TableCell>
       <TableCell className="p-2 align-middle whitespace-nowrap text-sm text-muted-foreground">
-        {apiKey.isDefault ? (
-          <DefaultKeyBadge />
-        ) : (
-          <Button variant="link" onClick={() => onSetDefault(apiKey.id)}>
-            Set as default
-          </Button>
-        )}
+        {apiKey.isDefault ? <DefaultKeyBadge /> : <span className="text-muted-foreground">—</span>}
       </TableCell>
       <TableCell className="p-2 align-middle whitespace-nowrap text-sm text-muted-foreground">{`${quotaUsed} / ${quotaLimit}`}</TableCell>
       <TableCell className="p-2 align-middle whitespace-nowrap text-sm text-muted-foreground">
         {quotaRenewDate}
       </TableCell>
-      <TableCell className="p-2 align-middle whitespace-nowrap text-right text-sm font-medium space-x-2">
-        <Button variant="link" onClick={() => onEdit(apiKey)}>
-          Edit
-        </Button>
-        <Button variant="link" onClick={() => onDelete(apiKey)} className="text-red-600 hover:text-red-900">
-          Delete
-        </Button>
+      <TableCell className="p-2 align-middle whitespace-nowrap text-right text-sm font-medium">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0" aria-label="Open actions menu">
+              <MoreVertical className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={() => onEdit(apiKey)}>Edit</DropdownMenuItem>
+            {!apiKey.isDefault && (
+              <DropdownMenuItem onClick={() => onSetDefault(apiKey.id)}>Set as default</DropdownMenuItem>
+            )}
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="text-red-600" onClick={() => onDelete(apiKey)}>
+              Delete
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </TableCell>
     </TableRow>
   );
