@@ -1,6 +1,9 @@
 'use client';
 
+import { Loader2 } from 'lucide-react';
 import { useState } from 'react';
+import { Button } from '@/shared/ui/components/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/ui/components/card';
 
 export default function DeviceFlowStatus() {
   const [status, setStatus] = useState('idle');
@@ -14,43 +17,44 @@ export default function DeviceFlowStatus() {
   };
 
   return (
-    <div className="p-6 border-t border-gray-200">
+    <Card className="border-t">
       {status === 'idle' && (
-        <div>
-          <h3 className="text-md font-semibold text-gray-900">Authorize with GitHub</h3>
-          <p className="mt-1 text-sm text-gray-600">Generate a new API key by authorizing your account with GitHub.</p>
-          <button
-            onClick={startDeviceFlow}
-            className="mt-4 w-full px-4 py-2 text-sm font-medium text-white bg-gray-800 rounded-md hover:bg-gray-900"
-          >
-            Authorize with GitHub
-          </button>
-        </div>
+        <>
+          <CardHeader>
+            <CardTitle className="text-md">Authorize with GitHub</CardTitle>
+            <CardDescription>Generate a new API key by authorizing your account with GitHub.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button className="w-full" onClick={startDeviceFlow}>
+              Authorize with GitHub
+            </Button>
+          </CardContent>
+        </>
       )}
 
       {status === 'authorizing' && (
-        <div className="text-center">
-          <p className="text-gray-600 mb-4">
+        <CardContent className="text-center space-y-4">
+          <p className="text-muted-foreground">
             Visit{' '}
-            <a href="#" className="text-indigo-600 underline">
+            <a href="#" className="underline">
               github.com/login/device
             </a>{' '}
             and enter the code below.
           </p>
-          <div className="text-2xl font-mono bg-gray-100 p-3 rounded-md d-inline-block">ABCD-1234</div>
-          <div className="mt-4 flex justify-center items-center">
-            <div className="animate-spin w-5 h-5 border-2 border-indigo-500 border-t-transparent rounded-full"></div>
-            <p className="text-sm text-gray-500 ml-3">Waiting for authorization...</p>
+          <div className="inline-block rounded-md bg-muted px-3 py-2 font-mono text-2xl">ABCD-1234</div>
+          <div className="mt-2 flex justify-center items-center gap-3">
+            <Loader2 className="size-5 animate-spin text-primary" />
+            <p className="text-sm text-muted-foreground">Waiting for authorization...</p>
           </div>
-        </div>
+        </CardContent>
       )}
 
       {status === 'success' && (
-        <div className="text-center">
+        <CardContent className="text-center space-y-1">
           <p className="text-lg font-semibold text-green-600">Authorization Successful!</p>
-          <p className="text-sm text-gray-600">Your new API key has been added to your list.</p>
-        </div>
+          <p className="text-sm text-muted-foreground">Your new API key has been added to your list.</p>
+        </CardContent>
       )}
-    </div>
+    </Card>
   );
 }
