@@ -1,7 +1,7 @@
 'use client';
 
 import { useApiKeyService } from '_/hooks/useApiKeyService';
-import { Check, Copy, Loader2 } from 'lucide-react';
+import { Check, Copy, ExternalLink, Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import type { DeviceFlowSSEEvent } from '@/shared/types/api-key';
 import { Button } from '@/shared/ui/components/button';
@@ -11,6 +11,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/shar
 export default function DeviceFlowStatus() {
   const [status, setStatus] = useState<'idle' | 'authorizing' | 'success'>('idle');
   const [deviceCode, setDeviceCode] = useState<string>('');
+  const [verificationUri, setVerificationUri] = useState<string>('');
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -33,6 +34,7 @@ export default function DeviceFlowStatus() {
         const evt: DeviceFlowSSEEvent = JSON.parse(e.data);
         if (evt.type === 'initiated') {
           setDeviceCode(evt.userCode ?? '');
+          setVerificationUri(evt.verificationUri ?? 'https://github.com/login/device');
         } else if (evt.type === 'success') {
           setStatus('success');
           es.close();
@@ -75,8 +77,13 @@ export default function DeviceFlowStatus() {
         <CardContent className="text-center space-y-4">
           <p className="text-muted-foreground">
             Visit{' '}
-            <a href="#" className="underline">
-              github.com/login/device
+            <a
+              href={verificationUri}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 underline"
+            >
+              {verificationUri} <ExternalLink className="size-3" />
             </a>{' '}
             and enter the code below.
           </p>
