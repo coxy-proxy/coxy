@@ -42,7 +42,7 @@ export default function CreateApiKeyModal({ isOpen, onClose, onCreate, isCreatin
         <DialogHeader className="space-y-1">
           <DialogTitle className="text-base">Create API Key</DialogTitle>
           <DialogDescription className="text-xs">
-            Give your key a name. Optionally paste an existing key to import it.
+            Give your key a name. Paste an existing key to import it.
           </DialogDescription>
         </DialogHeader>
 
@@ -59,19 +59,22 @@ export default function CreateApiKeyModal({ isOpen, onClose, onCreate, isCreatin
               placeholder="My Awesome App"
               required
               className="h-8"
+              autoComplete="off"
             />
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="newKeyValue" className="text-xs">
-              API Key (Optional)
+              API Key
             </Label>
             <Input
               type="text"
               id="newKeyValue"
               value={key}
               onChange={(e) => setKey(e.target.value)}
-              placeholder="Paste an existing key or leave blank"
+              placeholder="Paste an existing key"
+              required
               className="h-8"
+              autoComplete="off"
             />
           </div>
 
@@ -79,7 +82,7 @@ export default function CreateApiKeyModal({ isOpen, onClose, onCreate, isCreatin
             <Button type="button" size="sm" variant="outline" onClick={onClose} disabled={isCreating}>
               Cancel
             </Button>
-            <Button type="submit" size="sm" disabled={isCreating || !name}>
+            <Button type="submit" size="sm" disabled={isCreating || !name || !key}>
               {isCreating ? 'Creating...' : 'Create'}
             </Button>
           </DialogFooter>
