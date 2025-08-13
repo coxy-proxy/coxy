@@ -1,19 +1,21 @@
 'use client';
 
+import { useApiKeyService } from '_/hooks/useApiKeyService';
 import { Check, Copy, Loader2 } from 'lucide-react';
 import { useState } from 'react';
+import type { DeviceFlowSSEEvent } from '@/shared/types/api-key';
 import { Button } from '@/shared/ui/components/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/ui/components/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/shared/ui/components/tooltip';
 
 export default function DeviceFlowStatus() {
   const [status, setStatus] = useState<'idle' | 'authorizing' | 'success'>('idle');
-  const deviceCode = 'ABCD-1234';
+  const [deviceCode, setDeviceCode] = useState<string>('');
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(deviceCode);
+      await navigator.clipboard.writeText(deviceCode || '');
       setCopied(true);
       setTimeout(() => setCopied(false), 5000);
     } catch {
@@ -21,12 +23,36 @@ export default function DeviceFlowStatus() {
     }
   };
 
+  const apiKeyService = useApiKeyService();
+
   const startDeviceFlow = () => {
     setStatus('authorizing');
-    // Mocking the flow
-    setTimeout(() => {
-      setStatus('success');
-    }, 50000);
+    const es = apiKeyService.startDeviceFlow();
+    const messageHandler = (e: MessageEvent) => {
+      try {
+        const evt: DeviceFlowSSEEvent = JSON.parse(e.data);
+        if (evt.type === 'initiated') {
+          setDeviceCode(evt.userCode ?? '');
+        } else if (evt.type === 'success') {
+          setStatus('success');
+          es.close();
+        } else if (evt.type === 'error' || evt.type === 'expired') {
+          setStatus('idle');
+          es.close();
+        }
+      } catch {
+        console.error('Failed to parse device flow SSE event:', e.data);
+      }
+    };
+
+    es.addEventListener('initiated', messageHandler);
+    es.addEventListener('pending', messageHandler);
+    es.addEventListener('success', messageHandler);
+
+    es.onerror = () => {
+      setStatus('idle');
+      es.close();
+    };
   };
 
   return (
@@ -55,7 +81,9 @@ export default function DeviceFlowStatus() {
             and enter the code below.
           </p>
           <div className="flex items-center justify-center gap-2">
-            <div className="inline-block rounded-md bg-muted px-3 py-1 font-mono text-2xl">{deviceCode}</div>
+            <div className="inline-block rounded-md bg-muted px-3 py-1 font-mono text-2xl">
+              {deviceCode || '— — — —'}
+            </div>
             <TooltipProvider disableHoverableContent>
               <Tooltip>
                 <TooltipTrigger asChild>
