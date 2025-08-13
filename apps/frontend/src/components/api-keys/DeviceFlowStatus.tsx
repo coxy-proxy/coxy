@@ -8,7 +8,11 @@ import { Button } from '@/shared/ui/components/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/ui/components/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/shared/ui/components/tooltip';
 
-export default function DeviceFlowStatus() {
+interface DeviceFlowStatusProps {
+  onSuccess?: () => void;
+}
+
+export default function DeviceFlowStatus({ onSuccess }: DeviceFlowStatusProps) {
   const [status, setStatus] = useState<'idle' | 'authorizing' | 'success'>('idle');
   const [deviceCode, setDeviceCode] = useState<string>('');
   const [verificationUri, setVerificationUri] = useState<string>('');
@@ -37,6 +41,7 @@ export default function DeviceFlowStatus() {
           setVerificationUri(evt.verificationUri ?? 'https://github.com/login/device');
         } else if (evt.type === 'success') {
           setStatus('success');
+          onSuccess?.();
           es.close();
         } else if (evt.type === 'error' || evt.type === 'expired') {
           setStatus('idle');

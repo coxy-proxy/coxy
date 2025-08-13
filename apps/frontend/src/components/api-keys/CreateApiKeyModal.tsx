@@ -20,9 +20,16 @@ interface CreateApiKeyModalProps {
   onClose: () => void;
   onCreate: (name: string, key?: string) => Promise<void>;
   isCreating: boolean;
+  onDeviceFlowSuccess?: () => void;
 }
 
-export default function CreateApiKeyModal({ isOpen, onClose, onCreate, isCreating }: CreateApiKeyModalProps) {
+export default function CreateApiKeyModal({
+  isOpen,
+  onClose,
+  onCreate,
+  isCreating,
+  onDeviceFlowSuccess,
+}: CreateApiKeyModalProps) {
   const [name, setName] = useState('');
   const [key, setKey] = useState('');
 
@@ -94,7 +101,7 @@ export default function CreateApiKeyModal({ isOpen, onClose, onCreate, isCreatin
             <span className="bg-background px-2 text-xs text-muted-foreground">OR</span>
           </div>
         </div>
-        <DeviceFlowStatus />
+        <DeviceFlowStatus onSuccess={onDeviceFlowSuccess ?? onClose} />
       </DialogContent>
     </Dialog>
   );
