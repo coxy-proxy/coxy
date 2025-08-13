@@ -71,6 +71,15 @@ export function useApiKeys(initialKeys: ApiKeyResponse[] = []) {
     [apiKeyService],
   );
 
+  const refreshMeta = useCallback(
+    async (id: string) => {
+      const updatedKey = await apiKeyService.refreshApiKeyMeta(id);
+      setApiKeys((prev) => prev.map((k) => (k.id === id ? { ...k, ...updatedKey } : k)));
+      return updatedKey;
+    },
+    [apiKeyService],
+  );
+
   return {
     apiKeys,
     loading,
@@ -79,6 +88,7 @@ export function useApiKeys(initialKeys: ApiKeyResponse[] = []) {
     updateApiKey,
     deleteApiKey,
     setDefaultKey,
+    refreshMeta,
     refetch: fetchApiKeys,
   };
 }

@@ -37,6 +37,11 @@ export class ApiKeysController {
     return await this.apiKeysService.deleteApiKey(id);
   }
 
+  @Post(':id/refresh-meta')
+  async refreshMeta(@Param('id') id: string) {
+    return await this.apiKeysService.refreshApiKeyMeta(id);
+  }
+
   @Sse('device-flow')
   deviceFlowSSE(): Observable<MessageEvent<DeviceFlowSSEEvent>> {
     if (this.deviceFlowMap.has(this.currentUserId)) {

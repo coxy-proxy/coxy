@@ -12,7 +12,7 @@ import EditApiKeyModal from './EditApiKeyModal';
 import EmptyState from './EmptyState';
 
 export default function ApiKeyManager({ initialApiKeys }: { initialApiKeys: ApiKeyResponse[] }) {
-  const { apiKeys, loading, error, createApiKey, updateApiKey, deleteApiKey, setDefaultKey, refetch } =
+  const { apiKeys, loading, error, createApiKey, updateApiKey, deleteApiKey, setDefaultKey, refreshMeta, refetch } =
     useApiKeys(initialApiKeys);
 
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
@@ -58,6 +58,14 @@ export default function ApiKeyManager({ initialApiKeys }: { initialApiKeys: ApiK
     setDeleteDialog(true);
   };
 
+  const handleRefreshMeta = async (key: ApiKeyResponse) => {
+    try {
+      await refreshMeta(key.id);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   const handleConfirmDelete = async () => {
     if (!selectedKey) return;
     setIsSubmitting(true);
@@ -93,7 +101,13 @@ export default function ApiKeyManager({ initialApiKeys }: { initialApiKeys: ApiK
       {apiKeys.length === 0 ? (
         <EmptyState onNewKeyClick={() => setCreateModalOpen(true)} />
       ) : (
-        <ApiKeyTable apiKeys={apiKeys} onEdit={handleEdit} onDelete={handleDelete} onSetDefault={setDefaultKey} />
+        <ApiKeyTable
+          apiKeys={apiKeys}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+          onSetDefault={setDefaultKey}
+          onRefreshMeta={handleRefreshMeta}
+        />
       )}
 
       <CreateApiKeyModal

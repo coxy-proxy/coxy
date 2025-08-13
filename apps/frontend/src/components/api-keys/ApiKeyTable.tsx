@@ -7,9 +7,10 @@ interface ApiKeyTableProps {
   onEdit: (key: ApiKeyResponse) => void;
   onDelete: (key: ApiKeyResponse) => void;
   onSetDefault: (id: string) => void;
+  onRefreshMeta: (key: ApiKeyResponse) => Promise<void>;
 }
 
-export default function ApiKeyTable({ apiKeys, onEdit, onDelete, onSetDefault }: ApiKeyTableProps) {
+export default function ApiKeyTable({ apiKeys, onEdit, onDelete, onSetDefault, onRefreshMeta }: ApiKeyTableProps) {
   return (
     <div className="overflow-hidden rounded-lg border">
       <div data-slot="table-container" className="relative w-full overflow-x-auto">
@@ -47,6 +48,7 @@ export default function ApiKeyTable({ apiKeys, onEdit, onDelete, onSetDefault }:
                 onEdit={onEdit}
                 onDelete={onDelete}
                 onSetDefault={onSetDefault}
+                onRefreshMeta={onRefreshMeta}
               />
             ))}
           </TableBody>

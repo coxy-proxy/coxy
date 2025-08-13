@@ -16,9 +16,10 @@ interface ApiKeyRowProps {
   onEdit: (key: ApiKeyResponse) => void;
   onDelete: (key: ApiKeyResponse) => void;
   onSetDefault: (id: string) => void;
+  onRefreshMeta: (key: ApiKeyResponse) => Promise<void>;
 }
 
-export default function ApiKeyRow({ apiKey, onEdit, onDelete, onSetDefault }: ApiKeyRowProps) {
+export default function ApiKeyRow({ apiKey, onEdit, onDelete, onSetDefault, onRefreshMeta }: ApiKeyRowProps) {
   const quotaUsed = apiKey.usageCount;
   const quotaLimit = apiKey.meta?.completionsQuota ?? 'N/A';
   const quotaRenewDate = apiKey.meta?.resetTime ? new Date(apiKey.meta.resetTime * 1000).toLocaleDateString() : 'N/A';
@@ -50,6 +51,7 @@ export default function ApiKeyRow({ apiKey, onEdit, onDelete, onSetDefault }: Ap
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem onClick={() => onEdit(apiKey)}>Edit</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => onRefreshMeta(apiKey)}>Refresh meta</DropdownMenuItem>
             {!apiKey.isDefault && (
               <DropdownMenuItem onClick={() => onSetDefault(apiKey.id)}>Set as default</DropdownMenuItem>
             )}

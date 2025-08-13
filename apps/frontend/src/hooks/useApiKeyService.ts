@@ -36,6 +36,11 @@ class ApiKeyService {
     await this.apiClient.post('/api-keys/default', { id });
   }
 
+  async refreshApiKeyMeta(id: string): Promise<ApiKeyResponse> {
+    const response = await this.apiClient.post(`/api-keys/${id}/refresh-meta`);
+    return response.data;
+  }
+
   startDeviceFlow(): EventSource {
     const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
     // The backend controller uses @Sse which is a GET request.

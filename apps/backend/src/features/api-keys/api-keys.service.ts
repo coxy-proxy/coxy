@@ -51,6 +51,21 @@ export class ApiKeysService {
     await this.fileStorageService.remove(id);
   }
 
+  async refreshApiKeyMeta(id: string): Promise<ApiKeyResponse> {
+    const apiKey = await this.fileStorageService.findOne(id);
+    if (!apiKey) {
+      throw new Error('API key not found');
+    }
+
+    const meta = await this.githubOauthService.fetchCopilotMeta(apiKey.key).catch((error) => {
+      this.logger.warn(`Failed to refresh meta for key ${id}: ${error?.message ?? error}`);
+      throw new Error('Failed to refresh Copilot meta');
+    });
+
+    const updated = await this.fileStorageService.update(id, { meta });
+    return this.toApiKeyResponse(updated);
+  }
+
   executeDeviceFlowWithSSE(): Observable<DeviceFlowSSEEvent> {
     return this.githubOauthService.executeDeviceFlowWithPolling().pipe(
       tap((event) => {
