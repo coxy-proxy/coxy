@@ -74,13 +74,14 @@ export class GithubOauthService {
     const polling$ = interval(5500).pipe(
       takeUntil(stopPolling$),
       switchMap(() => this.verifyDeviceFlow(deviceCode)),
+      map((pollingEvent) => ({ ...initEvent, ...pollingEvent })),
       tap((event) => event.type === 'success' && stopPolling$.next(void 0)),
     );
 
     return polling$.pipe(
       startWith(initEvent),
       catchError((error) => {
-        this.logger.error(`Polling device authorization error:`, error);
+        this.logger.error(`Polling device authorization error:`, error.message);
         return of({
           type: 'error' as const,
           message: `Failed to poll device authorization: ${error.message}`,

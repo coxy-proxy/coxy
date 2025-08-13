@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Logger, Param, Patch, Post, Sse, UseGuards } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { map, share, tap } from 'rxjs/operators';
+import { map, shareReplay, tap } from 'rxjs/operators';
 import { CreateApiKeyDto, DeviceFlowSSEEvent, SetDefaultApiKeyDto, UpdateApiKeyDto } from '@/shared/types/api-key';
 import { AdminGuard } from '../admin/guards/admin.guard';
 import { ApiKeysService } from './api-keys.service';
@@ -55,7 +55,7 @@ export class ApiKeysController {
             data: event,
           }) as MessageEvent<DeviceFlowSSEEvent>,
       ),
-      share(),
+      shareReplay(1),
     );
     this.deviceFlowMap.set(this.currentUserId, deviceFlow$);
 

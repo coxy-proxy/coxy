@@ -37,7 +37,7 @@ export default function DeviceFlowStatus({ onSuccess }: DeviceFlowStatusProps) {
     const messageHandler = (e: MessageEvent) => {
       try {
         const evt: DeviceFlowSSEEvent = JSON.parse(e.data);
-        if (evt.type === 'initiated') {
+        if (evt.type === 'initiated' || evt.type === 'pending') {
           setDeviceCode(evt.userCode ?? '');
           setVerificationUri(evt.verificationUri ?? 'https://github.com/login/device');
         } else if (evt.type === 'success') {
