@@ -28,6 +28,7 @@ import {
   SidebarTrigger,
   Sidebar as UiSidebar,
 } from '@/shared/ui/components/sidebar';
+import { Toaster } from '@/shared/ui/components/sonner';
 
 function AppSidebar({ onClose }: { onClose: () => void }) {
   const { user } = useUser();
@@ -141,6 +142,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <div className="flex flex-1 flex-col">
             <div className="@container/main flex flex-1 flex-col gap-2 p-4">{children}</div>
           </div>
+          <Toaster richColors position="top-right" />
         </SidebarInset>
       </div>
     </SidebarProvider>

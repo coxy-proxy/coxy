@@ -3,6 +3,7 @@
 import { useApiKeyService } from '_/hooks/useApiKeyService';
 import { Check, Copy, ExternalLink, Loader2 } from 'lucide-react';
 import { useState } from 'react';
+import { toast } from 'sonner';
 import type { DeviceFlowSSEEvent } from '@/shared/types/api-key';
 import { Button } from '@/shared/ui/components/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/ui/components/card';
@@ -41,6 +42,9 @@ export default function DeviceFlowStatus({ onSuccess }: DeviceFlowStatusProps) {
           setVerificationUri(evt.verificationUri ?? 'https://github.com/login/device');
         } else if (evt.type === 'success') {
           setStatus('success');
+          toast.success('GitHub authorization successful', {
+            description: 'A new API key has been added to your list.',
+          });
           onSuccess?.();
           es.close();
         } else if (evt.type === 'error' || evt.type === 'expired') {
