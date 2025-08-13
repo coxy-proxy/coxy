@@ -1,6 +1,15 @@
+import { auth } from '@clerk/nextjs/server';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 
-export default function Page() {
+export default async function Page() {
+  if (process.env.AUTH_ENABLED === 'false') {
+    redirect('/api-keys');
+  }
+  const { userId } = await auth();
+  if (userId) {
+    redirect('/api-keys');
+  }
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
       <div className="text-center p-8">
