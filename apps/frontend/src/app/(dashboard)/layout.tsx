@@ -2,8 +2,8 @@
 
 import { SignOutButton, useUser } from '@clerk/nextjs';
 import { Key, MessageSquare, MoreVertical } from 'lucide-react';
-
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/ui/components/avatar';
 import {
   DropdownMenu,
@@ -115,6 +115,8 @@ function AppSidebar({ onClose }: { onClose: () => void }) {
 }
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const pageTitle = pathname.startsWith('/api-keys') ? 'API Keys' : pathname.startsWith('/chat') ? 'Chat' : '';
   return (
     <SidebarProvider>
       <div
@@ -136,7 +138,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <div className="flex w-full items-center gap-1 px-4 lg:gap-2 lg:px-6">
               <SidebarTrigger />
               <div className="bg-border/60 shrink-0 mx-2 w-0.5 h-4" />
-              <h1 className="text-base font-medium">Dashboard</h1>
+              <h1 className="text-base font-medium">{pageTitle}</h1>
             </div>
           </header>
           <div className="flex flex-1 flex-col">
