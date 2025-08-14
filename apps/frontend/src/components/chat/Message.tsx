@@ -16,18 +16,20 @@ export function Message({ message, onRetry }: MessageProps) {
   const isPending = message.status === 'pending';
 
   return (
-    <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4`}>
+    <div className={`mb-4 ${isUser ? 'flex justify-end' : 'block'}`}>
       <div
-        className={`max-w-[70%] rounded-lg px-4 py-2 ${
-          isUser ? 'bg-blue-600 text-white' : isError ? 'bg-red-50 text-red-800' : 'bg-gray-100 text-gray-900'
-        } ${isError ? 'border border-red-300' : ''}`}
+        className={
+          isUser
+            ? 'max-w-[70%] rounded-lg px-4 py-2 bg-muted text-foreground'
+            : `w-full rounded-lg px-4 py-3 ${isError ? 'bg-red-50 text-red-800 border border-red-300' : 'bg-background text-foreground'}`
+        }
       >
-        <div className="prose prose-sm max-w-none whitespace-pre-wrap">{message.content}</div>
+        <div className="prose prose-sm max-w-none whitespace-pre-wrap break-words">{message.content}</div>
 
         <div className="mt-2 flex items-center justify-between text-xs opacity-70">
           <span>{format(message.timestamp, 'HH:mm')}</span>
 
-          {isPending && <Loader2 className={`size-4 animate-spin ${isUser ? 'text-white' : 'text-gray-600'}`} />}
+          {isPending && <Loader2 className={`size-4 animate-spin ${isUser ? 'text-foreground' : 'text-gray-600'}`} />}
           {isError && (
             <Button variant="link" onClick={onRetry} className="text-red-600 hover:text-red-700 h-auto p-0">
               Retry

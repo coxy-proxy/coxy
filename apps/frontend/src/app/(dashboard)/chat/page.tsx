@@ -6,7 +6,6 @@ import { TypingIndicator } from '_/components/chat/TypingIndicator';
 import { useChat } from '_/hooks/useChat';
 import { createChatSession } from '_/services/sessions';
 import { useRouter } from 'next/navigation';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/ui/components/card';
 
 export default function ChatPage() {
   const router = useRouter();
@@ -25,18 +24,11 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-4rem)] p-6">
-      <Card className="w-full max-w-2xl">
-        <CardHeader className="text-center">
-          <CardTitle className="text-3xl">Start a conversation</CardTitle>
-          <CardDescription>Ask me anything to begin our chat</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="flex items-center justify-between">
-            <div />
-            <ModelSelector />
-          </div>
+    <div className="mx-auto w-full max-w-3xl p-6 flex h-full">
+      <div className="mt-[calc(40%)] mx-auto w-full max-w-xl">
+        <h1 className="mb-4 text-center text-3xl font-semibold">Start a conversation</h1>
 
+        <div className="w-full">
           <ChatInput
             onSend={handleFirstMessage}
             disabled={isLoading}
@@ -44,14 +36,17 @@ export default function ChatPage() {
             autoFocus
             className="w-full"
           />
+          <div className="mt-2">
+            <ModelSelector />
+          </div>
+        </div>
 
-          {isLoading && (
-            <div className="flex justify-center">
-              <TypingIndicator />
-            </div>
-          )}
-        </CardContent>
-      </Card>
+        {isLoading && (
+          <div className="mt-4 flex justify-center">
+            <TypingIndicator />
+          </div>
+        )}
+      </div>
     </div>
   );
 }

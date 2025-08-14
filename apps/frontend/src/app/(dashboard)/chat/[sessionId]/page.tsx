@@ -3,10 +3,10 @@
 import { ChatHeader } from '_/components/chat/ChatHeader';
 import { ChatInput } from '_/components/chat/ChatInput';
 import { MessageList } from '_/components/chat/MessageList';
+import { ModelSelector } from '_/components/chat/ModelSelector';
 import { useChat } from '_/hooks/useChat';
 import { useChatStore } from '_/hooks/useChatStore';
 import { use } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/ui/components/card';
 
 interface ChatSessionPageProps {
   params: Promise<{ sessionId: string }>;
@@ -23,25 +23,31 @@ export default function ChatSessionPage({ params }: ChatSessionPageProps) {
   };
 
   return (
-    <Card className="flex h-full flex-col">
-      <CardHeader className="border-b">
-        <CardTitle className="sr-only">Chat Session</CardTitle>
-        <CardDescription className="sr-only">Conversation and input</CardDescription>
+    <div className="mx-auto w-full max-w-4xl p-0 flex flex-col">
+      <div className="px-4 pt-4">
         <ChatHeader sessionId={sessionId} />
-      </CardHeader>
-
-      <CardContent className="flex-1 overflow-hidden p-0">
-        <MessageList
-          messages={messages}
-          isLoading={isLoading}
-          onRetry={(assistantMessageId) => retryAssistantMessage(sessionId, assistantMessageId)}
-          className="h-full"
-        />
-      </CardContent>
-
-      <div className="border-t p-4">
-        <ChatInput onSend={handleSendMessage} disabled={isLoading} placeholder="Send a follow-up message..." />
       </div>
-    </Card>
+      <div className="flex-1 overflow-y-auto px-4">
+        <div className="">
+          <MessageList
+            messages={messages}
+            isLoading={isLoading}
+            onRetry={(assistantMessageId) => retryAssistantMessage(sessionId, assistantMessageId)}
+            className="h-full"
+          />
+        </div>
+        <div className="sticky bottom-0 bg-background pt-2 pb-3">
+          <ChatInput
+            autoFocus
+            onSend={handleSendMessage}
+            disabled={isLoading}
+            placeholder="Send a follow-up message..."
+          />
+          <div className="mt-2">
+            <ModelSelector />
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

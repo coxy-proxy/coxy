@@ -39,21 +39,14 @@ export function ModelSelector({ className = '' }: { className?: string }) {
     };
   }, [setSelectedModel, selectedModel]);
 
-  const controlId = 'model-select';
+  const isDisabled = loading || (!!error && models.length === 0);
 
   return (
-    <div className={`flex items-center gap-2 ${className}`}>
-      <Label htmlFor={controlId} className="text-sm text-gray-600">
-        Model
-      </Label>
-      {loading ? (
-        <span className="text-sm text-gray-500">Loading...</span>
-      ) : error ? (
-        <span className="text-sm text-red-600">{error}</span>
-      ) : (
-        <Select value={selectedModel ?? ''} onValueChange={(v) => setSelectedModel(v)}>
-          <SelectTrigger id={controlId} className="w-56 h-8">
-            <SelectValue placeholder="Select a model" />
+    <div className={`flex flex-col gap-1 ${className}`}>
+      <div className="flex items-center gap-2">
+        <Select value={selectedModel ?? ''} onValueChange={(v) => setSelectedModel(v)} disabled={isDisabled}>
+          <SelectTrigger size="sm">
+            <SelectValue placeholder={error ? 'Failed to load models' : loading ? 'Loading…' : 'Select a model'} />
           </SelectTrigger>
           <SelectContent>
             {models.map((m) => (
@@ -63,7 +56,14 @@ export function ModelSelector({ className = '' }: { className?: string }) {
             ))}
           </SelectContent>
         </Select>
-      )}
+      </div>
+      <div className="min-h-5 text-xs">
+        {loading ? (
+          <span className="text-gray-500">Fetching models…</span>
+        ) : error ? (
+          <span className="text-red-600">{error}</span>
+        ) : null}
+      </div>
     </div>
   );
 }
