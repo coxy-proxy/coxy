@@ -40,7 +40,7 @@ export class ProxyService {
       copilotResponse.data.pipe(res);
     } catch (error) {
       const status = error.response?.status || 500;
-      const message = error.toJSON?.() || 'Internal server error';
+      const message = error.message || 'Internal Server Error';
       this.logger.error(`Error proxying request to Copilot: ${error.message}`, message, error.stack);
       res.status(status).json({ message });
     }
