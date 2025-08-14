@@ -22,7 +22,17 @@ interface ApiKeyRowProps {
 export default function ApiKeyRow({ apiKey, onEdit, onDelete, onSetDefault, onRefreshMeta }: ApiKeyRowProps) {
   const quotaUsed = apiKey.usageCount;
   const quotaLimit = apiKey.meta?.completionsQuota ?? 'N/A';
-  const quotaRenewDate = apiKey.meta?.resetTime ? new Date(apiKey.meta.resetTime * 1000).toLocaleDateString() : 'N/A';
+
+  // format as YYYY-MM-DD HH:mm
+  const quotaRenewDate = apiKey.meta?.resetTime
+    ? new Date(apiKey.meta.resetTime).toLocaleDateString('en-CA', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+      })
+    : 'N/A';
 
   return (
     <TableRow className="hover:bg-muted/50 data-[state=selected]:bg-muted border-b-2 transition-colors">
@@ -33,7 +43,7 @@ export default function ApiKeyRow({ apiKey, onEdit, onDelete, onSetDefault, onRe
         {apiKey.maskedKey}
       </TableCell>
       <TableCell className="p-2 align-middle whitespace-nowrap text-sm text-muted-foreground">
-        {new Date(apiKey.createdAt).toLocaleDateString()}
+        {new Date(apiKey.createdAt).toLocaleDateString('en-CA', { year: 'numeric', month: '2-digit', day: '2-digit' })}
       </TableCell>
       <TableCell className="p-2 align-middle whitespace-nowrap text-sm text-muted-foreground">
         {apiKey.isDefault ? <DefaultKeyBadge /> : <span className="text-muted-foreground">—</span>}
@@ -51,7 +61,7 @@ export default function ApiKeyRow({ apiKey, onEdit, onDelete, onSetDefault, onRe
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem onClick={() => onEdit(apiKey)}>Edit</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => onRefreshMeta(apiKey)}>Refresh meta</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => onRefreshMeta(apiKey)}>Refresh quota</DropdownMenuItem>
             {!apiKey.isDefault && (
               <DropdownMenuItem onClick={() => onSetDefault(apiKey.id)}>Set as default</DropdownMenuItem>
             )}

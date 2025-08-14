@@ -24,7 +24,7 @@ export default function ApiKeyTable({ apiKeys, onEdit, onDelete, onSetDefault, o
                 Key
               </TableHead>
               <TableHead className="text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap">
-                Created
+                Created At
               </TableHead>
               <TableHead className="text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap">
                 Default
