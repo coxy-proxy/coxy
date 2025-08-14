@@ -13,8 +13,17 @@ import EditApiKeyModal from './EditApiKeyModal';
 import EmptyState from './EmptyState';
 
 export default function ApiKeyManager({ initialApiKeys }: { initialApiKeys: ApiKeyResponse[] }) {
-  const { apiKeys, loading, error, createApiKey, updateApiKey, deleteApiKey, setDefaultKey, refreshMeta, refetch } =
-    useApiKeys(initialApiKeys);
+  const {
+    apiKeys,
+    loading,
+    error,
+    createApiKey,
+    updateApiKey,
+    deleteApiKey,
+    setDefaultKey,
+    refreshMeta,
+    refetchSilently,
+  } = useApiKeys(initialApiKeys);
 
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
@@ -117,11 +126,7 @@ export default function ApiKeyManager({ initialApiKeys }: { initialApiKeys: ApiK
         onClose={() => setCreateModalOpen(false)}
         onCreate={handleCreate}
         isCreating={isSubmitting}
-        onDeviceFlowSuccess={async () => {
-          // After device flow success, refresh the list and close modal
-          setCreateModalOpen(false);
-          await refetch();
-        }}
+        onDeviceFlowSuccess={refetchSilently}
       />
 
       <EditApiKeyModal

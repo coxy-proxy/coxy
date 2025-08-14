@@ -45,19 +45,15 @@ export default function CreateApiKeyModal({
         if (!open) onClose();
       }}
     >
-      <DialogContent className="gap-3 p-4 sm:max-w-md">
+      <DialogContent className="gap-3 p-4 sm">
         <DialogHeader className="space-y-1">
-          <DialogTitle className="text-base">Create API Key</DialogTitle>
-          <DialogDescription className="text-xs">
-            Give your key a name. Paste an existing key to import it.
-          </DialogDescription>
+          <DialogTitle>Create API Key</DialogTitle>
+          <DialogDescription>Give your key a name. Paste an existing key to import it.</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-3">
-          <div className="space-y-1.5">
-            <Label htmlFor="newKeyName" className="text-xs">
-              Key Name
-            </Label>
+          <div className="space-y-2">
+            <Label htmlFor="newKeyName">Key Name</Label>
             <Input
               type="text"
               id="newKeyName"
@@ -65,14 +61,11 @@ export default function CreateApiKeyModal({
               onChange={(e) => setName(e.target.value)}
               placeholder="My Awesome App"
               required
-              className="h-8"
               autoComplete="off"
             />
           </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="newKeyValue" className="text-xs">
-              API Key
-            </Label>
+          <div className="space-y-2">
+            <Label htmlFor="newKeyValue">API Key</Label>
             <Input
               type="text"
               id="newKeyValue"
@@ -80,7 +73,6 @@ export default function CreateApiKeyModal({
               onChange={(e) => setKey(e.target.value)}
               placeholder="Paste an existing key"
               required
-              className="h-8"
               autoComplete="off"
             />
           </div>

@@ -80,6 +80,11 @@ export function useApiKeys(initialKeys: ApiKeyResponse[] = []) {
     [apiKeyService],
   );
 
+  const refetchSilently = useCallback(async () => {
+    const keys = await apiKeyService.getApiKeys();
+    setApiKeys(keys);
+  }, [apiKeyService]);
+
   return {
     apiKeys,
     loading,
@@ -90,5 +95,6 @@ export function useApiKeys(initialKeys: ApiKeyResponse[] = []) {
     setDefaultKey,
     refreshMeta,
     refetch: fetchApiKeys,
+    refetchSilently,
   };
 }

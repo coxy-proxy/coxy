@@ -1,13 +1,13 @@
 'use client';
 
 import { useApiKeyService } from '_/hooks/useApiKeyService';
-import { Check, Copy, ExternalLink, Loader2 } from 'lucide-react';
+import { ExternalLink, Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import type { DeviceFlowSSEEvent } from '@/shared/types/api-key';
 import { Button } from '@/shared/ui/components/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/ui/components/card';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/shared/ui/components/tooltip';
+import CopiableProvider from './CopiableProvider';
 
 interface DeviceFlowStatusProps {
   onSuccess?: () => void;
@@ -17,17 +17,7 @@ export default function DeviceFlowStatus({ onSuccess }: DeviceFlowStatusProps) {
   const [status, setStatus] = useState<'idle' | 'authorizing' | 'success'>('idle');
   const [deviceCode, setDeviceCode] = useState<string>('');
   const [verificationUri, setVerificationUri] = useState<string>('');
-  const [copied, setCopied] = useState(false);
-
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(deviceCode || '');
-      setCopied(true);
-      setTimeout(() => setCopied(false), 5000);
-    } catch {
-      // no-op
-    }
-  };
+  const [accessToken, setAccessToken] = useState<string>('');
 
   const apiKeyService = useApiKeyService();
 
@@ -42,13 +32,12 @@ export default function DeviceFlowStatus({ onSuccess }: DeviceFlowStatusProps) {
           setVerificationUri(evt.verificationUri ?? 'https://github.com/login/device');
         } else if (evt.type === 'success') {
           setStatus('success');
-          toast.success('GitHub authorization successful', {
-            description: 'A new API key has been added to your list.',
-          });
+          setAccessToken(evt.accessToken ?? '');
           onSuccess?.();
           es.close();
         } else if (evt.type === 'error' || evt.type === 'expired') {
           setStatus('idle');
+          toast.error('Failed to authorize with GitHub', { description: evt.message });
           es.close();
         }
       } catch {
@@ -59,11 +48,7 @@ export default function DeviceFlowStatus({ onSuccess }: DeviceFlowStatusProps) {
     es.addEventListener('initiated', messageHandler);
     es.addEventListener('pending', messageHandler);
     es.addEventListener('success', messageHandler);
-
-    es.onerror = () => {
-      setStatus('idle');
-      es.close();
-    };
+    es.addEventListener('error', messageHandler);
   };
 
   return (
@@ -97,25 +82,11 @@ export default function DeviceFlowStatus({ onSuccess }: DeviceFlowStatusProps) {
             and enter the code below.
           </p>
           <div className="flex items-center justify-center gap-2">
-            <div className="inline-block rounded-md bg-muted px-3 py-1 font-mono text-2xl">
-              {deviceCode || '— — — —'}
-            </div>
-            <TooltipProvider disableHoverableContent>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleCopy}
-                    className="gap-1"
-                    aria-label={copied ? 'Copied' : 'Copy code'}
-                  >
-                    {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="top">{copied ? 'Copied!' : 'Copy code'}</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <CopiableProvider textToCopy={deviceCode}>
+              <div className="inline-block rounded-md bg-muted px-3 py-1 font-mono text-2xl">
+                {deviceCode || '— — — —'}
+              </div>
+            </CopiableProvider>
           </div>
           <div className="mt-2 flex justify-center items-center gap-3">
             <Loader2 className="size-5 animate-spin text-primary" />
@@ -128,6 +99,11 @@ export default function DeviceFlowStatus({ onSuccess }: DeviceFlowStatusProps) {
         <CardContent className="text-center space-y-1">
           <p className="text-lg font-semibold text-green-600">Authorization Successful!</p>
           <p className="text-sm text-muted-foreground">Your new API key has been added to your list.</p>
+          <div className="flex items-center justify-center gap-2">
+            <CopiableProvider textToCopy={accessToken}>
+              <div className="inline-block rounded-md bg-muted px-3 py-1 font-mono text-sm">{accessToken}</div>
+            </CopiableProvider>
+          </div>
         </CardContent>
       )}
     </Card>
