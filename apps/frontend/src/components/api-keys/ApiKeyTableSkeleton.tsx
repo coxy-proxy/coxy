@@ -1,90 +1,64 @@
 import { Skeleton } from '@/shared/ui/components/skeleton';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/shared/ui/components/table';
 
 export default function ApiKeyTableSkeleton() {
   return (
-    <div className="space-y-8">
-      <div className="flex justify-between items-center">
-        <div>
-          <Skeleton className="h-8 w-48 mb-2" />
-          <Skeleton className="h-4 w-80" />
-        </div>
-        <Skeleton className="h-10 w-28" />
-      </div>
-      <div className="bg-white rounded-lg shadow overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
+    <div className="overflow-hidden rounded-lg border">
+      <div data-slot="table-container" className="relative w-full overflow-x-auto">
+        <Table data-slot="table" className="w-full caption-bottom text-sm">
+          <TableHeader data-slot="table-header" className="[&_tr]:border-b-2 bg-muted sticky top-0 z-10">
+            <TableRow className="border-b-2 transition-colors">
+              <TableHead className="text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap">
                 Name
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
+              </TableHead>
+              <TableHead className="text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap">
                 Key
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
+              </TableHead>
+              <TableHead className="text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap">
                 Created
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
+              </TableHead>
+              <TableHead className="text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap">
                 Default
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
+              </TableHead>
+              <TableHead className="text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap">
                 Quota
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
+              </TableHead>
+              <TableHead className="text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap">
                 Renew At
-              </th>
-              <th scope="col" className="relative px-6 py-3">
+              </TableHead>
+              <TableHead className="text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap">
                 <span className="sr-only">Actions</span>
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200 animate-pulse">
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody data-slot="table-body" className="[&_tr:last-child]:border-0 animate-pulse">
             {[...Array(3)].map((_, i) => (
-              <tr key={i}>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <Skeleton className="h-4 w-3/4" />
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <Skeleton className="h-4 w-full" />
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <Skeleton className="h-4 w-1/4" />
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <div className="h-8">
-                    <Skeleton className="h-8 w-16" />
-                  </div>
-                </td>
-              </tr>
+              <TableRow key={i} className="border-b-2 transition-colors">
+                <TableCell className="p-2 align-middle whitespace-nowrap">
+                  <Skeleton className="h-4 w-32" />
+                </TableCell>
+                <TableCell className="p-2 align-middle whitespace-nowrap">
+                  <Skeleton className="h-4 w-40" />
+                </TableCell>
+                <TableCell className="p-2 align-middle whitespace-nowrap">
+                  <Skeleton className="h-4 w-24" />
+                </TableCell>
+                <TableCell className="p-2 align-middle whitespace-nowrap">
+                  <Skeleton className="h-5 w-16 rounded-full" />
+                </TableCell>
+                <TableCell className="p-2 align-middle whitespace-nowrap">
+                  <Skeleton className="h-4 w-24" />
+                </TableCell>
+                <TableCell className="p-2 align-middle whitespace-nowrap">
+                  <Skeleton className="h-4 w-24" />
+                </TableCell>
+                <TableCell className="p-2 align-middle whitespace-nowrap text-right">
+                  <Skeleton className="h-8 w-8 rounded-md ml-auto" />
+                </TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
     </div>
   );
