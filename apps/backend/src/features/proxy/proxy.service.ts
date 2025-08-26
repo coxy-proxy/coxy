@@ -4,6 +4,7 @@ import { toHeaders } from '_/shared/utils';
 import * as config from 'config';
 import { Request, Response } from 'express';
 import { lastValueFrom } from 'rxjs';
+import { TokenResolverService } from './token-resolver.service';
 
 @Injectable()
 export class ProxyService {
@@ -12,7 +13,10 @@ export class ProxyService {
 
   private readonly globalPrefix = config.get<string>('api.prefix');
 
-  constructor(private readonly httpService: HttpService) {}
+  constructor(
+    private readonly httpService: HttpService,
+    private readonly tokenResolver: TokenResolverService,
+  ) {}
 
   async proxyRequest(req: Request, res: Response) {
     const originalUrl = req.originalUrl.replace(this.globalPrefix, '').replace('//', '/');
@@ -24,7 +28,14 @@ export class ProxyService {
       const headers = {
         ...toHeaders(req.headers),
         ...config.get<Record<string, string>>('github.copilot.headers'),
-      };
+      } as Record<string, string>;
+
+      const pathname = targetUrl.pathname;
+      const isChatCompletions = pathname === '/chat/completions' || pathname.startsWith('/chat/completions');
+      if (isChatCompletions) {
+        const { token } = await this.tokenResolver.resolveCopilotToken(req);
+        headers.authorization = `Bearer ${token}`;
+      }
 
       const copilotResponse = await lastValueFrom(
         this.httpService.request({
