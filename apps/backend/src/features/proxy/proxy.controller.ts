@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
-import { ApiKeyGuard } from '_/shared/api-keys';
 import { Request, Response } from 'express';
+import { ApiKeyGuard } from '../api-keys/guards/api-key.guard';
 import { ProxyService } from './proxy.service';
 
 @Controller()

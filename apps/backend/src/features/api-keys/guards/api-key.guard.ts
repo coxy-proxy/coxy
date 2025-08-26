@@ -1,7 +1,7 @@
 import { type CanActivate, type ExecutionContext, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import { ApiKeysFileStorageService } from '_/shared/api-keys';
 import { maskKey } from '_/shared/utils';
 import { ApiKey } from '@/shared/types/api-key';
-import { ApiKeysFileStorageService } from '../api-keys-file-storage.service';
 
 const EMPTY_KEY = '_';
 
