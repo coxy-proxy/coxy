@@ -19,9 +19,10 @@ interface ApiKeyRowProps {
   onRefreshMeta: (key: ApiKeyResponse) => Promise<void>;
 }
 
+const DEFAULT_CHAT_QUOTA = 500;
+
 export default function ApiKeyRow({ apiKey, onEdit, onDelete, onSetDefault, onRefreshMeta }: ApiKeyRowProps) {
-  const quotaUsed = apiKey.usageCount;
-  const quotaLimit = apiKey.meta?.completionsQuota ?? 'N/A';
+  const quotaUsed = DEFAULT_CHAT_QUOTA - apiKey.meta?.chatQuota || 0;
 
   // format as YYYY-MM-DD HH:mm
   const quotaRenewDate = apiKey.meta?.resetTime
@@ -48,7 +49,7 @@ export default function ApiKeyRow({ apiKey, onEdit, onDelete, onSetDefault, onRe
       <TableCell className="p-2 align-middle whitespace-nowrap text-sm text-muted-foreground">
         {apiKey.isDefault ? <DefaultKeyBadge /> : <span className="text-muted-foreground">—</span>}
       </TableCell>
-      <TableCell className="p-2 align-middle whitespace-nowrap text-sm text-muted-foreground">{`${quotaUsed} / ${quotaLimit}`}</TableCell>
+      <TableCell className="p-2 align-middle whitespace-nowrap text-sm text-muted-foreground">{`${quotaUsed} / ${DEFAULT_CHAT_QUOTA}`}</TableCell>
       <TableCell className="p-2 align-middle whitespace-nowrap text-sm text-muted-foreground">
         {quotaRenewDate}
       </TableCell>

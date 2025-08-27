@@ -30,7 +30,7 @@ export default function ApiKeyTable({ apiKeys, onEdit, onDelete, onSetDefault, o
                 Default
               </TableHead>
               <TableHead className="text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap">
-                Quota
+                Chat Usage
               </TableHead>
               <TableHead className="text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap">
                 Renew At
