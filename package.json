@@ -1,6 +1,6 @@
 {
-  "name": "@nx-template/source",
-  "version": "0.0.0",
+  "name": "coxy",
+  "version": "0.0.1",
   "license": "MIT",
   "scripts": {
     "build": "nx build frontend",
