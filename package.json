@@ -4,6 +4,8 @@
   "license": "MIT",
   "scripts": {
     "build": "nx build frontend",
+    "build:backend": "nx build backend",
+    "build:gateway": "nx build gateway",
     "dev": ". ./.env && nx dev frontend -p $FRONTEND_PORT",
     "dev:backend": "nx serve backend",
     "dev:gateway": "nx serve gateway",
