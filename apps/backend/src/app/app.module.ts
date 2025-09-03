@@ -1,7 +1,6 @@
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
-import config from 'config';
 import { AdminModule } from '../features/admin/admin.module';
 import { ApiKeysModule } from '../features/api-keys/api-keys.module';
 import { ProxyModule } from '../features/proxy/proxy.module';
@@ -12,7 +11,7 @@ import { AppService } from './app.service';
   imports: [
     JwtModule.register({
       global: true,
-      secret: config.get<string>('jwt.secret') || 'your-secret-key',
+      secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '24h' },
     }),
     HttpModule.register({
