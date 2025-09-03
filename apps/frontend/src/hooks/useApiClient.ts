@@ -2,10 +2,9 @@ import { useAuth } from '@clerk/nextjs';
 import axios from 'axios';
 
 const instanceFactory = () => {
-  const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-  // Create axios instance
+  // Create axios instance with relative API base URL (proxied via gateway)
   const instance = axios.create({
-    baseURL: `${BASE_URL}/api`,
+    baseURL: `/api`,
     timeout: 10000,
   });
 

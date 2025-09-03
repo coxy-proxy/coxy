@@ -4,8 +4,9 @@
   "license": "MIT",
   "scripts": {
     "build": "nx build frontend",
-    "dev": "nx dev frontend",
+    "dev": ". ./.env && nx dev frontend -p $FRONTEND_PORT",
     "dev:backend": "nx serve backend",
+    "dev:gateway": "nx serve gateway",
     "ui:add": "TS_NODE_PROJECT=./tsconfig.base.json shadcn add",
     "lint": "biome check apps libs",
     "lint:staged": "biome check apps libs --staged"

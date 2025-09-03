@@ -24,11 +24,6 @@ export async function sendMessage({
   copilotKey,
   onDelta,
 }: SendMessageRequest): Promise<SendMessageResponse> {
-  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-  if (!baseUrl) {
-    throw new Error('NEXT_PUBLIC_API_BASE_URL is not set');
-  }
-
   const payload = {
     model: model ?? 'gpt-4o-mini',
     messages: [...history.map((m) => ({ role: m.role, content: m.content })), { role: 'user', content: message }],
@@ -40,7 +35,7 @@ export async function sendMessage({
     headers['Authorization'] = /^(token|Bearer)\s/.test(copilotKey) ? copilotKey : `token ${copilotKey}`;
   }
 
-  const res = await fetch(`${baseUrl}/api/chat/completions`, {
+  const res = await fetch(`/api/chat/completions`, {
     method: 'POST',
     headers,
     body: JSON.stringify(payload),

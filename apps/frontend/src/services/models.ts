@@ -4,17 +4,12 @@ export interface Model {
 }
 
 export async function listModels(copilotKey?: string): Promise<Model[]> {
-  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-  if (!baseUrl) {
-    throw new Error('NEXT_PUBLIC_API_BASE_URL is not set');
-  }
-
   const headers: Record<string, string> = {};
   if (copilotKey) {
     headers['Authorization'] = /^(token|Bearer)\s/.test(copilotKey) ? copilotKey : `token ${copilotKey}`;
   }
 
-  const res = await fetch(`${baseUrl}/api/models`, { headers });
+  const res = await fetch(`/api/models`, { headers });
   if (!res.ok) {
     const text = await res.text().catch(() => '');
     throw new Error(`Failed to fetch models: ${res.status} ${res.statusText} ${text}`);

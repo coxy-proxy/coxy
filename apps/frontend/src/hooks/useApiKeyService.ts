@@ -42,9 +42,8 @@ class ApiKeyService {
   }
 
   startDeviceFlow(): EventSource {
-    const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
     // The backend controller uses @Sse which is a GET request.
-    return new EventSource(`${baseUrl}/api/api-keys/device-flow`);
+    return new EventSource(`/api/api-keys/device-flow`);
   }
 }
 

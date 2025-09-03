@@ -4,7 +4,7 @@ import { app } from './app/app';
 
 // Environment configuration with sensible defaults
 const host = process.env.HOST ?? 'localhost';
-const port = process.env.GATEWAY_PORT ? Number(process.env.GATEWAY_PORT) : 3000;
+const port = process.env.PORT ? Number(process.env.PORT) : 3000;
 const backendHost = process.env.BACKEND_HOST ?? 'localhost';
 const backendPort = process.env.BACKEND_PORT ? Number(process.env.BACKEND_PORT) : 3020;
 const frontendHost = process.env.FRONTEND_HOST ?? 'localhost';
