@@ -1,7 +1,7 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { toHeaders } from '_/shared/utils';
-import * as config from 'config';
 import { Request, Response } from 'express';
 import { lastValueFrom } from 'rxjs';
 import { TokenResolverService } from './token-resolver.service';
@@ -9,14 +9,17 @@ import { TokenResolverService } from './token-resolver.service';
 @Injectable()
 export class ProxyService {
   private readonly logger = new Logger(ProxyService.name);
-  private readonly copilotApiUrl = config.get<string>('github.copilot.copilotApiUrl');
-
-  private readonly globalPrefix = config.get<string>('api.prefix');
+  private readonly copilotApiUrl: string;
+  private readonly globalPrefix: string;
 
   constructor(
     private readonly httpService: HttpService,
     private readonly tokenResolver: TokenResolverService,
-  ) {}
+    private readonly configService: ConfigService,
+  ) {
+    this.copilotApiUrl = this.configService.get<string>('github.copilot.copilotApiUrl');
+    this.globalPrefix = this.configService.get<string>('api.prefix');
+  }
 
   async proxyRequest(req: Request, res: Response) {
     const originalUrl = req.originalUrl.replace(this.globalPrefix, '').replace('//', '/');
@@ -27,7 +30,7 @@ export class ProxyService {
 
       const headers = {
         ...toHeaders(req.headers),
-        ...config.get<Record<string, string>>('github.copilot.headers'),
+        ...(this.configService.get<Record<string, string>>('github.copilot.headers') ?? {}),
       } as Record<string, string>;
 
       const pathname = targetUrl.pathname;

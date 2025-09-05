@@ -158,9 +158,6 @@ importers:
       clsx:
         specifier: 2.1.1
         version: 2.1.1
-      config:
-        specifier: 4.1.0
-        version: 4.1.0
       date-fns:
         specifier: 4.1.0
         version: 4.1.0
@@ -333,9 +330,6 @@ importers:
       '@swc/helpers':
         specifier: ~0.5.11
         version: 0.5.17
-      '@types/config':
-        specifier: 3.3.5
-        version: 3.3.5
       '@types/node':
         specifier: 18.16.9
         version: 18.16.9
@@ -4279,9 +4273,6 @@ packages:
   '@types/chai@5.2.2':
     resolution: {integrity: sha512-8kB30R7Hwqf40JPiKhVzodJs2Qc1ZJ5zuT3uzw5Hq/dhNCl3G3l83jfpdI1e20BP348+fV7VIL/+FxaXkqBmWg==}
 
-  '@types/config@3.3.5':
-    resolution: {integrity: sha512-itq2HtXQBrNUKwMNZnb9mBRE3T99VYCdl1gjST9rq+9kFaB1iMMGuDeZnP88qid73DnpAMKH9ZolqDpS1Lz7+w==}
-
   '@types/connect-history-api-fallback@1.5.4':
     resolution: {integrity: sha512-n6Cr2xS1h4uAulPRdlw6Jl6s1oG8KrVilPN2yUITEs+K48EzMJJ3W1xy8K5eWuFvjp3R74AOIGSmp2UfBJ8HFw==}
 
@@ -5373,10 +5364,6 @@ packages:
   concat-stream@2.0.0:
     resolution: {integrity: sha512-MWufYdFw53ccGjCA+Ol7XJYpAlW6/prSMzuPOTRnJGcGzuhLn4Scrz7qf6o8bROZ514ltazcIFJZevcfbo0x7A==}
     engines: {'0': node >= 6.0}
-
-  config@4.1.0:
-    resolution: {integrity: sha512-uxu0WQTPXwwkR9ZVNQm3ID3f39lWa9HEmppVC6q2HL6sOZszTBL/HGwIHG1dhnWW8006TkhHwZjX6yvAfkXp6Q==}
-    engines: {node: '>= 20.0.0'}
 
   confusing-browser-globals@1.0.11:
     resolution: {integrity: sha512-JsPKdmh8ZkmnHxDk55FZ1TqVLvEQTvoByJZRN9jzI0UjxK/QgAmsphz7PGtqgPieQZ/CQcHWXCR7ATDNhGe+YA==}
@@ -14697,8 +14684,6 @@ snapshots:
     dependencies:
       '@types/deep-eql': 4.0.2
 
-  '@types/config@3.3.5': {}
-
   '@types/connect-history-api-fallback@1.5.4':
     dependencies:
       '@types/express-serve-static-core': 4.19.6
@@ -15972,10 +15957,6 @@ snapshots:
       inherits: 2.0.4
       readable-stream: 3.6.2
       typedarray: 0.0.6
-
-  config@4.1.0:
-    dependencies:
-      json5: 2.2.3
 
   confusing-browser-globals@1.0.11: {}
 

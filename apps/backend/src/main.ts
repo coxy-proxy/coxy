@@ -3,18 +3,18 @@
  * This is only a minimal backend to get started.
  */
 
-import 'dotenv/config';
 import { Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
-import config from 'config';
 
 import { AppModule } from './app/app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const globalPrefix = config.get<string>('api.prefix');
+  const configService = app.get(ConfigService);
+  const globalPrefix = configService.get<string>('api.prefix') ?? 'api';
   app.setGlobalPrefix(globalPrefix);
-  const port = process.env.BACKEND_PORT ? Number(process.env.BACKEND_PORT) : 3020;
+  const port = configService.get<number>('BACKEND_PORT') ?? 3020;
   app.enableCors();
   await app.listen(port);
   Logger.log(`🚀 Application is running on: http://localhost:${port}/${globalPrefix}`);

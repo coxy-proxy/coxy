@@ -1,6 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
-import allConfig from 'config';
+import { ConfigService } from '@nestjs/config';
 import {
   catchError,
   firstValueFrom,
@@ -43,9 +43,14 @@ interface GithubCopilotTokenApiResponse {
 @Injectable()
 export class GithubOauthService {
   private readonly logger = new Logger(GithubOauthService.name);
-  private readonly config = allConfig.get<any>('github');
+  private readonly config: any;
 
-  constructor(private readonly httpService: HttpService) {}
+  constructor(
+    private readonly httpService: HttpService,
+    private readonly configService: ConfigService,
+  ) {
+    this.config = this.configService.get<any>('github');
+  }
 
   async fetchCopilotMeta(key: string): Promise<CopilotMeta> {
     try {
