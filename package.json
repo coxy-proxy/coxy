@@ -13,6 +13,10 @@
     "lint": "biome check apps libs",
     "lint:staged": "biome check apps libs --staged"
   },
+  "bin": {
+    "coxy": "./bin/cli.js"
+  },
+  "files": ["dist/apps/backend", "dist/apps/gateway", "apps/frontend/server.js", "apps/frontend/.next", "bin"],
   "private": true,
   "dependencies": {
     "@angular/common": "~20.1.0",
