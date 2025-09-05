@@ -80,7 +80,7 @@
       "options": {
         "startTargetName": "start",
         "buildTargetName": "build",
-        "devTargetName": "dev",
+        "devTargetName": "serve",
         "serveStaticTargetName": "serve-static",
         "buildDepsTargetName": "build-deps",
         "watchDepsTargetName": "watch-deps"
