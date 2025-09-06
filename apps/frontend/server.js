@@ -15,7 +15,7 @@ app.prepare().then(() => {
       const parsedUrl = parse(req.url, true);
       handle(req, res, parsedUrl);
     })
-    .listen(port);
-
-  console.log(`> Frontend server listening at http://localhost:${port} as production`);
+    .listen(port, () => {
+      console.log(`🚀 Coxy frontend is running on http://localhost:${port} as production`);
+    });
 });

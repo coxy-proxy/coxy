@@ -56,4 +56,6 @@ export async function app(fastify: FastifyInstance, opts: AppOptions) {
     prefix: '/',
     httpMethods: ['DELETE', 'GET', 'HEAD', 'PATCH', 'POST', 'PUT', 'OPTIONS'],
   });
+
+  fastify.log.info('Routes configured: /api/* -> Backend API, /* -> Frontend App');
 }

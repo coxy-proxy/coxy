@@ -10,9 +10,11 @@ const backendPort = process.env.BACKEND_PORT ? Number(process.env.BACKEND_PORT) 
 const frontendHost = process.env.FRONTEND_HOST ?? 'localhost';
 const frontendPort = process.env.FRONTEND_PORT ? Number(process.env.FRONTEND_PORT) : 3010;
 
+import { logger } from '@/shared/logger';
+
 // Instantiate Fastify with some config
 const server = Fastify({
-  logger: true,
+  loggerInstance: logger,
 });
 
 // Log configuration on startup
@@ -48,7 +50,6 @@ server.listen({ port, host }, (err) => {
     server.log.error(err);
     process.exit(1);
   } else {
-    server.log.info(`API Gateway listening on port ${port}`);
-    server.log.info('Routes configured:\n  - /api/* -> Backend API\n  - /* -> Frontend App');
+    server.log.info(`🚀 Coxy gateway listening on port ${port}`);
   }
 });
