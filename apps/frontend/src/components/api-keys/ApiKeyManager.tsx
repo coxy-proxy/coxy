@@ -106,7 +106,7 @@ export default function ApiKeyManager({ initialApiKeys }: { initialApiKeys: ApiK
           <h1 className="text-2xl font-bold">API Keys</h1>
           <p className="text-gray-600">Manage your API keys for accessing the service.</p>
         </div>
-        <Button onClick={() => setCreateModalOpen(true)}>Create Key</Button>
+        <Button onClick={() => setCreateModalOpen(true)}>Create API Key</Button>
       </div>
 
       {apiKeys.length === 0 ? (
