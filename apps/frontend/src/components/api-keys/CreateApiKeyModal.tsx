@@ -36,13 +36,21 @@ export default function CreateApiKeyModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await onCreate(name, key);
+    setName('');
+    setKey('');
+  };
+
+  const doClose = () => {
+    onClose();
+    setName('');
+    setKey('');
   };
 
   return (
     <Dialog
       open={isOpen}
       onOpenChange={(open) => {
-        if (!open) onClose();
+        if (!open) doClose();
       }}
     >
       <DialogContent className="gap-3 p-4 sm">
@@ -78,7 +86,7 @@ export default function CreateApiKeyModal({
           </div>
 
           <DialogFooter className="gap-2">
-            <Button type="button" size="sm" variant="outline" onClick={onClose} disabled={isCreating}>
+            <Button type="button" size="sm" variant="outline" onClick={doClose} disabled={isCreating}>
               Cancel
             </Button>
             <Button type="submit" size="sm" disabled={isCreating || !name || !key}>
@@ -93,7 +101,7 @@ export default function CreateApiKeyModal({
             <span className="bg-background px-2 text-xs text-muted-foreground">OR</span>
           </div>
         </div>
-        <DeviceFlowStatus onSuccess={onDeviceFlowSuccess ?? onClose} />
+        <DeviceFlowStatus onSuccess={onDeviceFlowSuccess ?? doClose} />
       </DialogContent>
     </Dialog>
   );
