@@ -2,6 +2,7 @@
 
 import { SignOutButton, useUser } from '@clerk/nextjs';
 import { Key, MessageSquare, MoreVertical } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/ui/components/avatar';
@@ -40,8 +41,9 @@ function AppSidebar({ onClose }: { onClose: () => void }) {
     <UiSidebar variant="inset" collapsible="offcanvas">
       <SidebarHeader>
         <div className="flex items-center gap-2 px-2 py-1">
+          <Image src="/logo.png" width={32} height={32} alt="Coxy Logo" loading="lazy" />
           <Link href="/">
-            <span className="font-semibold">Copilot Proxy</span>
+            <span className="font-semibold text-2xl">Coxy</span>
           </Link>
         </div>
       </SidebarHeader>
