@@ -18,7 +18,14 @@
   "bin": {
     "coxy": "./bin/cli.js"
   },
-  "files": ["dist/apps/backend", "dist/apps/gateway", "apps/frontend/server.js", "apps/frontend/.next", "bin"],
+  "files": [
+    "dist/apps/backend",
+    "dist/apps/gateway",
+    "apps/frontend/server.js",
+    "apps/frontend/.next",
+    "apps/frontend/public",
+    "bin"
+  ],
   "private": true,
   "dependencies": {
     "@angular/common": "~20.1.0",
