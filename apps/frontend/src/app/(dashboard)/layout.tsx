@@ -1,10 +1,13 @@
 'use client';
 
 import { SignOutButton, useUser } from '@clerk/nextjs';
+import { RecentChats } from '_/components/chat/RecentChats';
+import { useChatStore } from '_/hooks/useChatStore';
 import { Key, MessageSquare, MoreVertical } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useMemo } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/ui/components/avatar';
 import {
   DropdownMenu,
@@ -31,7 +34,7 @@ import {
 } from '@/shared/ui/components/sidebar';
 import { Toaster } from '@/shared/ui/components/sonner';
 
-function AppSidebar({ onClose }: { onClose: () => void }) {
+function AppSidebar() {
   const { user } = useUser();
   const fullName = user?.fullName ?? user?.firstName ?? 'User';
   const email = user?.primaryEmailAddress?.emailAddress ?? '';
@@ -71,6 +74,7 @@ function AppSidebar({ onClose }: { onClose: () => void }) {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+        <RecentChats />
       </SidebarContent>
       <SidebarFooter>
         {process.env.NEXT_PUBLIC_AUTH_ENABLED === 'true' && (
@@ -131,8 +135,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           } as React.CSSProperties
         }
       >
-        {/* Sidebar */}
-        <AppSidebar onClose={() => {}} />
+        <AppSidebar />
 
         {/* Inset main area */}
         <SidebarInset className="bg-background border">
