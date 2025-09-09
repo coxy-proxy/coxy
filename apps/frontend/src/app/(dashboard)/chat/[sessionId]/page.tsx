@@ -1,6 +1,5 @@
 'use client';
 
-import { ChatHeader } from '_/components/chat/ChatHeader';
 import { ChatInput } from '_/components/chat/ChatInput';
 import { MessageList } from '_/components/chat/MessageList';
 import { ModelSelector } from '_/components/chat/ModelSelector';
@@ -24,9 +23,6 @@ export default function ChatSessionPage({ params }: ChatSessionPageProps) {
 
   return (
     <div className="mx-auto w-full max-w-4xl p-0 flex flex-col">
-      <div className="px-4 pt-4">
-        <ChatHeader sessionId={sessionId} />
-      </div>
       <div className="flex-1 overflow-y-auto px-4">
         <div className="">
           <MessageList

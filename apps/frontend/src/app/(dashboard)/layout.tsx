@@ -64,7 +64,7 @@ function AppSidebar({ onClose }: { onClose: () => void }) {
                 <SidebarMenuButton asChild>
                   <Link href="/chat">
                     <MessageSquare />
-                    <span>Chat</span>
+                    <span>New Chat</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
