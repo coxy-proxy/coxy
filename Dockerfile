@@ -35,5 +35,6 @@ WORKDIR /app
 
 # Copy production app from build stage
 COPY --from=builder /app/prod/ ./
+ENV HOST=0.0.0.0
 
 CMD ["bin/cli.js"]

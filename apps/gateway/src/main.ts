@@ -50,6 +50,6 @@ server.listen({ port, host }, (err) => {
     server.log.error(err);
     process.exit(1);
   } else {
-    server.log.info(`🚀 Coxy gateway listening on port ${port}`);
+    server.log.info(`🚀 Coxy gateway listening on ${host}:${port}`);
   }
 });
