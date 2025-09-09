@@ -10,6 +10,7 @@ interface ChatState {
   isLoading: boolean;
   error: string | null;
   selectedModel: string | null;
+  hasHydrated: boolean;
 }
 
 interface ChatActions {
@@ -22,6 +23,7 @@ interface ChatActions {
   setError: (error: string | null) => void;
   setCurrentSession: (sessionId: string) => void;
   setSelectedModel: (modelId: string) => void;
+  setHasHydrated: (value: boolean) => void;
 }
 
 export const useChatStore = create<ChatState & ChatActions>()(
@@ -32,6 +34,7 @@ export const useChatStore = create<ChatState & ChatActions>()(
       isLoading: false,
       error: null,
       selectedModel: null,
+      hasHydrated: false,
       createSession: () => {
         const { sessions } = get();
         const newSessionId = `session-${Object.keys(sessions).length + 1}`;
@@ -91,10 +94,21 @@ export const useChatStore = create<ChatState & ChatActions>()(
       setError: (error) => set({ error }),
       setCurrentSession: (sessionId) => set({ currentSession: sessionId }),
       setSelectedModel: (modelId) => set({ selectedModel: modelId }),
+      setHasHydrated: (value) => set({ hasHydrated: value }),
     }),
     {
       name: 'chat-store',
       storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({
+        sessions: state.sessions,
+        currentSession: state.currentSession,
+        selectedModel: state.selectedModel,
+      }),
+      onRehydrateStorage: () => (state) => {
+        // before hydration starts, flag stays false
+        // after hydration, mark as hydrated
+        state?.setHasHydrated(true);
+      },
     },
   ),
 );

@@ -5,7 +5,8 @@ import { MessageList } from '_/components/chat/MessageList';
 import { ModelSelector } from '_/components/chat/ModelSelector';
 import { useChat } from '_/hooks/useChat';
 import { useChatStore } from '_/hooks/useChatStore';
-import { use } from 'react';
+import { useRouter } from 'next/navigation';
+import { use, useEffect, useState } from 'react';
 
 interface ChatSessionPageProps {
   params: Promise<{ sessionId: string }>;
@@ -13,9 +14,19 @@ interface ChatSessionPageProps {
 
 export default function ChatSessionPage({ params }: ChatSessionPageProps) {
   const { sessionId } = use(params);
+  const router = useRouter();
   const { sessions } = useChatStore();
   const { sendMessage, retryAssistantMessage, isLoading } = useChat(sessionId);
   const messages = sessions[sessionId] || [];
+
+  // Use store's hasHydrated flag set via onRehydrateStorage
+  const hydrated = useChatStore((s) => s.hasHydrated);
+  useEffect(() => {
+    if (!hydrated) return;
+    if (!sessions[sessionId]) {
+      router.replace('/chat');
+    }
+  }, [hydrated, sessions, sessionId, router]);
 
   const handleSendMessage = async (content: string) => {
     await sendMessage(sessionId, content);
