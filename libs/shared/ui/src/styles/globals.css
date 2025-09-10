@@ -167,7 +167,7 @@
     box-shadow: 0 2px 0 0 var(--destructive-border);
   }
   .texture {
-    background-image: url(https://matsu-theme.vercel.app/texture.jpg);
+    background-image: url(/texture.jpg);
     background-size: 100% 100%;
     background-repeat: repeat;
     opacity: 0.12;
