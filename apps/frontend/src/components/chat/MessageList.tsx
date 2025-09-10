@@ -23,20 +23,18 @@ export function MessageList({ messages, isLoading, onRetry, className = '' }: Me
   }, [messages, isLoading]);
 
   return (
-    <ScrollArea className={`p-4 ${className}`}>
-      <div ref={scrollRef} className="overflow-y-auto">
-        {messages.map((msg) => (
-          <Message key={msg.id} message={msg} onRetry={() => onRetry?.(msg.id)} />
-        ))}
-        {isLoading && (
-          <div className="flex justify-start">
-            <TypingIndicator />
-          </div>
-        )}
-        {!isLoading && messages.length === 0 && (
-          <div className="text-center text-sm text-gray-500 py-6">No messages yet.</div>
-        )}
-      </div>
-    </ScrollArea>
+    <div ref={scrollRef} className="overflow-y-auto">
+      {messages.map((msg) => (
+        <Message key={msg.id} message={msg} onRetry={() => onRetry?.(msg.id)} />
+      ))}
+      {isLoading && (
+        <div className="flex justify-start">
+          <TypingIndicator />
+        </div>
+      )}
+      {!isLoading && messages.length === 0 && (
+        <div className="text-center text-sm text-gray-500 py-6">No messages yet.</div>
+      )}
+    </div>
   );
 }
