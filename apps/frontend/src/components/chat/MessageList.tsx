@@ -24,7 +24,7 @@ export function MessageList({ messages, isLoading, onRetry, className = '' }: Me
 
   return (
     <ScrollArea className={`p-4 ${className}`}>
-      <div ref={scrollRef} className="max-h-[60vh] overflow-y-auto">
+      <div ref={scrollRef} className="overflow-y-auto">
         {messages.map((msg) => (
           <Message key={msg.id} message={msg} onRetry={() => onRetry?.(msg.id)} />
         ))}

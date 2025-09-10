@@ -146,7 +146,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <h1 className="text-base font-medium">{pageTitle}</h1>
             </div>
           </header>
-          <div className="flex flex-1 flex-col">
+          <div className="flex flex-1 flex-col overflow-y-auto">
             <div className="@container/main flex flex-1 flex-col gap-2 p-4">{children}</div>
           </div>
           <Toaster richColors position="top-right" />
