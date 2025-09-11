@@ -23,7 +23,7 @@ export function MessageList({ messages, isLoading, onRetry, className = '' }: Me
   }, [messages, isLoading]);
 
   return (
-    <div ref={scrollRef} className="overflow-y-auto">
+    <div ref={scrollRef}>
       {messages.map((msg) => (
         <Message key={msg.id} message={msg} onRetry={() => onRetry?.(msg.id)} />
       ))}

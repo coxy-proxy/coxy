@@ -34,22 +34,24 @@ export default function ChatSessionPage({ params }: ChatSessionPageProps) {
   };
 
   return (
-    <div className="mx-auto w-full max-w-4xl p-0 flex flex-col">
+    <div className="w-full p-0 flex flex-1 flex-col overflow-y-hidden">
       {!hydrated || !messages ? (
         <div className="flex h-full items-center justify-center py-12">
           <TypingIndicator />
         </div>
       ) : (
-        <div className="flex-1 overflow-y-auto px-4">
-          <div className="">
-            <MessageList
-              messages={messages}
-              isLoading={isLoading}
-              onRetry={(assistantMessageId) => retryAssistantMessage(sessionId, assistantMessageId)}
-              className="h-full"
-            />
+        <>
+          <div className="flex flex-col flex-1 overflow-y-auto [scrollbar-gutter:stable] pt-8 px-3 lg:px-8">
+            <div className="flex-1 mx-auto max-w-4xl w-full lg:w-2/3">
+              <MessageList
+                messages={messages}
+                isLoading={isLoading}
+                onRetry={(assistantMessageId) => retryAssistantMessage(sessionId, assistantMessageId)}
+                className="h-full"
+              />
+            </div>
           </div>
-          <div className="sticky bottom-0 bg-background pt-2 pb-3">
+          <div className="bg-background max-w-4xl mx-auto w-full lg:w-2/3 px-3 lg:px-8">
             <ChatInput
               autoFocus
               onSend={handleSendMessage}
@@ -60,7 +62,7 @@ export default function ChatSessionPage({ params }: ChatSessionPageProps) {
               <ModelSelector />
             </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   );
