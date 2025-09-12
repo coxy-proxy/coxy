@@ -1,8 +1,6 @@
 'use client';
 
 import type { Message as MessageType } from '_/types/chat';
-import { useEffect, useRef } from 'react';
-import { ScrollArea } from '@/shared/ui/components/scroll-area';
 import { Message } from './Message';
 import { TypingIndicator } from './TypingIndicator';
 
@@ -13,17 +11,10 @@ interface MessageListProps {
   className?: string;
 }
 
+// Presentational-only list: no internal scrolling or auto-scroll logic.
 export function MessageList({ messages, isLoading, onRetry, className = '' }: MessageListProps) {
-  const scrollRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  }, [messages, isLoading]);
-
   return (
-    <div ref={scrollRef}>
+    <div className={className}>
       {messages.map((msg) => (
         <Message key={msg.id} message={msg} onRetry={() => onRetry?.(msg.id)} />
       ))}

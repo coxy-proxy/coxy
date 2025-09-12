@@ -3,6 +3,7 @@
 import { ChatInput } from '_/components/chat/ChatInput';
 import { MessageList } from '_/components/chat/MessageList';
 import { ModelSelector } from '_/components/chat/ModelSelector';
+import { ScrollShadowViewport } from '_/components/chat/ScrollShadowViewport';
 import { TypingIndicator } from '_/components/chat/TypingIndicator';
 import { useChat } from '_/hooks/useChat';
 import { useChatStore } from '_/hooks/useChatStore';
@@ -41,16 +42,18 @@ export default function ChatSessionPage({ params }: ChatSessionPageProps) {
         </div>
       ) : (
         <>
-          <div className="flex flex-col flex-1 overflow-y-auto [scrollbar-gutter:stable] pt-8 px-3 lg:px-8">
-            <div className="flex-1 mx-auto max-w-4xl w-full lg:w-2/3">
-              <MessageList
-                messages={messages}
-                isLoading={isLoading}
-                onRetry={(assistantMessageId) => retryAssistantMessage(sessionId, assistantMessageId)}
-                className="h-full"
-              />
-            </div>
-          </div>
+          <ScrollShadowViewport
+            className="relative flex-1 [scrollbar-gutter:stable] mt-6 px-3 lg:px-8"
+            contentClassName="flex-1 mx-auto max-w-4xl w-full lg:w-2/3"
+            autoScrollOn={[messages, isLoading]}
+          >
+            <MessageList
+              messages={messages}
+              isLoading={isLoading}
+              onRetry={(assistantMessageId) => retryAssistantMessage(sessionId, assistantMessageId)}
+              className="h-full"
+            />
+          </ScrollShadowViewport>
           <div className="bg-background max-w-4xl mx-auto w-full lg:w-2/3 px-3 lg:px-8">
             <ChatInput
               autoFocus
