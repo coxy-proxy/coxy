@@ -3,7 +3,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 
 export default function ApiKeyTableSkeleton() {
   return (
-    <div className="overflow-hidden rounded-lg border">
+    <div className="overflow-hidden rounded-lg border m-4">
       <div data-slot="table-container" className="relative w-full overflow-x-auto">
         <Table data-slot="table" className="w-full caption-bottom text-sm">
           <TableHeader data-slot="table-header" className="[&_tr]:border-b-2 bg-muted sticky top-0 z-10">

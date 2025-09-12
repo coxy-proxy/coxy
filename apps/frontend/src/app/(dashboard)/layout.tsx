@@ -146,7 +146,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <h1 className="text-base font-medium">{pageTitle}</h1>
             </div>
           </header>
-          <div className="flex flex-1 flex-col overflow-y-hidden rounded-[inherit] ">{children}</div>
+          <div className="flex flex-1 flex-col overflow-y-auto rounded-[inherit] ">{children}</div>
           <Toaster richColors position="top-right" />
         </SidebarInset>
       </div>

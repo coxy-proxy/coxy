@@ -24,29 +24,29 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="mx-auto w-full max-w-3xl p-6 flex h-full">
-      <div className="mt-[calc(40%)] mx-auto w-full max-w-xl">
-        <h1 className="mb-4 text-center text-3xl font-semibold">Start a conversation</h1>
+    <div className="mx-auto w-full lg:w-2/3 p-6 flex flex-col h-full">
+      <h1 className="min-h-[25vh] mb-4 flex flex-col justify-end text-center text-3xl font-semibold">
+        Start a conversation
+      </h1>
 
-        <div className="w-full">
-          <ChatInput
-            onSend={handleFirstMessage}
-            disabled={isLoading}
-            placeholder="Type your message here..."
-            autoFocus
-            className="w-full"
-          />
-          <div className="mt-2">
-            <ModelSelector />
-          </div>
+      <div className="w-full">
+        <ChatInput
+          onSend={handleFirstMessage}
+          disabled={isLoading}
+          placeholder="Type your message here..."
+          autoFocus
+          className="w-full"
+        />
+        <div className="mt-2">
+          <ModelSelector />
         </div>
-
-        {isLoading && (
-          <div className="mt-4 flex justify-center">
-            <TypingIndicator />
-          </div>
-        )}
       </div>
+
+      {isLoading && (
+        <div className="mt-4 flex justify-center">
+          <TypingIndicator />
+        </div>
+      )}
     </div>
   );
 }
