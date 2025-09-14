@@ -1,82 +1,82 @@
-# NxTemplate
+# Coxy
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
-
-✨ Your new, shiny [Nx workspace](https://nx.dev) is almost ready ✨.
-
-[Learn more about this workspace setup and its capabilities](https://nx.dev/getting-started/tutorials/angular-monorepo-tutorial?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
-
-## Finish your CI setup
-
-[Click here to finish setting up your workspace!](https://cloud.nx.app/connect/bFgGfumixU)
+The proxy that exposes your GitHub Copilot as an OpenAI-compatible API.
 
 
-## Run tasks
+## Why?
+- You have a lot of free quota on GitHub Copilot, you want to use it like OpenAI-compatible APIs.
+- You want the computing power of GitHub Copilot beyond VS Code.
+- You want to use modern models like gpt-4.1 free.
+- You have multiple GitHub accounts and the free quota is just wasted.
+- Host LLM locally and leave the computing remotely.
 
-To run the dev server for your app, use:
+## Features
 
-```sh
-npx nx serve frontend
-```
+- Proxies requests to `https://api.githubcopilot.com`
+  - Support endpoints: `/chat/completions`, `/models`
+- User-friendly admin UI:
+  - Log in with GitHub and generate tokens
+  - Add tokens manually
+  - Manage multiple tokens with ease
+  - View chat message and code completion usage statistics
+- Supports Langfuse for LLM observability
 
-To create a production bundle:
+## How to use
+- Start the proxy server
+  - Option 1: Use Docker
+    ```bash
+    docker run -p 3000:3000 ghcr.io/coxy-proxy/coxy:latest
+    ```
+  - Option 2: Use `pnpx`(recommended) or `npx`
+    ```bash
+    pnpx coxy
+    ```
+- Browse `http://localhost:3000` to generate the token by following the instructions.
+  - Or add your own token manually.
+- Set a default token.
+- Your OpenAI-compatible API base URL is `http://localhost:3000/api`
+  - You can test it like this: (no need authorization header since you've set a default token!)
+  ```
+  curl --request POST --url http://localhost:3000/api/chat/completions --header 'content-type: application/json' \
+  --data '{
+      "model": "gpt-4",
+      "messages": [{"role": "user", "content": "Hi"}]
+  }'
+  ```
+  - You still can set a token in the request header `authorization: Bearer <token>` and it will override the default token.
+- (Optional) Use environment variable `PORT` for setting different port other than `3000`.
 
-```sh
-npx nx build frontend
-```
+## Available environment variables
+  - `PORT`: Port number to listen on (default: `3000`)
+  - `LOG_LEVEL`: Log level (default: `info`)
+  - `STORAGE_DIR`: Directory to store tokens (default: `.storage`)
+    - Be sure to backup this directory if you want to keep your tokens.
+    - Note: even if you delete the storage folder, the token is still functional from GitHub Copilot. (That is how Github Copilot works at the moment.)
+  - Langfuse is supported, see official [documentation](https://langfuse.com/docs/get-started) for more details.
+      - `LANGFUSE_SECRET_KEY`: Langfuse secret key
+      - `LANGFUSE_PUBLIC_KEY`: Langfuse public key
+      - `LANGFUSE_BASEURL`: Langfuse base URL (default: `https://cloud.langfuse.com`)
 
-To see all available targets to run for a project, run:
+## Advanced usage
+- Dummy token `_` to make coxy use the default token.
+    - In most cases, the default token just works without 'Authorization' header. But if your LLM client requires a non-empty API key, you can use the special dummy token `_` to make coxy use the default token.
+- Tips for using docker:
+  - Mount the storage folder from host to persist the tokens and use .env file to set environment variables
+    ```bash
+    docker run -p 3000:3000 -v /path/to/storage:/app/.storage -v /path/to/.env:/app/.env ghcr.io/coxy-proxy/coxy:latest
+    ```
 
-```sh
-npx nx show project frontend
-```
+## Use cases
+- Use with [LLM](https://llm.datasette.io/en/stable/other-models.html#openai-compatible-models) CLI locally.
+- Chat with GitHub Copilot by [Open WebUI](https://docs.openwebui.com/getting-started/).
+## Requirements
 
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
+- Node.js 22 or higher 
 
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+## References
+- https://www.npmjs.com/package/@github/copilot-language-server
+- https://github.com/B00TK1D/copilot-api
+- https://github.com/ericc-ch/copilot-api
+- https://hub.docker.com/r/mouxan/copilot
 
-## Add new projects
-
-While you could add new projects to your workspace manually, you might want to leverage [Nx plugins](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) and their [code generation](https://nx.dev/features/generate-code?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) feature.
-
-Use the plugin's generator to create new projects.
-
-To generate a new application, use:
-
-```sh
-npx nx g @nx/angular:app demo
-```
-
-To generate a new library, use:
-
-```sh
-npx nx g @nx/angular:lib mylib
-```
-
-You can use `npx nx list` to get a list of installed plugins. Then, run `npx nx list <plugin-name>` to learn about more specific capabilities of a particular plugin. Alternatively, [install Nx Console](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) to browse plugins and generators in your IDE.
-
-[Learn more about Nx plugins &raquo;](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) | [Browse the plugin registry &raquo;](https://nx.dev/plugin-registry?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Install Nx Console
-
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
-
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Useful links
-
-Learn more:
-
-- [Learn more about this workspace setup](https://nx.dev/getting-started/tutorials/angular-monorepo-tutorial?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-And join the Nx community:
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+> Licensed under the [MIT License](./LICENSE).
