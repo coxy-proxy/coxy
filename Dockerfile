@@ -1,5 +1,7 @@
 # Build stage
 FROM node:22-alpine AS builder
+LABEL org.opencontainers.image.source https://github.com/coxy-proxy/coxy
+
 WORKDIR /app
 
 # Enable corepack to manage pnpm
