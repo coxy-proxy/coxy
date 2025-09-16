@@ -49,9 +49,7 @@ The proxy that exposes your GitHub Copilot as an OpenAI-compatible API.
 ## Available environment variables
   - `PORT`: Port number to listen on (default: `3000`)
   - `LOG_LEVEL`: Log level (default: `info`)
-  - `STORAGE_DIR`: Directory to store tokens (default: `.storage`)
-    - Be sure to backup this directory if you want to keep your tokens.
-    - Note: even if you delete the storage folder, the token is still functional from GitHub Copilot. (That is how Github Copilot works at the moment.)
+  - `DATABASE_URL`: Sqlite URL for Prisma
   - Langfuse is supported, see official [documentation](https://langfuse.com/docs/get-started) for more details.
       - `LANGFUSE_SECRET_KEY`: Langfuse secret key
       - `LANGFUSE_PUBLIC_KEY`: Langfuse public key

@@ -93,6 +93,6 @@ The `ApiKeysModule` manages API keys used to authenticate requests to the proxy.
 
 The `shared` directory contains modules and services that are used by multiple feature modules.
 
--   **ApiKeysSharedModule**: Provides shared services for managing API keys, namely the `ApiKeysFileStorageService` which persists keys using `node-persist` under `.storage` (configurable via `STORAGE_DIR`).
+-   **ApiKeysSharedModule**: Provides shared services for managing API keys via a database-backed service (Prisma). File-based storage has been removed.
 -   **Interceptors**: `LoggingInterceptor` is available for request logging (not currently applied globally).
 -   **Utils**: Utility functions like `maskKey` and `toHeaders` used across the app.

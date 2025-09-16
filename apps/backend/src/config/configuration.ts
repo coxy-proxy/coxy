@@ -2,10 +2,6 @@ export default () => ({
   api: {
     prefix: 'api',
   },
-  apiKeys: {
-    storage: (process.env.API_KEYS_STORAGE as 'file' | 'database') || 'file',
-    migrateOnStart: process.env.API_KEYS_MIGRATE_ON_START === 'true',
-  },
   github: {
     deviceCodeApiUrl: 'https://github.com/login/device/code',
     oauthApiUrl: 'https://github.com/login/oauth/access_token',

@@ -13,6 +13,8 @@
     "dev:gateway": "nx serve gateway",
     "test": "nx test backend",
     "e2e": "nx e2e gateway",
+    "db:client": "prisma generate",
+    "db:sync": "prisma db push",
     "ui:add": "TS_NODE_PROJECT=./tsconfig.base.json shadcn add",
     "lint": "biome check apps libs",
     "lint:staged": "biome check apps libs --staged"
@@ -89,7 +91,7 @@
     "lucide-react": "0.539.0",
     "next": "~15.2.4",
     "next-themes": "0.4.6",
-    "node-persist": "4.0.4",
+
     "pino": "9.7.0",
     "pino-pretty": "13.1.1",
     "postcss": "8.5.6",
@@ -144,7 +146,7 @@
     "@swc/core": "~1.5.7",
     "@swc/helpers": "~0.5.11",
     "@types/node": "18.16.9",
-    "@types/node-persist": "3.1.8",
+
     "@types/react": "19.0.0",
     "@types/react-dom": "19.0.0",
     "@typescript-eslint/utils": "^8.29.0",

@@ -1,4 +1,4 @@
-import type { ApiKeysFileStorageService } from '_/shared/api-keys';
+import type { IApiKeysStorage } from '_/shared/api-keys';
 import { of, Subject } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { ApiKey, ApiKeyResponse, CopilotMeta } from '@/shared/types/api-key';
@@ -21,7 +21,7 @@ function makeApiKey(partial: Partial<ApiKey> = {}): ApiKey {
 
 describe('ApiKeysService', () => {
   let oauth: jest.Mocked<GithubOauthService> | any;
-  let storage: jest.Mocked<ApiKeysFileStorageService> | any;
+  let storage: jest.Mocked<IApiKeysStorage> | any;
   let service: ApiKeysService;
 
   beforeEach(() => {
