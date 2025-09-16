@@ -11,6 +11,7 @@
     "dev:frontend": "nx serve frontend",
     "dev:backend": "nx serve backend",
     "dev:gateway": "nx serve gateway",
+    "test": "nx test backend",
     "ui:add": "TS_NODE_PROJECT=./tsconfig.base.json shadcn add",
     "lint": "biome check apps libs",
     "lint:staged": "biome check apps libs --staged"
