@@ -1,5 +1,5 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { ApiKeysFileStorageService } from '_/shared/api-keys';
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { API_KEYS_STORAGE, IApiKeysStorage } from '_/shared/api-keys';
 import { Observable, tap } from 'rxjs';
 import {
   ApiKey,
@@ -20,39 +20,39 @@ export class ApiKeysService {
 
   constructor(
     private readonly githubOauthService: GithubOauthService,
-    private readonly fileStorageService: ApiKeysFileStorageService,
+    @Inject(API_KEYS_STORAGE) private readonly storageService: IApiKeysStorage,
   ) {}
 
   async createApiKey(dto: CreateApiKeyDto): Promise<ApiKeyResponse> {
-    const apiKey = await this.fileStorageService.create(dto);
+    const apiKey = await this.storageService.create(dto);
     apiKey.meta = await this.githubOauthService.fetchCopilotMeta(apiKey.key).catch(() => null);
 
     return this.toApiKeyResponse(apiKey);
   }
 
   async listApiKeys(): Promise<ApiKeyResponse[]> {
-    const apiKeys = await this.fileStorageService.findAll();
-    this.defaultApiKeyId = (await this.fileStorageService.getDefault())?.id;
+    const apiKeys = await this.storageService.findAll();
+    this.defaultApiKeyId = (await this.storageService.getDefault())?.id;
 
     // Sort by createdAt in descending order
     return apiKeys.map(this.toApiKeyResponse).sort((a, b) => b.createdAt - a.createdAt);
   }
 
   async updateApiKey(id: string, dto: UpdateApiKeyDto): Promise<ApiKeyResponse> {
-    const apiKey = await this.fileStorageService.findOne(id);
+    const apiKey = await this.storageService.findOne(id);
     if (!apiKey) {
       throw new Error('API key not found');
     }
-    const newKey = await this.fileStorageService.update(id, dto);
+    const newKey = await this.storageService.update(id, dto);
     return this.toApiKeyResponse(newKey);
   }
 
   async deleteApiKey(id: string): Promise<void> {
-    await this.fileStorageService.remove(id);
+    await this.storageService.remove(id);
   }
 
   async refreshApiKeyMeta(id: string): Promise<ApiKeyResponse> {
-    const apiKey = await this.fileStorageService.findOne(id);
+    const apiKey = await this.storageService.findOne(id);
     if (!apiKey) {
       throw new Error('API key not found');
     }
@@ -62,7 +62,7 @@ export class ApiKeysService {
       throw new Error('Failed to refresh Copilot meta');
     });
 
-    const updated = await this.fileStorageService.update(id, { meta });
+    const updated = await this.storageService.update(id, { meta });
     return this.toApiKeyResponse(updated);
   }
 
@@ -75,11 +75,11 @@ export class ApiKeysService {
   }
 
   async setDefaultApiKey(dto: SetDefaultApiKeyDto): Promise<ApiKeyResponse> {
-    const apiKey = await this.fileStorageService.findOne(dto.id);
+    const apiKey = await this.storageService.findOne(dto.id);
     if (!apiKey) {
       throw new Error('API key not found');
     }
-    await this.fileStorageService.updateDefault(apiKey.id);
+    await this.storageService.updateDefault(apiKey.id);
     this.defaultApiKeyId = apiKey.id;
     return this.toApiKeyResponse(apiKey);
   }

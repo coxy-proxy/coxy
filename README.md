@@ -61,9 +61,9 @@ The proxy that exposes your GitHub Copilot as an OpenAI-compatible API.
 - Dummy token `_` to make coxy use the default token.
     - In most cases, the default token just works without 'Authorization' header. But if your LLM client requires a non-empty API key, you can use the special dummy token `_` to make coxy use the default token.
 - Tips for using docker:
-  - Mount the storage folder from host to persist the tokens and use .env file to set environment variables
+  - Mount the sqlite db file from host to persist the tokens and use .env file to set environment variables
     ```bash
-    docker run -p 3000:3000 -v /path/to/storage:/app/.storage -v /path/to/.env:/app/.env ghcr.io/coxy-proxy/coxy:latest
+    docker run -p 3000:3000 -v /path/to/sqlite.db:/app/coxy.db -v /path/to/.env:/app/.env ghcr.io/coxy-proxy/coxy:latest
     ```
 
 ## Use cases

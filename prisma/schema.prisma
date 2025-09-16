@@ -12,3 +12,27 @@ model User {
   email String  @unique
   name  String?
 }
+
+model ApiKey {
+  id         String       @id @default(uuid())
+  name       String
+  key        String       @unique
+  createdAt  DateTime     @default(now())
+  lastUsed   DateTime?
+  usageCount Int          @default(0)
+  isDefault  Boolean      @default(false)
+  meta       CopilotMeta?
+
+  @@index([isDefault])
+}
+
+model CopilotMeta {
+  id               String   @id @default(uuid())
+  token            String
+  expiresAt        DateTime
+  resetTime        DateTime?
+  chatQuota        Int?
+  completionsQuota Int?
+  apiKeyId         String   @unique
+  apiKey           ApiKey   @relation(fields: [apiKeyId], references: [id], onDelete: Cascade)
+}
