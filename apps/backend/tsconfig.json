@@ -5,9 +5,16 @@
   "references": [
     {
       "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
     }
   ],
   "compilerOptions": {
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "paths": {
+      "_/*": ["apps/backend/src/*"],
+      "@/shared/types/*": ["libs/shared/types/src/*"]
+    }
   }
 }

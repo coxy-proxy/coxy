@@ -16,6 +16,12 @@
         }
       }
     },
+    "test": {
+      "executor": "@nx/vite:test",
+      "options": {
+        "config": "apps/backend/vite.config.ts"
+      }
+    },
     "serve": {
       "continuous": true,
       "executor": "@nx/js:node",
