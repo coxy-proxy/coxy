@@ -1,6 +1,6 @@
 # Build stage
 FROM node:22-alpine AS builder
-LABEL org.opencontainers.image.source https://github.com/coxy-proxy/coxy
+LABEL org.opencontainers.image.source=https://github.com/coxy-proxy/coxy
 
 WORKDIR /app
 
@@ -8,7 +8,7 @@ WORKDIR /app
 RUN corepack enable
 
 # Copy lockfile and package.json first to leverage cache
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml prisma ./
 
 # Pre-fetch dependencies with cache mount for pnpm store
 RUN --mount=type=cache,id=pnpm,target=/root/.local/share/pnpm/store pnpm fetch --frozen-lockfile
