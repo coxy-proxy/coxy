@@ -59,6 +59,9 @@ importers:
       '@primeuix/themes':
         specifier: 1.2.1
         version: 1.2.1
+      '@prisma/client':
+        specifier: 6.16.1
+        version: 6.16.1(prisma@6.16.1(magicast@0.3.5)(typescript@5.8.3))(typescript@5.8.3)
       '@radix-ui/react-accordion':
         specifier: 1.2.11
         version: 1.2.11(@types/react-dom@19.0.0)(@types/react@19.0.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -3005,6 +3008,18 @@ packages:
   '@primeuix/utils@0.6.0':
     resolution: {integrity: sha512-ULpB87ImNAiX36OMtyDeRceWB7N/mVlh6gGLqp/lx8UMKZlLIQH/UAFND86hYXHwNpXeNKcWfMGreb0Oc0hcZA==}
     engines: {node: '>=12.11.0'}
+
+  '@prisma/client@6.16.1':
+    resolution: {integrity: sha512-QaBCOY29lLAxEFFJgBPyW3WInCW52fJeQTmWx/h6YsP5u0bwuqP51aP0uhqFvhK9DaZPwvai/M4tSDYLVE9vRg==}
+    engines: {node: '>=18.18'}
+    peerDependencies:
+      prisma: '*'
+      typescript: '>=5.1.0'
+    peerDependenciesMeta:
+      prisma:
+        optional: true
+      typescript:
+        optional: true
 
   '@prisma/config@6.16.1':
     resolution: {integrity: sha512-sz3uxRPNL62QrJ0EYiujCFkIGZ3hg+9hgC1Ae1HjoYuj0BxCqHua4JNijYvYCrh9LlofZDZcRBX3tHBfLvAngA==}
@@ -13563,6 +13578,11 @@ snapshots:
       '@primeuix/styled': 0.7.0
 
   '@primeuix/utils@0.6.0': {}
+
+  '@prisma/client@6.16.1(prisma@6.16.1(magicast@0.3.5)(typescript@5.8.3))(typescript@5.8.3)':
+    optionalDependencies:
+      prisma: 6.16.1(magicast@0.3.5)(typescript@5.8.3)
+      typescript: 5.8.3
 
   '@prisma/config@6.16.1(magicast@0.3.5)':
     dependencies:
