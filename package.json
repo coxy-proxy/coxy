@@ -17,7 +17,8 @@
     "db:sync": "prisma db push",
     "ui:add": "TS_NODE_PROJECT=./tsconfig.base.json shadcn add",
     "lint": "biome check apps libs",
-    "lint:staged": "biome check apps libs --staged"
+    "lint:staged": "biome check apps libs --staged",
+    "postinstall": "prisma generate"
   },
   "bin": {
     "coxy": "./bin/cli.js"
