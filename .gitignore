@@ -58,3 +58,4 @@ vitest.config.*.timestamp*
 # Next.js
 .next
 out
+/generated/prisma
