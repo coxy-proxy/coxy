@@ -1,4 +1,3 @@
-import { auth } from '@clerk/nextjs/server';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
@@ -6,6 +5,7 @@ export default async function Page() {
   if (process.env.AUTH_ENABLED === 'false') {
     redirect('/api-keys');
   }
+  const { auth } = await import('@clerk/nextjs/server');
   const { userId } = await auth();
   if (userId) {
     redirect('/api-keys');
