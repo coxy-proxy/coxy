@@ -1,5 +1,5 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { API_KEYS_STORAGE, IApiKeysStorage } from '_/shared/api-keys';
+import { API_KEYS_STORAGE, type IApiKeysStorage } from '_/shared/api-keys';
 import { Observable, tap } from 'rxjs';
 import {
   ApiKey,

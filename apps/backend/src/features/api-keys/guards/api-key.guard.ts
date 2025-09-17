@@ -6,7 +6,7 @@ import {
   Logger,
   UnauthorizedException,
 } from '@nestjs/common';
-import { API_KEYS_STORAGE, IApiKeysStorage } from '_/shared/api-keys';
+import { API_KEYS_STORAGE, type IApiKeysStorage } from '_/shared/api-keys';
 import { maskKey } from '_/shared/utils';
 import { ApiKey } from '@/shared/types/api-key';
 
