@@ -1,5 +1,7 @@
+# ============================================
 # Build stage
-FROM node:22-alpine AS builder
+# ============================================
+FROM node:22-bookworm-slim AS builder
 LABEL org.opencontainers.image.source=https://github.com/coxy-proxy/coxy
 
 WORKDIR /app
@@ -7,14 +9,15 @@ WORKDIR /app
 # Enable corepack to manage pnpm
 RUN corepack enable
 
+# Form prisma
+RUN apt-get update && apt-get install -y openssl
+
 # Copy lockfile and package.json first to leverage cache
-COPY package.json pnpm-lock.yaml prisma ./
+# TODO: use `COPY --link`
+COPY package.json pnpm-lock.yaml prisma .env.default ./
 
-# Pre-fetch dependencies with cache mount for pnpm store
-RUN --mount=type=cache,id=pnpm,target=/root/.local/share/pnpm/store pnpm fetch --frozen-lockfile
-
-# Install dependencies with frozen lockfile
-RUN --mount=type=cache,id=pnpm,target=/root/.local/share/pnpm/store pnpm install --frozen-lockfile
+ENV NODE_ENV=production
+RUN pnpm install --frozen-lockfile && pnpm cache delete
 
 # Copy all source files
 COPY . .
@@ -27,16 +30,19 @@ RUN npm pack && \
   tar -zxvf *.tgz && \
   mv /app/package /app/prod
 
-# Install only production dependencies ignoring scripts, using cache mount
-RUN --mount=type=cache,id=pnpm,target=/root/.local/share/pnpm/store \
-  cd /app/prod && pnpm install --prod --ignore-scripts
+# Install only production dependencies
+RUN cd /app/prod && pnpm install --prod
 
+# ============================================
 # Production stage
+# ============================================
 FROM gcr.io/distroless/nodejs22-debian12
 WORKDIR /app
 
+ENV HOST=0.0.0.0
+ENV NEXT_TELEMETRY_DISABLE=1
+
 # Copy production app from build stage
 COPY --from=builder /app/prod/ ./
-ENV HOST=0.0.0.0
 
 CMD ["bin/cli.js"]
