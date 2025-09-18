@@ -23,8 +23,8 @@ const instanceFactory = () => {
 };
 const instance = instanceFactory();
 
-// For client-side usage
-export function useApiClient() {
+// TODO: when AUTH_ENABLED=true, use the authed API client
+export function useAuthedApiClient() {
   const { getToken } = useAuth();
 
   instance.interceptors.request.clear();
@@ -38,6 +38,10 @@ export function useApiClient() {
     },
     (error) => Promise.reject(error),
   );
+  return instance;
+}
 
+// For client-side usage
+export function useApiClient() {
   return instance;
 }

@@ -15,14 +15,25 @@ const ptSans = PT_Sans({
 });
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  if (process.env.NEXT_PUBLIC_AUTH_ENABLED === 'true') {
+    return (
+      <ClerkProvider>
+        <html lang="en">
+          <body className={`${nunito.variable} ${ptSans.variable} antialiased relative bg-sidebar`}>
+            <div className="texture" />
+            {children}
+          </body>
+        </html>
+      </ClerkProvider>
+    );
+  }
+
   return (
-    <ClerkProvider>
-      <html lang="en">
-        <body className={`${nunito.variable} ${ptSans.variable} antialiased relative bg-sidebar`}>
-          <div className="texture" />
-          {children}
-        </body>
-      </html>
-    </ClerkProvider>
+    <html lang="en">
+      <body className={`${nunito.variable} ${ptSans.variable} antialiased relative bg-sidebar`}>
+        <div className="texture" />
+        {children}
+      </body>
+    </html>
   );
 }
