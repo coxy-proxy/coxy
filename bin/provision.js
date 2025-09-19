@@ -3,7 +3,7 @@ const path = require('node:path');
 const fs = require('node:fs');
 
 const args = process.argv.slice(2);
-const shouldProvision = args.includes('--provision');
+const hasProvisionFlag = args.includes('--provision');
 
 function ensureSqliteDir(fileUrl) {
   const filePath = fileUrl.replace(/^file:/, '');
@@ -33,9 +33,6 @@ function runPrismaDbPush() {
 }
 
 function maybeProvision() {
-  if (!shouldProvision) {
-    return;
-  }
   let dbUrl = process.env.DATABASE_URL;
   if (!dbUrl) {
     dbUrl = 'file:../coxy.db';
@@ -43,13 +40,21 @@ function maybeProvision() {
     console.log(`[coxy] DATABASE_URL missing. Defaulting to ${dbUrl}`);
   }
 
+  // For sqlite, we need to provision the db if it doesn't exist even no --provision flag is provided
   if (dbUrl.startsWith('file:')) {
     const absPath = ensureSqliteDir(dbUrl);
     console.log(`[coxy] sqlite path resolved to ${absPath}`);
+    if (!fs.existsSync(absPath)) {
+      console.log('[coxy] No sqlite db, provision by "prisma db push"...');
+      runPrismaDbPush();
+      return;
+    }
   }
 
-  console.log('[coxy] Ensuring database schema via "prisma db push"...');
-  runPrismaDbPush();
+  if (hasProvisionFlag) {
+    console.log('[coxy] Force provision by "prisma db push"...');
+    runPrismaDbPush();
+  }
 }
 
 module.exports = { maybeProvision };
