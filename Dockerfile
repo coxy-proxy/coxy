@@ -45,4 +45,5 @@ ENV NEXT_TELEMETRY_DISABLE=1
 # Copy production app from build stage
 COPY --from=builder /app/prod/ ./
 
-CMD ["bin/cli.js"]
+# To support CLI arguments
+ENTRYPOINT ["/nodejs/bin/node", "bin/cli.js"]
