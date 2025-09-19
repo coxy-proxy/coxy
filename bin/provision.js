@@ -7,7 +7,7 @@ const shouldProvision = args.includes('--provision');
 
 function ensureSqliteDir(fileUrl) {
   const filePath = fileUrl.replace(/^file:/, '');
-  const absPath = path.isAbsolute(filePath) ? filePath : path.join(process.cwd(), filePath);
+  const absPath = path.isAbsolute(filePath) ? filePath : path.join(__dirname, filePath);
   const dir = path.dirname(absPath);
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
@@ -17,8 +17,15 @@ function ensureSqliteDir(fileUrl) {
 
 function runPrismaDbPush() {
   const schema = path.join(__dirname, '..', 'prisma', 'schema.prisma');
-  const prismaArgs = ['prisma', 'db', 'push', `--schema=${schema}`];
-  const result = spawnSync('npx', prismaArgs, { stdio: 'inherit', shell: true });
+  const prismaBin = path.join(
+    __dirname,
+    '..',
+    'node_modules',
+    '.bin',
+    process.platform === 'win32' ? 'prisma.cmd' : 'prisma',
+  );
+
+  const result = spawnSync(prismaBin, ['db', 'push', `--schema=${schema}`], { stdio: 'inherit' });
   if (result.status !== 0) {
     console.error('[coxy] Failed to provision database via "prisma db push"');
     process.exit(result.status || 1);
