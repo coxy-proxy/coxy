@@ -1,9 +1,10 @@
 <p align="center">
-  <img src="./apps/frontend/public/logo.png" width="128" height="128" />
-  <span>Coxy</span>
+  <img src="./apps/frontend/public/logo.png" alt="Coxy logo" style="display:block; margin-left:auto; margin-right:auto;" width="64" height="64" />
+  <span style="font-size: 36px; font-weight: bold;">Coxy</span>
+  <br />
+  <strong>GitHub Copilot as an OpenAI-compatible API</strong>
 </p>
 
-The proxy that exposes your GitHub Copilot as an OpenAI-compatible API.
 
 
 ## Why?
