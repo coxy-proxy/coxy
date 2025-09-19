@@ -49,7 +49,7 @@ The proxy that exposes your GitHub Copilot as an OpenAI-compatible API.
 ## Available environment variables
   - `PORT`: Port number to listen on (default: `3000`)
   - `LOG_LEVEL`: Log level (default: `info`)
-  - `DATABASE_URL`: Sqlite URL for Prisma
+  - `DATABASE_URL`: Database URL for Prisma (currently only supports sqlite)
   - Langfuse is supported, see official [documentation](https://langfuse.com/docs/get-started) for more details.
       - `LANGFUSE_SECRET_KEY`: Langfuse secret key
       - `LANGFUSE_PUBLIC_KEY`: Langfuse public key
@@ -63,6 +63,7 @@ The proxy that exposes your GitHub Copilot as an OpenAI-compatible API.
     ```bash
     docker run -p 3000:3000 -v /path/to/sqlite.db:/app/coxy.db -v /path/to/.env:/app/.env ghcr.io/coxy-proxy/coxy:latest
     ```
+- Provisioning: launch the CLI with `--provision` to automatically initialize the database schema via Prisma. If `DATABASE_URL` is missing, it will default to a local sqlite file `coxy.db` at app root(`file:../coxy.db`).
 
 ## Use cases
 - Use with [LLM](https://llm.datasette.io/en/stable/other-models.html#openai-compatible-models) CLI locally.
