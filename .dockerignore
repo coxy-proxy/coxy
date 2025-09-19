@@ -40,6 +40,7 @@ pnpm-debug.log*
 *.swp
 .DS_Store
 Thumbs.db
+*.db
 
 # Ignore Docker-related files (to avoid copying unnecessary configs)
 Dockerfile
@@ -61,3 +62,4 @@ kiro/
 anthropic/
 ai_outputs/
 ai_cache/
+opencode.json
