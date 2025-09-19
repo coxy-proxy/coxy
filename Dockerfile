@@ -1,16 +1,13 @@
 # ============================================
 # Build stage
 # ============================================
-FROM node:22-bookworm-slim AS builder
+FROM node:22-alpine AS builder
 LABEL org.opencontainers.image.source=https://github.com/coxy-proxy/coxy
 
 WORKDIR /app
 
 # Enable corepack to manage pnpm
 RUN corepack enable
-
-# Form prisma
-RUN apt-get update && apt-get install -y openssl
 
 # Copy lockfile and package.json first to leverage cache
 # TODO: use `COPY --link`
@@ -30,13 +27,14 @@ RUN npm pack && \
   tar -zxvf *.tgz && \
   mv /app/package /app/prod
 
-# Install only production dependencies
-RUN cd /app/prod && pnpm install --prod
+# Prepare dependencies for production
+RUN pnpm prune --prod --ignore-scripts
+RUN cp -r ./node_modules /app/prod/
 
 # ============================================
 # Production stage
 # ============================================
-FROM gcr.io/distroless/nodejs22-debian12
+FROM node:22-alpine
 WORKDIR /app
 
 ENV HOST=0.0.0.0
@@ -46,4 +44,4 @@ ENV NEXT_TELEMETRY_DISABLE=1
 COPY --from=builder /app/prod/ ./
 
 # To support CLI arguments
-ENTRYPOINT ["/nodejs/bin/node", "bin/cli.js"]
+ENTRYPOINT ["bin/cli.js"]
