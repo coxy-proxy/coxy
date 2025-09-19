@@ -43,7 +43,8 @@ function maybeProvision() {
   // For sqlite, we need to provision the db if it doesn't exist even no --provision flag is provided
   if (dbUrl.startsWith('file:')) {
     const absPath = ensureSqliteDir(dbUrl);
-    console.log(`[coxy] sqlite path resolved to ${absPath}`);
+    process.env.DATABASE_URL = `file:${absPath}`;
+    console.log(`[coxy] Resolved sqlite DATABASE_URL to ${absPath}`);
     if (!fs.existsSync(absPath)) {
       console.log('[coxy] No sqlite db, provision by "prisma db push"...');
       runPrismaDbPush();
