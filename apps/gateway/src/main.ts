@@ -15,6 +15,7 @@ import { logger } from '@/shared/logger';
 // Instantiate Fastify with some config
 const server = Fastify({
   loggerInstance: logger,
+  disableRequestLogging: true,
 });
 
 // Log configuration on startup
