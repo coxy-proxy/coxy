@@ -1,4 +1,7 @@
-# Coxy
+<p align="center">
+  <img src="./apps/frontend/public/logo.png" width="128" height="128" />
+  <span>Coxy</span>
+</p>
 
 The proxy that exposes your GitHub Copilot as an OpenAI-compatible API.
 
@@ -18,8 +21,9 @@ The proxy that exposes your GitHub Copilot as an OpenAI-compatible API.
   - Log in with GitHub and generate tokens
   - Add tokens manually
   - Manage multiple tokens with ease
-  - View chat message and code completion usage statistics
-- Supports Langfuse for LLM observability
+  - View chat message usage statistics
+  - Simple chat bot for model evaluation
+    - Client-side chat session history
 
 ## How to use
 - Start the proxy server
@@ -49,21 +53,18 @@ The proxy that exposes your GitHub Copilot as an OpenAI-compatible API.
 ## Available environment variables
   - `PORT`: Port number to listen on (default: `3000`)
   - `LOG_LEVEL`: Log level (default: `info`)
-  - `DATABASE_URL`: Database URL for Prisma (currently only supports sqlite)
-  - Langfuse is supported, see official [documentation](https://langfuse.com/docs/get-started) for more details.
-      - `LANGFUSE_SECRET_KEY`: Langfuse secret key
-      - `LANGFUSE_PUBLIC_KEY`: Langfuse public key
-      - `LANGFUSE_BASEURL`: Langfuse base URL (default: `https://cloud.langfuse.com`)
+  - `DATABASE_URL`: Database URL for Prisma (currently only supports sqlite). Should start with `file:`. (default: `file:../coxy.db`)
+    - The relative path will be resolved to the absolute path at runtime.
 
 ## Advanced usage
 - Dummy token `_` to make coxy use the default token.
     - In most cases, the default token just works without 'Authorization' header. But if your LLM client requires a non-empty API key, you can use the special dummy token `_` to make coxy use the default token.
+- Provisioning: launch the CLI with `--provision` to force initialize the database schema via Prisma.
 - Tips for using docker:
-  - Mount the sqlite db file from host to persist the tokens and use .env file to set environment variables
+  - Mount the sqlite db file from host to persist the tokens and use .env file to set environment variables. Use `--provision` first time to initialize the database schema via Prisma, e.g.
     ```bash
-    docker run -p 3000:3000 -v /path/to/sqlite.db:/app/coxy.db -v /path/to/.env:/app/.env ghcr.io/coxy-proxy/coxy:latest
+    docker run -p 3000:3000 -v /path/to/sqlite.db:/app/coxy.db -v /path/to/.env:/app/.env ghcr.io/coxy-proxy/coxy:latest --provision
     ```
-- Provisioning: launch the CLI with `--provision` to automatically initialize the database schema via Prisma. If `DATABASE_URL` is missing, it will default to a local sqlite file `coxy.db` at app root(`file:../coxy.db`).
 
 ## Use cases
 - Use with [LLM](https://llm.datasette.io/en/stable/other-models.html#openai-compatible-models) CLI locally.
