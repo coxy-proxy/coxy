@@ -1,9 +1,15 @@
 <p align="center">
-  <img src="./apps/frontend/public/logo.png" width="128" height="128" />
-  <span>Coxy</span>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/coxy-proxy/coxy/refs/heads/main/assets/header-light.png">
+    <img alt="Coxy logo" src="https://raw.githubusercontent.com/coxy-proxy/coxy/refs/heads/main/assets/header-dark.png" width="200">
+  </picture>
+  <br />
+  <strong>GitHub Copilot as OpenAI-compatible APIs</strong>
+  <br />
+  <br />
+  <img alt="Coxy demo" src="https://raw.githubusercontent.com/coxy-proxy/coxy/refs/heads/main/assets/coxy-demo.gif" width="800">
 </p>
 
-The proxy that exposes your GitHub Copilot as an OpenAI-compatible API.
 
 
 ## Why?
@@ -52,7 +58,7 @@ The proxy that exposes your GitHub Copilot as an OpenAI-compatible API.
 
 ## Available environment variables
   - `PORT`: Port number to listen on (default: `3000`)
-  - `LOG_LEVEL`: Log level (default: `info`)
+  - `LOG_LEVEL`: Log level of [pino](https://getpino.io/#/docs/api?id=loggerlevel-string-gettersetter) (default: `info`)
   - `DATABASE_URL`: Database URL for Prisma (currently only supports sqlite). Should start with `file:`. (default: `file:../coxy.db`)
     - The relative path will be resolved to the absolute path at runtime.
 
@@ -65,6 +71,14 @@ The proxy that exposes your GitHub Copilot as an OpenAI-compatible API.
     ```bash
     docker run -p 3000:3000 -v /path/to/sqlite.db:/app/coxy.db -v /path/to/.env:/app/.env ghcr.io/coxy-proxy/coxy:latest --provision
     ```
+
+## Troubleshooting
+- I got status code 400 when using GPT-5-mini model.
+  - Make sure you have enabled "OpenAI GPT-5 mini" in your github account Copilot settings. The URL looks like `https://github.com/settings/copilot/features`.
+- I got the error `Fail to load API keys` when opening API Keys page.    
+  - Make sure you have sqlite db file and provisioned correctly.
+- I'm using podman and cannot access via `localhost:3000` but can access via `127.0.0.1:3000`.
+  - It seems podman's known issue or bug. Just use `127.0.0.1:3000` instead or setting another host name, like `127.0.0.1 coxy`, in your `/etc/hosts` file.
 
 ## Use cases
 - Use with [LLM](https://llm.datasette.io/en/stable/other-models.html#openai-compatible-models) CLI locally.
