@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
 export default async function Page() {
-  if (process.env.AUTH_ENABLED === 'false') {
+  if (process.env.AUTH_ENABLED !== 'true') {
     redirect('/api-keys');
   }
   const { userId } = await auth();
