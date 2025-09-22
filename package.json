@@ -24,6 +24,7 @@
   "bin": {
     "coxy": "./bin/cli.js"
   },
+  "keywords": ["copilot", "proxy", "openai"],
   "files": [
     "dist/apps/backend",
     "dist/apps/gateway",
