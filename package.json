@@ -34,7 +34,7 @@
     ".env.default",
     "bin"
   ],
-  "private": true,
+  "packageManager": "pnpm@10.10.0",
   "dependencies": {
     "@angular/common": "~20.1.0",
     "@angular/compiler": "~20.1.0",
