@@ -30,7 +30,7 @@ export function Message({ message, onRetry }: MessageProps) {
           <span>{format(message.timestamp, 'HH:mm')}</span>
 
           {isPending && <Loader2 className={`size-4 animate-spin ${isUser ? 'text-foreground' : 'text-gray-600'}`} />}
-          {isError && (
+          {isError && !isUser && (
             <Button variant="link" onClick={onRetry} className="text-red-600 hover:text-red-700 h-auto p-0">
               Retry
             </Button>
