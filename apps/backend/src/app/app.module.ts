@@ -5,6 +5,7 @@ import { JwtModule } from '@nestjs/jwt';
 import configuration from '../config/configuration';
 import { AdminModule } from '../features/admin/admin.module';
 import { ApiKeysModule } from '../features/api-keys/api-keys.module';
+import { AuthModule } from '../features/auth/auth.module';
 import { ProxyModule } from '../features/proxy/proxy.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -32,6 +33,7 @@ import { AppService } from './app.service';
     ProxyModule,
     AdminModule,
     ApiKeysModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -3,7 +3,7 @@
  * This is only a minimal backend to get started.
  */
 
-import { ConsoleLogger, Logger } from '@nestjs/common';
+import { ConsoleLogger, Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app/app.module';
@@ -22,6 +22,7 @@ async function bootstrap() {
   app.setGlobalPrefix(globalPrefix);
   const port = configService.get<number>('BACKEND_PORT') ?? 3020;
   app.enableCors();
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }));
 
   // Prisma health and graceful shutdown
   app.enableShutdownHooks();
