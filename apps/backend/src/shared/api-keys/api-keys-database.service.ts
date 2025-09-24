@@ -51,13 +51,54 @@ export class ApiKeysDatabaseService implements IApiKeysStorage {
     return this.map(created);
   }
 
+  async createForUser(
+    userId: string,
+    { id, name, key, createdAt, lastUsed, usageCount, meta }: Partial<ApiKey>,
+  ): Promise<ApiKey> {
+    if (!name || !key) throw new Error('Missing required fields: name, key');
+    const created = await this.prisma.apiKey.create({
+      data: {
+        id: id ?? undefined,
+        name,
+        key,
+        userId,
+        createdAt: fromEpoch(createdAt) ?? undefined,
+        lastUsed: fromEpoch(lastUsed),
+        usageCount: usageCount ?? 0,
+        meta: meta
+          ? {
+              create: {
+                token: meta.token,
+                expiresAt: new Date(meta.expiresAt),
+                resetTime: fromEpoch(meta.resetTime) ?? null,
+                chatQuota: meta.chatQuota ?? null,
+                completionsQuota: meta.completionsQuota ?? null,
+              },
+            }
+          : undefined,
+      },
+      include: { meta: true },
+    });
+    return this.map(created);
+  }
+
   async findAll(): Promise<ApiKey[]> {
     const rows = await this.prisma.apiKey.findMany({ include: { meta: true } });
     return rows.map((r) => this.map(r));
   }
 
+  async findAllByUser(userId: string): Promise<ApiKey[]> {
+    const rows = await this.prisma.apiKey.findMany({ where: { userId }, include: { meta: true } });
+    return rows.map((r) => this.map(r));
+  }
+
   async findOne(id: string): Promise<ApiKey | null> {
     const row = await this.prisma.apiKey.findUnique({ where: { id }, include: { meta: true } });
+    return row ? this.map(row) : null;
+  }
+
+  async findByKey(key: string): Promise<ApiKey | null> {
+    const row = await this.prisma.apiKey.findUnique({ where: { key }, include: { meta: true } });
     return row ? this.map(row) : null;
   }
 
@@ -109,8 +150,20 @@ export class ApiKeysDatabaseService implements IApiKeysStorage {
     ]);
   }
 
+  async updateDefaultForUser(userId: string, id: string): Promise<void> {
+    await this.prisma.$transaction([
+      this.prisma.apiKey.updateMany({ data: { isDefault: false }, where: { userId, isDefault: true } }),
+      this.prisma.apiKey.update({ where: { id }, data: { isDefault: true } }),
+    ]);
+  }
+
   async getDefault(): Promise<ApiKey | null> {
     const row = await this.prisma.apiKey.findFirst({ where: { isDefault: true }, include: { meta: true } });
+    return row ? this.map(row) : null;
+  }
+
+  async getDefaultForUser(userId: string): Promise<ApiKey | null> {
+    const row = await this.prisma.apiKey.findFirst({ where: { userId, isDefault: true }, include: { meta: true } });
     return row ? this.map(row) : null;
   }
 
