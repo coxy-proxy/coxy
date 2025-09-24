@@ -7,10 +7,38 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Phase 1: Auth-ready schema (backward compatible)
+
+enum Role {
+  USER
+  ADMIN
+}
+
 model User {
-  id    String  @id @default(cuid())
-  email String  @unique
-  name  String?
+  id            String         @id @default(cuid())
+  email         String         @unique
+  name          String?
+  passwordHash  String
+  role          Role           @default(USER)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  // Relations
+  apiKeys       ApiKey[]
+  refreshTokens RefreshToken[]
+}
+
+model RefreshToken {
+  id         String   @id @default(uuid())
+  tokenHash  String   @unique
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt  DateTime
+  revokedAt  DateTime?
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
 }
 
 model ApiKey {
@@ -23,7 +51,12 @@ model ApiKey {
   isDefault  Boolean      @default(false)
   meta       CopilotMeta?
 
+  // Optional owner for backward compatibility (global keys have userId = null)
+  userId     String?
+  user       User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+
   @@index([isDefault])
+  @@index([userId])
 }
 
 model CopilotMeta {
