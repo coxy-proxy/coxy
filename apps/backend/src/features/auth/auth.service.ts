@@ -1,12 +1,10 @@
+import { createHash } from 'node:crypto';
 import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '_/shared/prisma/prisma.service';
-import { scrypt as _scrypt, createHash, randomBytes, timingSafeEqual } from 'crypto';
-import { promisify } from 'util';
+import * as bcrypt from 'bcrypt';
 import type { UpdateProfileDto } from './dto/update-profile.dto';
-
-const scrypt = promisify(_scrypt);
 
 interface JwtPayload {
   sub: string;
@@ -32,20 +30,13 @@ export class AuthService {
     this.refreshTtl = this.config.get<string>('JWT_REFRESH_TTL') || '7d';
   }
 
-  // Password hashing using scrypt
+  // Password hashing using bcrypt
   private async hashPassword(password: string): Promise<string> {
-    const salt = randomBytes(16);
-    const derived = (await scrypt(password, salt, 32)) as Buffer;
-    return `scrypt:${salt.toString('hex')}:${derived.toString('hex')}`;
+    return bcrypt.hash(password, 12);
   }
 
   private async verifyPassword(password: string, stored: string): Promise<boolean> {
-    const [algo, saltHex, hashHex] = stored.split(':');
-    if (algo !== 'scrypt') return false;
-    const salt = Buffer.from(saltHex, 'hex');
-    const hash = Buffer.from(hashHex, 'hex');
-    const derived = (await scrypt(password, salt, 32)) as Buffer;
-    return timingSafeEqual(hash, derived);
+    return bcrypt.compare(password, stored);
   }
 
   private async issueTokens(user: { id: string; email: string; role: string }) {
