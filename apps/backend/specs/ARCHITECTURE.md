@@ -4,26 +4,38 @@
 
 A NestJS backend serving as a proxy between OpenAI-compatible clients and GitHub Copilot, with a Next.js frontend for administration.
 
-The backend is built with NestJS and is structured into several modules. It uses NestJS ConfigModule (TypeScript-based configuration) for configuration management, NestJS Console Logger for logging, and `class-validator`/`class-transformer` for input validation.
+The backend uses:
+- NestJS modules with DI and feature boundaries
+- Prisma ORM for database access
+- JWT authentication (access + refresh tokens)
+- class-validator/class-transformer for input validation
+- Global ValidationPipe for sanitization
+- Throttling for auth endpoints via @nestjs/throttler
 
-## Project Structure
+## Project Structure (Backend)
 
-The backend codebase is organized as follows:
+- `src/main.ts`: App bootstrap (global prefix, CORS, validation pipe, Prisma health/GC, start server)
+- `src/app/`: Root app module and controller/service
+- `src/config/`: TypeScript-based configuration loaded via ConfigModule
+- `src/shared/`: Cross-cutting services/modules
+  - `prisma/`: PrismaModule + PrismaService
+  - `api-keys/`: ApiKeysSharedModule, storage interface and DB implementation
+  - `interceptors/`: Logging interceptor (optional)
+  - `utils.ts`: helpers (e.g., maskKey)
+- `src/features/`: Feature modules
+  - `proxy/`: OpenAI-compatible proxy endpoints
+  - `api-keys/`: User-scoped API key management, GitHub OAuth device flow
+  - `auth/`: Registration, login, refresh, logout, profile
+  - `admin/`: Admin login, stats, user management
+  - `users/`: Minimal current-user profile endpoint
 
--   `src/main.ts`: The application entry point (sets global prefix from config, enables CORS, and starts the server).
--   `src/app/`: The root module of the application.
--   `src/features/`: Contains the core feature modules of the application.
-    -   `admin/`: Handles administration-related functionalities (login, stats, logs).
-    -   `api-keys/`: Manages API key creation, validation, storage, and GitHub OAuth device flow.
-    -   `proxy/`: Proxies requests to the GitHub Copilot service.
--   `src/shared/`: Contains shared modules, services, and utilities used across different feature modules.
--   `src/config/`: TypeScript-based application configuration loaded via NestJS ConfigModule (`configuration.ts`).
+## Data Models (Conceptual)
 
-## Data Models
+Types exposed to clients (shared in `libs/shared/types`):
 
-```typescript
+```ts
 export interface CopilotMeta {
-  token: string; // token used for chat completions
+  token: string;
   expiresAt: number;
   resetTime: number | null;
   chatQuota: number | null;
@@ -46,53 +58,174 @@ export interface ApiKeyResponse extends Omit<ApiKey, 'key'> {
 }
 ```
 
-## API Endpoints
+Prisma schema (implemented):
+- `enum Role { USER ADMIN }`
+- `model User { id, email, name?, passwordHash, role@default(USER), createdAt, updatedAt, apiKeys[], refreshTokens[] }`
+- `model RefreshToken { id, tokenHash@unique, userId -> User, expiresAt, revokedAt?, createdAt }`
+- `model ApiKey { id, name, key@unique, createdAt, lastUsed?, usageCount@default(0), isDefault@default(false), meta?, userId?, user? }`
+- `model CopilotMeta { id, token, expiresAt, resetTime?, chatQuota?, completionsQuota?, apiKeyId@unique -> ApiKey }`
 
-All endpoints are served under the global prefix configured at `api.prefix` (default: `api`).
+Notes:
+- `ApiKey.userId` is nullable for backward compatibility (global keys).
+- Default-per-user enforcement is done in service layer (partial unique indexes are provider-specific).
 
-### OpenAI-compatible
-
--   `POST /api/chat/completions` — OpenAI-compatible proxy endpoint (streams response when applicable)
--   `GET /api/models` — Get list of available models (proxied)
-
-### Admin dashboard
-
--   `POST /api/admin/login` — Admin login (returns JWT)
--   `GET /api/admin/stats` — Get usage statistics (requires AdminGuard / JWT)
--   `GET /api/admin/logs` — Get request logs (requires AdminGuard / JWT)
-
-### API keys management
-
--   `POST /api/api-keys` — Create new API key
--   `GET /api/api-keys` — List API keys
--   `PATCH /api/api-keys/:id` — Update API key
--   `DELETE /api/api-keys/:id` — Delete API key
--   `GET /api/api-keys/device-flow` — Server-Sent Events (SSE) stream for GitHub OAuth device flow status
--   `POST /api/api-keys/default` — Set default API key
--   `POST /api/api-keys/:id/refresh-meta` — Refresh Copilot metadata for a specific key
-
-## Backend modules
+## Backend Modules
 
 ### App Module
+- Imports ConfigModule, JwtModule (global), HttpModule, PrismaModule (via shared), and feature modules.
+- Sets global config and DI across features.
 
-The `AppModule` is the root module of the application. It imports the necessary modules, including feature modules, and sets up global configuration via `ConfigModule`, JWT via `JwtModule.registerAsync`, and outbound HTTP via `HttpModule`.
+### Auth Module
+- Endpoints:
+  - `POST /api/auth/register` — register with email/password (password policy enforced)
+  - `POST /api/auth/login` — login, returns access + refresh tokens
+  - `POST /api/auth/refresh` — rotate refresh token, returns new tokens
+  - `POST /api/auth/logout` — revoke refresh token
+  - `GET /api/auth/profile` — current user profile
+  - `PUT /api/auth/profile` — update profile (name)
+- Security:
+  - Access tokens short-lived (default 15m), refresh tokens long-lived (default 7d)
+  - Refresh tokens stored hashed (sha256) in DB and rotated on use
+  - Password hashing via bcrypt (12 rounds)
+  - Throttling on register/login/refresh via @nestjs/throttler
 
-### Proxy Module
+### Users Module
+- Endpoints:
+  - `GET /api/users/me` — current user profile (JWT-protected)
+- Note: User-scoped API key operations are under `ApiKeysModule`.
 
-The `ProxyModule` is responsible for forwarding requests from OpenAI-compatible clients to the GitHub Copilot service. It uses `HttpModule` to make HTTP requests, `ApiKeyGuard` to validate incoming API keys (or fall back to a default key), and `TokenResolverService` + `GithubOauthService` to resolve ephemeral Copilot tokens for chat completion requests.
+### API Keys Module (User-scoped)
+- Endpoints (JWT-protected, user-specific):
+  - `POST /api/api-keys` — create new API key for the authenticated user
+  - `GET /api/api-keys` — list API keys for the authenticated user
+  - `PATCH /api/api-keys/:id` — update an existing key (ownership enforced)
+  - `DELETE /api/api-keys/:id` — delete key (ownership enforced)
+  - `POST /api/api-keys/:id/refresh-meta` — refresh Copilot metadata (ownership enforced)
+  - `POST /api/api-keys/default` — set default key for the user
+  - `SSE /api/api-keys/device-flow` — GitHub OAuth device flow status stream; creates key for the user upon success
+- Storage: implemented with Prisma via `ApiKeysDatabaseService` (see below).
 
-### Admin Module
+### Proxy Module (OpenAI-compatible)
+- Endpoints (JWT not required):
+  - `POST /api/chat/completions`
+  - `GET /api/models`
+- Secured with `ApiKeyGuard` only:
+  - Accepts an API key in `Authorization` header (`token` or `Bearer`).
+  - Falls back to a global default API key when none is provided (backward compatible).
+  - Resolves ephemeral Copilot token for chat completions via `TokenResolverService` + `GithubOauthService`.
 
-The `AdminModule` provides backend functionalities for the admin dashboard. This includes endpoints for logging in, viewing usage statistics, and fetching request logs. It uses the `JwtModule` for issuing and verifying JWTs. (The current login implementation is a placeholder and should be replaced with real authentication.)
+### Admin Module (Roles-based)
+- Endpoints:
+  - `POST /api/admin/login` — authenticates via AuthService and requires the user to be ADMIN; returns admin access token
+  - `GET /api/admin/stats` — system stats (protected)
+  - `GET /api/admin/logs` — request logs (placeholder; protected)
+  - `GET /api/admin/users` — list users (protected)
+  - `GET /api/admin/users/:id` — user detail including masked API keys (protected)
+  - `PATCH /api/admin/users/:id` — update user name/role (protected)
+  - `DELETE /api/admin/users/:id` — delete user (protected)
+- Guard:
+  - `AdminGuard` composes `JwtAuthGuard` + `RolesGuard`. It validates JWT, injects `req.user`, ensures a roles metadata exists (defaults to `['admin']`), and then uses `RolesGuard` to enforce.
 
-### API Keys Module
+## Shared Modules and Services
 
-The `ApiKeysModule` manages API keys used to authenticate requests to the proxy. It provides endpoints for creating, listing, updating, and deleting API keys; supports selecting a default key; and implements the GitHub OAuth device flow (via SSE) to obtain GitHub tokens. API keys and the selected default key are stored using a file-based storage service.
+### Prisma
+- `PrismaModule` exposes `PrismaService` application-wide.
+- `PrismaService` manages connection lifecycle and graceful shutdown.
 
-### Shared Modules
+### API Keys Shared
+- Token & interfaces: `IApiKeysStorage`
+- Implementation: `ApiKeysDatabaseService` (Prisma)
+- Exposed via `ApiKeysSharedModule` (`API_KEYS_STORAGE` token)
+- Methods:
+  - `create`, `createForUser(userId, dto)`
+  - `findAll`, `findAllByUser(userId)`
+  - `findOne(id)`, `findByKey(key)`
+  - `update(id, dto)`, `remove(id)`
+  - `getDefault()`, `getDefaultForUser(userId)`
+  - `updateDefault(id)`, `updateDefaultForUser(userId, id)`
 
-The `shared` directory contains modules and services that are used by multiple feature modules.
+### Guards
+- `JwtAuthGuard` — verifies access token, attaches `req.user`
+- `RolesGuard` — enforces roles metadata (`@Roles('admin')`, etc.)
+- `AdminGuard` — composes JwtAuth + Roles (defaults role to `admin` if none set)
+- `ApiKeyGuard` — validates API key header for proxy endpoints, optimized to use `findByKey` and fallback to global default token when not provided
 
--   **ApiKeysSharedModule**: Provides shared services for managing API keys via a database-backed service (Prisma). File-based storage has been removed.
--   **Interceptors**: `LoggingInterceptor` is available for request logging (not currently applied globally).
--   **Utils**: Utility functions like `maskKey` and `toHeaders` used across the app.
+## Configuration
+
+Loaded via `ConfigModule` and `src/config/configuration.ts`.
+- Core:
+  - `BACKEND_PORT` (default 3020)
+  - `api.prefix` (default `api`)
+- GitHub/Copilot headers and endpoints are configured in `configuration.ts` and used by `GithubOauthService`/`ProxyService`.
+- JWT:
+  - `JWT_SECRET` (fallback if specific secrets absent)
+  - `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET`
+  - `JWT_ACCESS_TTL` (default `15m`), `JWT_REFRESH_TTL` (default `7d`)
+- DB:
+  - `DATABASE_URL` (SQLite by default; supports other providers)
+
+## Security
+- Password hashing: bcrypt (12 rounds)
+- Refresh tokens: signed JWT, hashed persistently (sha256), rotated on refresh
+- Input validation: DTOs with class-validator, Global ValidationPipe with whitelist + forbidNonWhitelisted + transform
+- Rate limiting: @nestjs/throttler on auth endpoints
+- Data isolation: ApiKeys operations are user-scoped and enforce ownership at service layer
+- Proxy protection: JWT is not required; API keys control access to proxy endpoints
+
+## API Endpoints Summary
+
+OpenAI-compatible (API key required via header):
+- `POST /api/chat/completions`
+- `GET /api/models`
+
+Auth (public + JWT):
+- `POST /api/auth/register`
+- `POST /api/auth/login`
+- `POST /api/auth/refresh`
+- `POST /api/auth/logout`
+- `GET /api/auth/profile`
+- `PUT /api/auth/profile`
+
+Users (JWT):
+- `GET /api/users/me`
+
+API Keys (JWT; user-scoped):
+- `POST /api/api-keys`
+- `GET /api/api-keys`
+- `PATCH /api/api-keys/:id`
+- `DELETE /api/api-keys/:id`
+- `POST /api/api-keys/:id/refresh-meta`
+- `POST /api/api-keys/default`
+- `SSE /api/api-keys/device-flow`
+
+Admin (JWT + role admin):
+- `POST /api/admin/login`
+- `GET /api/admin/stats`
+- `GET /api/admin/logs`
+- `GET /api/admin/users`
+- `GET /api/admin/users/:id`
+- `PATCH /api/admin/users/:id`
+- `DELETE /api/admin/users/:id`
+
+## Backward Compatibility and Migration
+- Existing API keys remain valid; `ApiKey.userId` is nullable (global keys).
+- Proxy endpoints continue to work without JWT and accept a default global API key when provided.
+- API key management endpoints are now JWT-protected and user-scoped; frontend must attach access tokens.
+- Prisma schema updated with `User`, `RefreshToken`, and optional `ApiKey.userId`.
+
+## Testing
+- Unit tests exist for token resolution and storage mapping; more tests recommended:
+  - AuthService (register/login/refresh/logout)
+  - JwtAuthGuard/RolesGuard/AdminGuard composition
+  - ApiKeysService ownership enforcement and defaults
+  - ApiKeyGuard DB lookup behavior
+- E2E: register → login → manage user keys → proxy requests with user keys
+
+## Logging & Observability
+- Console logger enabled; optional logging interceptor available
+- Admin `getRequestLogs` endpoint is stubbed and can be wired to telemetry/log store later
+
+## Known Limitations / TODOs
+- Device-flow + SSE currently creates key on success for the authenticated user; error handling is basic
+- Per-user default key constraint is enforced in service layer only
+- Admin telemetry (stats/logs) is partial and will need integration with a metrics/logging backend
