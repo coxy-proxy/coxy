@@ -2,56 +2,58 @@ import { Body, Controller, Delete, Get, Logger, Param, Patch, Post, Sse, UseGuar
 import { Observable } from 'rxjs';
 import { map, shareReplay, tap } from 'rxjs/operators';
 import { CreateApiKeyDto, DeviceFlowSSEEvent, SetDefaultApiKeyDto, UpdateApiKeyDto } from '@/shared/types/api-key';
-import { AdminGuard } from '../admin/guards/admin.guard';
+import { User as UserDecorator } from '../auth/decorators/user.decorator';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ApiKeysService } from './api-keys.service';
 
 @Controller('api-keys')
-// TODO: Uncomment this line to enable admin access
-// @UseGuards(AdminGuard)
+@UseGuards(JwtAuthGuard)
 export class ApiKeysController {
   private logger = new Logger(ApiKeysController.name);
 
-  // TODO: Implement user management
-  private currentUserId = 'abc';
   private deviceFlowMap = new Map<string, Observable<MessageEvent<DeviceFlowSSEEvent>>>();
 
   constructor(private readonly apiKeysService: ApiKeysService) {}
 
   @Post()
-  async createApiKey(@Body() createApiKeyDto: CreateApiKeyDto) {
-    return await this.apiKeysService.createApiKey(createApiKeyDto);
+  async createApiKey(@UserDecorator('id') userId: string, @Body() createApiKeyDto: CreateApiKeyDto) {
+    return await this.apiKeysService.createApiKey(userId, createApiKeyDto);
   }
 
   @Get()
-  async listApiKeys() {
-    return await this.apiKeysService.listApiKeys();
+  async listApiKeys(@UserDecorator('id') userId: string) {
+    return await this.apiKeysService.listApiKeys(userId);
   }
 
   @Patch(':id')
-  async updateApiKey(@Param('id') id: string, @Body() updateApiKeyDto: UpdateApiKeyDto) {
-    return await this.apiKeysService.updateApiKey(id, updateApiKeyDto);
+  async updateApiKey(
+    @UserDecorator('id') userId: string,
+    @Param('id') id: string,
+    @Body() updateApiKeyDto: UpdateApiKeyDto,
+  ) {
+    return await this.apiKeysService.updateApiKey(userId, id, updateApiKeyDto);
   }
 
   @Delete(':id')
-  async deleteApiKey(@Param('id') id: string) {
-    return await this.apiKeysService.deleteApiKey(id);
+  async deleteApiKey(@UserDecorator('id') userId: string, @Param('id') id: string) {
+    return await this.apiKeysService.deleteApiKey(userId, id);
   }
 
   @Post(':id/refresh-meta')
-  async refreshMeta(@Param('id') id: string) {
-    return await this.apiKeysService.refreshApiKeyMeta(id);
+  async refreshMeta(@UserDecorator('id') userId: string, @Param('id') id: string) {
+    return await this.apiKeysService.refreshApiKeyMeta(userId, id);
   }
 
   @Sse('device-flow')
-  deviceFlowSSE(): Observable<MessageEvent<DeviceFlowSSEEvent>> {
-    if (this.deviceFlowMap.has(this.currentUserId)) {
-      return this.deviceFlowMap.get(this.currentUserId);
+  deviceFlowSSE(@UserDecorator('id') userId: string): Observable<MessageEvent<DeviceFlowSSEEvent>> {
+    if (this.deviceFlowMap.has(userId)) {
+      return this.deviceFlowMap.get(userId);
     }
 
-    const deviceFlow$ = this.apiKeysService.executeDeviceFlowWithSSE().pipe(
+    const deviceFlow$ = this.apiKeysService.executeDeviceFlowWithSSE(userId).pipe(
       tap((event) => {
         this.logger.log('SSE event:', event);
-        event.type === 'success' && this.deviceFlowMap.delete(this.currentUserId);
+        event.type === 'success' && this.deviceFlowMap.delete(userId);
       }),
       map(
         (event: DeviceFlowSSEEvent) =>
@@ -62,13 +64,13 @@ export class ApiKeysController {
       ),
       shareReplay(1),
     );
-    this.deviceFlowMap.set(this.currentUserId, deviceFlow$);
+    this.deviceFlowMap.set(userId, deviceFlow$);
 
     return deviceFlow$;
   }
 
   @Post('default')
-  async setDefaultApiKey(@Body() setDefaultApiKeyDto: SetDefaultApiKeyDto) {
-    return await this.apiKeysService.setDefaultApiKey(setDefaultApiKeyDto);
+  async setDefaultApiKey(@UserDecorator('id') userId: string, @Body() setDefaultApiKeyDto: SetDefaultApiKeyDto) {
+    return await this.apiKeysService.setDefaultApiKey(userId, setDefaultApiKeyDto);
   }
 }

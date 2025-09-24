@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable, Logger } from '@nestjs/common';
 import { API_KEYS_STORAGE, type IApiKeysStorage } from '_/shared/api-keys';
 import { Observable, tap } from 'rxjs';
 import {
@@ -23,39 +23,46 @@ export class ApiKeysService {
     @Inject(API_KEYS_STORAGE) private readonly storageService: IApiKeysStorage,
   ) {}
 
-  async createApiKey(dto: CreateApiKeyDto): Promise<ApiKeyResponse> {
-    const apiKey = await this.storageService.create(dto);
+  async createApiKey(userId: string, dto: CreateApiKeyDto): Promise<ApiKeyResponse> {
+    const apiKey = await this.storageService.createForUser(userId, dto);
     apiKey.meta = await this.githubOauthService.fetchCopilotMeta(apiKey.key).catch(() => null);
 
     return this.toApiKeyResponse(apiKey);
   }
 
-  async listApiKeys(): Promise<ApiKeyResponse[]> {
-    const apiKeys = await this.storageService.findAll();
-    this.defaultApiKeyId = (await this.storageService.getDefault())?.id;
+  async listApiKeys(userId: string): Promise<ApiKeyResponse[]> {
+    const apiKeys = await this.storageService.findAllByUser(userId);
+    this.defaultApiKeyId = (await this.storageService.getDefaultForUser(userId))?.id;
 
     // Sort by createdAt in descending order
     return apiKeys.map(this.toApiKeyResponse).sort((a, b) => b.createdAt - a.createdAt);
   }
 
-  async updateApiKey(id: string, dto: UpdateApiKeyDto): Promise<ApiKeyResponse> {
+  async updateApiKey(userId: string, id: string, dto: UpdateApiKeyDto): Promise<ApiKeyResponse> {
     const apiKey = await this.storageService.findOne(id);
     if (!apiKey) {
       throw new Error('API key not found');
     }
+    // ensure ownership
+    const owned = (await this.storageService.findAllByUser(userId)).some((k) => k.id === id);
+    if (!owned) throw new Error('Not your API key');
     const newKey = await this.storageService.update(id, dto);
     return this.toApiKeyResponse(newKey);
   }
 
-  async deleteApiKey(id: string): Promise<void> {
+  async deleteApiKey(userId: string, id: string): Promise<void> {
+    const owned = (await this.storageService.findAllByUser(userId)).some((k) => k.id === id);
+    if (!owned) throw new ForbiddenException('Not your API key');
     await this.storageService.remove(id);
   }
 
-  async refreshApiKeyMeta(id: string): Promise<ApiKeyResponse> {
+  async refreshApiKeyMeta(userId: string, id: string): Promise<ApiKeyResponse> {
     const apiKey = await this.storageService.findOne(id);
     if (!apiKey) {
       throw new Error('API key not found');
     }
+    const owned = (await this.storageService.findAllByUser(userId)).some((k) => k.id === id);
+    if (!owned) throw new ForbiddenException('Not your API key');
 
     const meta = await this.githubOauthService.fetchCopilotMeta(apiKey.key).catch((error) => {
       this.logger.warn(`Failed to refresh meta for key ${id}: ${error?.message ?? error}`);
@@ -66,26 +73,28 @@ export class ApiKeysService {
     return this.toApiKeyResponse(updated);
   }
 
-  executeDeviceFlowWithSSE(): Observable<DeviceFlowSSEEvent> {
+  executeDeviceFlowWithSSE(userId: string): Observable<DeviceFlowSSEEvent> {
     return this.githubOauthService.executeDeviceFlowWithPolling().pipe(
       tap((event) => {
-        event.type === 'success' && this.onDeviceFlowSuccess(event);
+        event.type === 'success' && this.onDeviceFlowSuccess(userId, event);
       }),
     );
   }
 
-  async setDefaultApiKey(dto: SetDefaultApiKeyDto): Promise<ApiKeyResponse> {
+  async setDefaultApiKey(userId: string, dto: SetDefaultApiKeyDto): Promise<ApiKeyResponse> {
     const apiKey = await this.storageService.findOne(dto.id);
     if (!apiKey) {
       throw new Error('API key not found');
     }
-    await this.storageService.updateDefault(apiKey.id);
+    const owned = (await this.storageService.findAllByUser(userId)).some((k) => k.id === dto.id);
+    if (!owned) throw new ForbiddenException('Not your API key');
+    await this.storageService.updateDefaultForUser(userId, apiKey.id);
     this.defaultApiKeyId = apiKey.id;
     return this.toApiKeyResponse(apiKey);
   }
 
-  private onDeviceFlowSuccess = (event: DeviceFlowSSEEvent) => {
-    this.createApiKey({ name: `Key:${Date.now()}`, key: event.accessToken });
+  private onDeviceFlowSuccess = (userId: string, event: DeviceFlowSSEEvent) => {
+    this.createApiKey(userId, { name: `Key:${Date.now()}`, key: event.accessToken });
     this.logger.log('Stored API key by device flow');
   };
 
