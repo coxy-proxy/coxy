@@ -1,32 +1,30 @@
-import { type CanActivate, type ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { type CanActivate, type ExecutionContext, Injectable } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../../auth/guards/roles.guard';
 
 @Injectable()
 export class AdminGuard implements CanActivate {
-  constructor(private readonly jwtService: JwtService) {}
+  constructor(
+    private readonly jwtAuthGuard: JwtAuthGuard,
+    private readonly rolesGuard: RolesGuard,
+    private readonly reflector: Reflector,
+  ) {}
 
-  canActivate(context: ExecutionContext): boolean {
-    const request = context.switchToHttp().getRequest();
-    const token = this.extractTokenFromHeader(request);
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    // First validate JWT and attach req.user
+    const jwtOk = await Promise.resolve(this.jwtAuthGuard.canActivate(context));
+    if (!jwtOk) return false;
 
-    if (!token) {
-      throw new UnauthorizedException('No token provided');
+    // Ensure 'admin' role is required for this route
+    const handler = context.getHandler();
+    const cls = context.getClass();
+    const existing = this.reflector.getAllAndOverride<string[]>('roles', [handler, cls]);
+    if (!existing || existing.length === 0) {
+      Reflect.defineMetadata('roles', ['admin'], handler);
     }
 
-    try {
-      const payload = this.jwtService.verify(token);
-      if (payload.role !== 'admin') {
-        throw new UnauthorizedException('Admin access required');
-      }
-      request.user = payload;
-      return true;
-    } catch (error) {
-      throw new UnauthorizedException('Invalid token');
-    }
-  }
-
-  private extractTokenFromHeader(request: any): string | undefined {
-    const [type, token] = request.headers.authorization?.split(' ') ?? [];
-    return type === 'Bearer' ? token : undefined;
+    // Enforce role via RolesGuard
+    return Promise.resolve(this.rolesGuard.canActivate(context));
   }
 }

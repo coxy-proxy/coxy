@@ -1,5 +1,4 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '_/shared/prisma/prisma.service';
 import { maskKey } from '_/shared/utils';
 import { AuthService } from '../auth/auth.service';
@@ -7,7 +6,6 @@ import { AuthService } from '../auth/auth.service';
 @Injectable()
 export class AdminService {
   constructor(
-    private readonly jwtService: JwtService,
     private readonly auth: AuthService,
     private readonly prisma: PrismaService,
   ) {}
