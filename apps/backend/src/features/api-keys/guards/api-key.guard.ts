@@ -42,13 +42,13 @@ export class ApiKeyGuard implements CanActivate {
   }
 
   private async findDefaultToken(): Promise<string | null> {
+    // Backward-compatible: use global default when no key is provided.
     const apiKey = await this.storageService.getDefault();
     return apiKey?.key || null;
   }
 
   private async findApiKey(key: string): Promise<ApiKey | null> {
-    const apiKeys = await this.storageService.findAll();
-    const apiKey = apiKeys.find((apiKey) => apiKey.key === key);
-    return apiKey;
+    // Efficient lookup using DB index instead of scanning all
+    return this.storageService.findByKey(key);
   }
 }
