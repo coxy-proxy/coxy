@@ -1,7 +1,7 @@
 import { ClerkProvider } from '@clerk/nextjs';
 import './global.css';
 
-import { Nunito, PT_Sans } from 'next/font/google';
+import { Nunito, PT_Sans, PT_Serif } from 'next/font/google';
 
 const nunito = Nunito({
   variable: '--font-nunito',
@@ -14,12 +14,18 @@ const ptSans = PT_Sans({
   weight: ['400', '700'],
 });
 
+const ptSerif = PT_Serif({
+  variable: '--font-pt-serif',
+  subsets: ['latin'],
+  weight: ['400', '700'],
+});
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   if (process.env.NEXT_PUBLIC_AUTH_ENABLED === 'true') {
     return (
       <ClerkProvider>
         <html lang="en">
-          <body className={`${nunito.variable} ${ptSans.variable} antialiased relative bg-sidebar`}>
+          <body className={`${nunito.variable} ${ptSans.variable} ${ptSerif.variable} antialiased relative bg-sidebar`}>
             <div className="texture" />
             {children}
           </body>
@@ -30,7 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <html lang="en">
-      <body className={`${nunito.variable} ${ptSans.variable} antialiased relative bg-sidebar`}>
+      <body className={`${nunito.variable} ${ptSans.variable} ${ptSerif.variable} antialiased relative bg-sidebar`}>
         <div className="texture" />
         {children}
       </body>
