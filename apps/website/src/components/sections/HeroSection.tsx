@@ -7,8 +7,8 @@ export default function HeroSection() {
       className="max-w-7xl mx-auto px-4 py-16 md:py-24 min-h-[80vh] flex items-center justify-center text-center"
     >
       <div className="space-y-6">
-        <img src="/logo.png" alt="Coxy Logo" className="mx-auto h-12 w-auto" />
-        <h1 className="text-4xl md:text-5xl font-extrabold">GitHub Copilot as OpenAI-compatible APIs</h1>
+        <img src="/header-dark.png" alt="Coxy Logo" className="mx-auto h-20 w-auto" />
+        <h1 className="text-3xl md:text-4xl font-extrabold">GitHub Copilot as OpenAI-compatible APIs</h1>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
           Coxy is a lightweight proxy that lets you use your free GitHub Copilot quota with any OpenAI-compatible
           client, freeing the power of modern LLMs from your VS Code editor.
