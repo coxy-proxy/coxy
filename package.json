@@ -21,6 +21,7 @@
     "init-env": "test -f .env || cp .env.default .env",
     "postinstall": "npm run init-env && prisma generate && prisma db push"
   },
+  "homepage": "https://github.com/coxy-proxy/coxy",
   "bin": {
     "coxy": "./bin/cli.js"
   },
