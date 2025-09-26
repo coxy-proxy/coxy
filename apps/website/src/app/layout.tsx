@@ -15,7 +15,7 @@ const ptSans = PT_Sans({
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className="scroll-smooth">
       <body className={`${nunito.variable} ${ptSans.variable} antialiased relative`}>
         <div className="texture" />
         {children}
