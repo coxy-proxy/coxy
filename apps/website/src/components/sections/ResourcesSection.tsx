@@ -7,11 +7,11 @@ export default function ResourcesSection() {
       <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">Resources</h2>
       <div className="space-y-6">
         <Card>
-          <CardHeader className="border-b">
+          <CardHeader>
             <CardTitle>References</CardTitle>
             <CardDescription>Useful links to related projects and packages</CardDescription>
           </CardHeader>
-          <CardContent className="py-6">
+          <CardContent>
             <ul className="list-disc list-inside space-y-1 text-foreground/90">
               <li>
                 <a
@@ -47,20 +47,19 @@ export default function ResourcesSection() {
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className="border-b">
+          <CardHeader>
             <CardTitle>GitHub Repository</CardTitle>
             <CardDescription>Explore the code and contribute to the project</CardDescription>
           </CardHeader>
-          <CardContent className="py-6">
+          <CardContent>
             <p>
-              Explore the full source code and contribute on our official
+              Explore the full source code and contribute on official&nbsp;
               <a
                 href="https://github.com/coxy-proxy/coxy"
                 className="underline text-primary hover:opacity-90"
                 target="_blank"
                 rel="noreferrer noopener"
               >
-                {' '}
                 GitHub repository
               </a>
               .

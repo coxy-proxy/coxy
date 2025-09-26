@@ -11,7 +11,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
           <a href="#home" className="flex-shrink-0 inline-flex items-center gap-2">
-            <img src="/logo.png" alt="Coxy Logo" className="h-8 w-auto" />
+            <img src="/header-dark.png" alt="Coxy Logo" className="h-8 w-auto" />
           </a>
 
           <div className="hidden md:flex items-center gap-8">
@@ -44,6 +44,7 @@ export default function Navbar() {
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
+                aria-hidden="true"
               >
                 <path d="M4 6h16M4 12h16M4 18h16" />
               </svg>
