@@ -49,18 +49,17 @@ export default function ResourcesSection() {
         <Card>
           <CardHeader>
             <CardTitle>GitHub Repository</CardTitle>
-            <CardDescription>Explore the code and contribute to the project</CardDescription>
           </CardHeader>
           <CardContent>
             <p>
-              Explore the full source code and contribute on official&nbsp;
+              Explore the full source code and contribute on official GitHub repository&nbsp;
               <a
                 href="https://github.com/coxy-proxy/coxy"
                 className="underline text-primary hover:opacity-90"
                 target="_blank"
                 rel="noreferrer noopener"
               >
-                GitHub repository
+                coxy-proxy/coxy
               </a>
               .
             </p>
