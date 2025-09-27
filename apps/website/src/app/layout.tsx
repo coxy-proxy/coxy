@@ -1,5 +1,6 @@
 import './global.css';
 
+import { Analytics } from '@vercel/analytics/next';
 import { Nunito, PT_Sans, PT_Serif } from 'next/font/google';
 
 const nunito = Nunito({
@@ -25,6 +26,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={`${nunito.variable} ${ptSans.variable} ${ptSerif.variable} antialiased relative`}>
         <div className="texture" />
         {children}
+        <Analytics />
       </body>
     </html>
   );
