@@ -1,6 +1,7 @@
 import './global.css';
 
 import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Nunito, PT_Sans, PT_Serif } from 'next/font/google';
 
 const nunito = Nunito({
@@ -27,6 +28,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div className="texture" />
         {children}
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
