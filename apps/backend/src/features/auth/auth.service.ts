@@ -24,10 +24,10 @@ export class AuthService {
     private readonly config: ConfigService,
     private readonly prisma: PrismaService,
   ) {
-    this.accessSecret = this.config.get<string>('JWT_ACCESS_SECRET') || this.config.get<string>('JWT_SECRET');
-    this.refreshSecret = this.config.get<string>('JWT_REFRESH_SECRET') || this.config.get<string>('JWT_SECRET');
-    this.accessTtl = this.config.get<string>('JWT_ACCESS_TTL') || '15m';
-    this.refreshTtl = this.config.get<string>('JWT_REFRESH_TTL') || '7d';
+    this.accessSecret = this.config.get<string>('jwt.accessSecret')!;
+    this.refreshSecret = this.config.get<string>('jwt.refreshSecret')!;
+    this.accessTtl = this.config.get<string>('jwt.accessTtl')!;
+    this.refreshTtl = this.config.get<string>('jwt.refreshTtl')!;
   }
 
   // Password hashing using bcrypt

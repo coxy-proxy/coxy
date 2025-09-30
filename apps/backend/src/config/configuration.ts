@@ -1,6 +1,22 @@
+// Centralized app configuration. Exposes environment-driven values and sensible defaults.
 export default () => ({
   api: {
+    // Global API prefix (e.g., http://localhost:3020/api)
     prefix: 'api',
+  },
+
+  // JWT configuration (documented for clarity; values are sourced from environment)
+  jwt: {
+    // Fallback secret if access/refresh secrets are not explicitly set
+    secret: process.env.JWT_SECRET,
+
+    // Access token settings
+    accessSecret: process.env.JWT_ACCESS_SECRET || process.env.JWT_SECRET,
+    accessTtl: process.env.JWT_ACCESS_TTL || '15m',
+
+    // Refresh token settings
+    refreshSecret: process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET,
+    refreshTtl: process.env.JWT_REFRESH_TTL || '7d',
   },
   github: {
     deviceCodeApiUrl: 'https://github.com/login/device/code',
@@ -29,5 +45,4 @@ export default () => ({
     },
   },
   BACKEND_PORT: Number(process.env.BACKEND_PORT ?? 3020),
-  JWT_SECRET: process.env.JWT_SECRET,
 });

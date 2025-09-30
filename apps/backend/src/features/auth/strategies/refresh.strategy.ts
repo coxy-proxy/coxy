@@ -46,10 +46,8 @@ export class RefreshJwtStrategy extends PassportStrategy(Strategy, 'jwt-refresh'
     super({
       jwtFromRequest: ExtractJwt.fromExtractors(refreshExtractors),
       ignoreExpiration: false,
-      secretOrKey: config.get<string>('JWT_REFRESH_SECRET') || config.get<string>('JWT_SECRET'),
+      secretOrKey: config.get<string>('jwt.refreshSecret'),
       passReqToCallback: true,
-      // issuer: config.get<string>('JWT_ISSUER'),
-      // audience: config.get<string>('JWT_AUDIENCE'),
     });
   }
 

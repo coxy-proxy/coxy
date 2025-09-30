@@ -23,8 +23,8 @@ import { AppService } from './app.service';
       global: true,
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
-        secret: config.get<string>('JWT_SECRET'),
-        signOptions: { expiresIn: '24h' },
+        secret: config.get<string>('jwt.secret') || config.get<string>('jwt.accessSecret'),
+        signOptions: { expiresIn: config.get<string>('jwt.accessTtl') || '15m' },
       }),
     }),
     HttpModule.register({
