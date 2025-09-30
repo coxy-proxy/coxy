@@ -1,11 +1,11 @@
 // Centralized app configuration. Exposes environment-driven values and sensible defaults.
 export default () => {
-  const backendHost = process.env.BACKEND_HOST || 'localhost';
-  const backendPort = Number(process.env.BACKEND_PORT ?? 3020);
+  const gatewayHost = process.env.HOST || 'localhost';
+  const gatewayPort = Number(process.env.PORT ?? 3000);
   const callbackPath = (process.env.GOOGLE_CALLBACK_PATH || '/api/auth/google/callback').startsWith('/')
     ? process.env.GOOGLE_CALLBACK_PATH || '/api/auth/google/callback'
     : `/${process.env.GOOGLE_CALLBACK_PATH}`;
-  const googleCallbackUrl = `http://${backendHost}:${backendPort}${callbackPath}`;
+  const googleCallbackUrl = `http://${gatewayHost}:${gatewayPort}${callbackPath}`;
 
   const frontendHost = process.env.FRONTEND_HOST || 'localhost';
   const frontendPort = Number(process.env.FRONTEND_PORT ?? 3000);

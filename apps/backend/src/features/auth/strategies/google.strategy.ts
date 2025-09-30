@@ -12,8 +12,6 @@ export class GoogleOauthStrategy extends PassportStrategy(Strategy, 'google') {
       clientSecret: config.get<string>('google.clientSecret'),
       callbackURL: config.get<string>('google.callbackUrl'),
       scope: ['email', 'profile'],
-      state: true,
-      passReqToCallback: false,
     });
   }
 
