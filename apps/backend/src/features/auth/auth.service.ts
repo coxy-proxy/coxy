@@ -90,6 +90,56 @@ export class AuthService {
     return { user: { id: user.id, email: user.email, name: user.name }, ...tokens };
   }
 
+  async generateTokensForUser(user: { id: string; email: string; role: string }) {
+    const tokens = await this.issueTokens({ id: user.id, email: user.email, role: user.role });
+    return tokens;
+  }
+
+  async validateGoogleUser(profile: { googleId: string; email?: string; name?: string; avatar?: string }) {
+    if (!profile.googleId) {
+      throw new BadRequestException('Google profile missing id');
+    }
+
+    // Prefer lookup by googleId
+    let user = await this.prisma.user.findUnique({ where: { googleId: profile.googleId } });
+    if (user) {
+      // Best-effort profile sync
+      const data: any = {};
+      if (profile.name && profile.name !== user.name) data.name = profile.name;
+      if (profile.avatar && profile.avatar !== (user as any).avatar) data.avatar = profile.avatar;
+      if (Object.keys(data).length > 0) {
+        user = await this.prisma.user.update({ where: { id: user.id }, data });
+      }
+      return user;
+    }
+
+    // Fallback: match by email for account linking scenario
+    if (profile.email) {
+      user = await this.prisma.user.findUnique({ where: { email: profile.email } });
+      if (user) {
+        const authProvider = user.passwordHash ? 'BOTH' : 'GOOGLE';
+        return this.prisma.user.update({
+          where: { id: user.id },
+          data: { googleId: profile.googleId, avatar: profile.avatar ?? null, authProvider },
+        });
+      }
+    } else {
+      // Email is required for new account creation
+      throw new BadRequestException('Google account does not provide an email');
+    }
+
+    // Create new user
+    return this.prisma.user.create({
+      data: {
+        email: profile.email!,
+        name: profile.name ?? null,
+        googleId: profile.googleId,
+        avatar: profile.avatar ?? null,
+        authProvider: 'GOOGLE',
+      },
+    });
+  }
+
   async login(email: string, password: string) {
     const user = await this.prisma.user.findUnique({ where: { email } });
     if (!user) throw new UnauthorizedException('Invalid credentials');
