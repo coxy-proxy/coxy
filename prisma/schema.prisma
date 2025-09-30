@@ -14,11 +14,20 @@ enum Role {
   ADMIN
 }
 
+enum AuthProvider {
+  EMAIL
+  GOOGLE
+  BOTH
+}
+
 model User {
   id            String         @id @default(cuid())
   email         String         @unique
   name          String?
-  passwordHash  String
+  passwordHash  String?        // Nullable for OAuth-only users
+  googleId      String?        @unique
+  avatar        String?
+  authProvider  AuthProvider   @default(EMAIL)
   role          Role           @default(USER)
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
@@ -26,6 +35,8 @@ model User {
   // Relations
   apiKeys       ApiKey[]
   refreshTokens RefreshToken[]
+
+  @@index([googleId])
 }
 
 model RefreshToken {
