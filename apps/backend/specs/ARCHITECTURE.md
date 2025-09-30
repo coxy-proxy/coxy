@@ -83,9 +83,13 @@ Notes:
   - `POST /api/auth/logout` — revoke refresh token
   - `GET /api/auth/profile` — current user profile
   - `PUT /api/auth/profile` — update profile (name)
-- Security:
+- Security & Implementation:
+  - Passport-based strategies and guards:
+    - `JwtStrategy` + `JwtAuthGuard` for access tokens (reads jwt.accessSecret)
+    - `RefreshJwtStrategy` + `RefreshJwtAuthGuard` for refresh tokens (reads jwt.refreshSecret)
   - Access tokens short-lived (default 15m), refresh tokens long-lived (default 7d)
   - Refresh tokens stored hashed (sha256) in DB and rotated on use
+  - AuthService.refresh no longer verifies the token signature (delegated to guard); it rotates and issues new tokens
   - Password hashing via bcrypt (12 rounds)
   - Throttling on register/login/refresh via @nestjs/throttler
 
@@ -145,7 +149,8 @@ Notes:
   - `updateDefault(id)`, `updateDefaultForUser(userId, id)`
 
 ### Guards
-- `JwtAuthGuard` — verifies access token, attaches `req.user`
+- `JwtAuthGuard` — Passport AuthGuard('jwt'); validates access token via JwtStrategy and attaches `req.user`
+- `RefreshJwtAuthGuard` — Passport AuthGuard('jwt-refresh'); validates refresh token via RefreshJwtStrategy
 - `RolesGuard` — enforces roles metadata (`@Roles('admin')`, etc.)
 - `AdminGuard` — composes JwtAuth + Roles (defaults role to `admin` if none set)
 - `ApiKeyGuard` — validates API key header for proxy endpoints, optimized to use `findByKey` and fallback to global default token when not provided
@@ -157,10 +162,10 @@ Loaded via `ConfigModule` and `src/config/configuration.ts`.
   - `BACKEND_PORT` (default 3020)
   - `api.prefix` (default `api`)
 - GitHub/Copilot headers and endpoints are configured in `configuration.ts` and used by `GithubOauthService`/`ProxyService`.
-- JWT:
-  - `JWT_SECRET` (fallback if specific secrets absent)
-  - `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET`
-  - `JWT_ACCESS_TTL` (default `15m`), `JWT_REFRESH_TTL` (default `7d`)
+- JWT (centralized in configuration.ts):
+  - `jwt.secret` (fallback if specific secrets absent)
+  - `jwt.accessSecret`, `jwt.refreshSecret`
+  - `jwt.accessTtl` (default `15m`), `jwt.refreshTtl` (default `7d`)
 - DB:
   - `DATABASE_URL` (SQLite by default; supports other providers)
 
