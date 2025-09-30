@@ -57,7 +57,7 @@ export class AuthService {
   }
 
   private parseTtlMs(ttl: string): number {
-    // very small parser for number+unit, supports m,h,d
+    // very small parser for number+unit, supports s, m, h, d
     const m = ttl.match(/^(\d+)([smhd])$/);
     if (!m) return 0;
     const n = Number(m[1]);
@@ -74,6 +74,15 @@ export class AuthService {
       default:
         return 0;
     }
+  }
+
+  // Expose TTLs in milliseconds for cookie configuration and other uses
+  public getAccessTtlMs(): number {
+    return this.parseTtlMs(this.accessTtl);
+  }
+
+  public getRefreshTtlMs(): number {
+    return this.parseTtlMs(this.refreshTtl);
   }
 
   async register(dto: { email: string; password: string; name?: string }) {

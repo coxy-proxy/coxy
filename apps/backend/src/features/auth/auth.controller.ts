@@ -78,15 +78,26 @@ export class AuthController {
 
       const base = this.config.get<string>('frontend.url')!;
       const successPath = this.config.get<string>('frontend.oauthSuccessPath') || '/auth/oauth-success';
+
+      const secure = process.env.NODE_ENV === 'production';
+      const sameSite: 'lax' | 'strict' | 'none' = 'lax';
+      const accessMaxAgeMs = this.auth.getAccessTtlMs();
+      const refreshMaxAgeMs = this.auth.getRefreshTtlMs();
+      res.cookie('access_token', accessToken, { httpOnly: true, secure, sameSite, maxAge: accessMaxAgeMs, path: '/' });
+      res.cookie('refresh_token', refreshToken, {
+        httpOnly: true,
+        secure,
+        sameSite,
+        maxAge: refreshMaxAgeMs,
+        path: '/',
+      });
+
       const url = new URL(successPath, base);
-      url.searchParams.set('access_token', accessToken);
-      url.searchParams.set('refresh_token', refreshToken);
       return res.redirect(url.toString());
     } catch (err: any) {
       const base = this.config.get<string>('frontend.url')!;
       const errorPath = this.config.get<string>('frontend.oauthErrorPath') || '/auth/oauth-error';
       const url = new URL(errorPath, base);
-      url.searchParams.set('error', err?.message || 'OAuthError');
       return res.redirect(url.toString());
     }
   }

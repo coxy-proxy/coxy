@@ -19,7 +19,19 @@ function bodyRefreshTokenExtractor(req: any): string | null {
 }
 
 function cookieRefreshTokenExtractor(req: any): string | null {
-  return req?.cookies?.refreshToken ?? null;
+  // Prefer parsed cookies if available
+  const byName = req?.cookies?.refreshToken || req?.cookies?.refresh_token;
+  if (byName) return byName;
+  // Fallback: parse Cookie header manually
+  const header: string | undefined = req?.headers?.cookie;
+  if (!header) return null;
+  const parts = header.split(';').map((c) => c.trim());
+  for (const p of parts) {
+    const [k, ...v] = p.split('=');
+    if (!k) continue;
+    if (k === 'refresh_token' || k === 'refreshToken') return decodeURIComponent(v.join('='));
+  }
+  return null;
 }
 
 const refreshExtractors: JwtFromRequestFunction[] = [
