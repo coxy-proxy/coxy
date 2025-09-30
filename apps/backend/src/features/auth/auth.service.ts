@@ -4,6 +4,8 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '_/shared/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
+import type { GoogleProfileDto } from './dto/google-profile.dto';
+import type { LoginResponseDto } from './dto/login-response.dto';
 import type { UpdateProfileDto } from './dto/update-profile.dto';
 
 interface JwtPayload {
@@ -85,7 +87,7 @@ export class AuthService {
     return this.parseTtlMs(this.refreshTtl);
   }
 
-  async register(dto: { email: string; password: string; name?: string }) {
+  async register(dto: { email: string; password: string; name?: string }): Promise<LoginResponseDto> {
     // validate uniqueness
     const existing = await this.prisma.user.findUnique({ where: { email: dto.email } });
     if (existing) {
@@ -96,7 +98,18 @@ export class AuthService {
     const user = await this.prisma.user.create({ data: { email: dto.email, name: dto.name ?? null, passwordHash } });
 
     const tokens = await this.issueTokens({ id: user.id, email: user.email, role: 'USER' });
-    return { user: { id: user.id, email: user.email, name: user.name }, ...tokens };
+    return {
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: 'USER',
+        avatar: (user as any).avatar ?? null,
+        authProvider: ((user as any).authProvider ?? 'EMAIL') as 'EMAIL' | 'GOOGLE' | 'BOTH',
+        isGoogleLinked: Boolean((user as any).googleId),
+      },
+      ...tokens,
+    };
   }
 
   async generateTokensForUser(user: { id: string; email: string; role: string }) {
@@ -104,7 +117,7 @@ export class AuthService {
     return tokens;
   }
 
-  async validateGoogleUser(profile: { googleId: string; email?: string; name?: string; avatar?: string }) {
+  async validateGoogleUser(profile: GoogleProfileDto) {
     if (!profile.googleId) {
       throw new BadRequestException('Google profile missing id');
     }
@@ -149,7 +162,7 @@ export class AuthService {
     });
   }
 
-  async login(email: string, password: string) {
+  async login(email: string, password: string): Promise<LoginResponseDto> {
     const user = await this.prisma.user.findUnique({ where: { email } });
     if (!user) throw new UnauthorizedException('Invalid credentials');
 
@@ -157,7 +170,21 @@ export class AuthService {
     if (!ok) throw new UnauthorizedException('Invalid credentials');
 
     const tokens = await this.issueTokens({ id: user.id, email: user.email, role: user.role });
-    return { user: { id: user.id, email: user.email, name: user.name }, ...tokens };
+    return {
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        avatar: (user as any).avatar ?? null,
+        authProvider: ((user as any).authProvider ?? (user.passwordHash ? 'EMAIL' : 'GOOGLE')) as
+          | 'EMAIL'
+          | 'GOOGLE'
+          | 'BOTH',
+        isGoogleLinked: Boolean((user as any).googleId),
+      },
+      ...tokens,
+    };
   }
 
   async refresh(userId: string, refreshToken: string) {
@@ -171,7 +198,21 @@ export class AuthService {
     if (!user) throw new UnauthorizedException('User not found');
 
     const tokens = await this.issueTokens({ id: user.id, email: user.email, role: user.role });
-    return { user: { id: user.id, email: user.email, name: user.name }, ...tokens };
+    return {
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        avatar: (user as any).avatar ?? null,
+        authProvider: ((user as any).authProvider ?? (user.passwordHash ? 'EMAIL' : 'GOOGLE')) as
+          | 'EMAIL'
+          | 'GOOGLE'
+          | 'BOTH',
+        isGoogleLinked: Boolean((user as any).googleId),
+      },
+      ...tokens,
+    };
   }
 
   async logout(refreshToken: string) {

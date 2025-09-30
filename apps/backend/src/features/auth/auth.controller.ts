@@ -4,9 +4,12 @@ import { ThrottlerGuard } from '@nestjs/throttler';
 import type { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import { User as UserDecorator } from './decorators/user.decorator';
+import type { GoogleProfileDto } from './dto/google-profile.dto';
 import { LoginDto } from './dto/login.dto';
+import type { LoginResponseDto } from './dto/login-response.dto';
 import { RefreshDto } from './dto/refresh.dto';
 import { RegisterDto } from './dto/register.dto';
+
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { GoogleOauthGuard } from './guards/google.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
@@ -21,13 +24,13 @@ export class AuthController {
 
   @Post('register')
   @UseGuards(ThrottlerGuard)
-  async register(@Body() dto: RegisterDto) {
+  async register(@Body() dto: RegisterDto): Promise<LoginResponseDto> {
     return this.auth.register(dto);
   }
 
   @Post('login')
   @UseGuards(ThrottlerGuard)
-  async login(@Body() dto: LoginDto) {
+  async login(@Body() dto: LoginDto): Promise<LoginResponseDto> {
     return this.auth.login(dto.email, dto.password);
   }
 
@@ -47,7 +50,16 @@ export class AuthController {
   @Get('profile')
   @UseGuards(JwtAuthGuard)
   async profile(@UserDecorator() user: any) {
-    return { user: { id: user.id, email: user.email, name: user.name, role: user.role } };
+    return {
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        avatar: user.avatar ?? null,
+        authProvider: user.authProvider ?? undefined,
+      },
+    };
   }
 
   @Put('profile')
@@ -68,7 +80,7 @@ export class AuthController {
   @UseGuards(ThrottlerGuard, GoogleOauthGuard)
   async googleAuthCallback(@Req() req: Request, @Res() res: Response) {
     try {
-      const profile = req.user as any; // { googleId, email, name, avatar }
+      const profile = req.user as GoogleProfileDto; // { googleId, email, name, avatar }
       const user = await this.auth.validateGoogleUser(profile);
       const { accessToken, refreshToken } = await this.auth.generateTokensForUser({
         id: user.id,

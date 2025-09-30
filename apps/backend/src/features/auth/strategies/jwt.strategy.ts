@@ -31,6 +31,13 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       throw new UnauthorizedException('Invalid token');
     }
     // Attach sanitized user to request
-    return { id: user.id, email: user.email, name: user.name, role: user.role };
+    return {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+      avatar: (user as any).avatar ?? null,
+      authProvider: (user as any).authProvider ?? undefined,
+    };
   }
 }

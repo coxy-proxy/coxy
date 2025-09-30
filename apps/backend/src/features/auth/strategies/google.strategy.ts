@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, VerifyCallback } from 'passport-google-oauth20';
+import type { GoogleProfileDto } from '../dto/google-profile.dto';
 
 @Injectable()
 export class GoogleOauthStrategy extends PassportStrategy(Strategy, 'google') {
@@ -23,7 +24,7 @@ export class GoogleOauthStrategy extends PassportStrategy(Strategy, 'google') {
 
     // Phase B: return a normalized profile-like object.
     // Phase C will link/create user via AuthService and return a full user record.
-    const normalized = {
+    const normalized: GoogleProfileDto = {
       googleId: id,
       email,
       name: displayName,
