@@ -7,6 +7,7 @@ import { RefreshDto } from './dto/refresh.dto';
 import { RegisterDto } from './dto/register.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { RefreshJwtAuthGuard } from './guards/refresh-jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -25,9 +26,10 @@ export class AuthController {
   }
 
   @Post('refresh')
-  @UseGuards(ThrottlerGuard)
-  async refresh(@Body() dto: RefreshDto) {
-    return this.auth.refresh(dto.refreshToken);
+  @UseGuards(ThrottlerGuard, RefreshJwtAuthGuard)
+  async refresh(@UserDecorator('id') userId: string, @Body() dto: RefreshDto) {
+    // Guard verifies token signature and revocation; service performs rotation and issuing
+    return this.auth.refresh(userId, dto.refreshToken);
   }
 
   @Post('logout')

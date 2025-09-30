@@ -101,25 +101,14 @@ export class AuthService {
     return { user: { id: user.id, email: user.email, name: user.name }, ...tokens };
   }
 
-  async refresh(refreshToken: string) {
-    // verify signature
-    let payload: JwtPayload;
-    try {
-      payload = await this.jwt.verifyAsync<JwtPayload>(refreshToken, { secret: this.refreshSecret });
-    } catch {
-      throw new UnauthorizedException('Invalid refresh token');
-    }
-
+  async refresh(userId: string, refreshToken: string) {
+    // Guard already verified signature and revocation; proceed to rotate
     const tokenHash = this.hashToken(refreshToken);
-    const stored = await this.prisma.refreshToken.findUnique({ where: { tokenHash } });
-    if (!stored || (stored.expiresAt && stored.expiresAt.getTime() < Date.now()) || stored.revokedAt) {
-      throw new UnauthorizedException('Invalid refresh token');
-    }
 
-    // rotate refresh token: delete existing and create a new one
-    await this.prisma.refreshToken.delete({ where: { tokenHash } });
+    // Best-effort delete existing refresh token (rotation)
+    await this.prisma.refreshToken.delete({ where: { tokenHash } }).catch(() => void 0);
 
-    const user = await this.prisma.user.findUnique({ where: { id: payload.sub } });
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!user) throw new UnauthorizedException('User not found');
 
     const tokens = await this.issueTokens({ id: user.id, email: user.email, role: user.role });

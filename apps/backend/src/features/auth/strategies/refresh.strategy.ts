@@ -1,0 +1,72 @@
+import { createHash } from 'node:crypto';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { PassportStrategy } from '@nestjs/passport';
+import { PrismaService } from '_/shared/prisma/prisma.service';
+import type { JwtFromRequestFunction } from 'passport-jwt';
+import { ExtractJwt, Strategy } from 'passport-jwt';
+
+export interface RefreshJwtPayload {
+  sub: string;
+  email: string;
+  role: string;
+  iat?: number;
+  exp?: number;
+}
+
+function bodyRefreshTokenExtractor(req: any): string | null {
+  return req?.body?.refreshToken ?? null;
+}
+
+function cookieRefreshTokenExtractor(req: any): string | null {
+  return req?.cookies?.refreshToken ?? null;
+}
+
+const refreshExtractors: JwtFromRequestFunction[] = [
+  bodyRefreshTokenExtractor as unknown as JwtFromRequestFunction,
+  cookieRefreshTokenExtractor as unknown as JwtFromRequestFunction,
+  ExtractJwt.fromAuthHeaderAsBearerToken(),
+  ExtractJwt.fromUrlQueryParameter('refresh_token'),
+];
+
+function extractFromRequest(req: any): string | undefined {
+  for (const ex of refreshExtractors) {
+    const token = ex(req as any);
+    if (token) return token as string;
+  }
+  return undefined;
+}
+
+@Injectable()
+export class RefreshJwtStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
+  constructor(
+    private readonly config: ConfigService,
+    private readonly prisma: PrismaService,
+  ) {
+    super({
+      jwtFromRequest: ExtractJwt.fromExtractors(refreshExtractors),
+      ignoreExpiration: false,
+      secretOrKey: config.get<string>('JWT_REFRESH_SECRET') || config.get<string>('JWT_SECRET'),
+      passReqToCallback: true,
+      // issuer: config.get<string>('JWT_ISSUER'),
+      // audience: config.get<string>('JWT_AUDIENCE'),
+    });
+  }
+
+  async validate(req: any, payload: RefreshJwtPayload) {
+    const rawToken = extractFromRequest(req);
+    if (!rawToken) throw new UnauthorizedException('No refresh token provided');
+
+    const tokenHash = createHash('sha256').update(rawToken).digest('hex');
+    const stored = await this.prisma.refreshToken.findUnique({ where: { tokenHash } });
+    if (!stored || (stored.expiresAt && stored.expiresAt.getTime() < Date.now()) || stored.revokedAt) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+
+    const user = await this.prisma.user.findUnique({ where: { id: payload.sub } });
+    if (!user) throw new UnauthorizedException('User not found');
+
+    // Attach user; keep refreshToken if needed downstream
+    return { id: user.id, email: user.email, name: user.name, role: user.role, refreshToken: rawToken };
+  }
+}
