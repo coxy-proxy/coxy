@@ -1,4 +1,4 @@
-import { ClerkProvider } from '@clerk/nextjs';
+import { AuthProvider } from '_/contexts/AuthContext';
 import './global.css';
 
 import { Nunito, PT_Sans, PT_Serif } from 'next/font/google';
@@ -23,14 +23,14 @@ const ptSerif = PT_Serif({
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   if (process.env.NEXT_PUBLIC_AUTH_ENABLED === 'true') {
     return (
-      <ClerkProvider>
+      <AuthProvider>
         <html lang="en">
           <body className={`${nunito.variable} ${ptSans.variable} ${ptSerif.variable} antialiased relative bg-sidebar`}>
             <div className="texture" />
             {children}
           </body>
         </html>
-      </ClerkProvider>
+      </AuthProvider>
     );
   }
 

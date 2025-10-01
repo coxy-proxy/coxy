@@ -1,7 +1,7 @@
 'use client';
 
-import { SignOutButton, useUser } from '@clerk/nextjs';
 import { RecentChats } from '_/components/chat/RecentChats';
+import { useAuth } from '_/contexts/AuthContext';
 import { Key, MessageSquare, MoreVertical } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -33,10 +33,14 @@ import {
 import { Toaster } from '@/shared/ui/components/sonner';
 
 function UserMenuItem() {
-  const { user } = useUser();
-  const fullName = user?.fullName ?? user?.firstName ?? 'User';
-  const email = user?.primaryEmailAddress?.emailAddress ?? '';
-  const imageUrl = user?.imageUrl ?? undefined;
+  const { user, logout } = useAuth();
+  const fullName = user?.name ?? 'User';
+  const email = user?.email ?? '';
+  const imageUrl = user?.avatar ?? undefined;
+
+  const handleSignOut = async () => {
+    await logout();
+  };
 
   return (
     <DropdownMenu>
@@ -70,9 +74,7 @@ function UserMenuItem() {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <SignOutButton />
-        </DropdownMenuItem>
+        <DropdownMenuItem onClick={handleSignOut}>Sign Out</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

@@ -1,4 +1,3 @@
-import { useAuth } from '@clerk/nextjs';
 import axios from 'axios';
 
 const instanceFactory = () => {
@@ -6,6 +5,7 @@ const instanceFactory = () => {
   const instance = axios.create({
     baseURL: `/api`,
     timeout: 10000,
+    withCredentials: true, // Include cookies in requests
   });
 
   // Response interceptor for error handling
@@ -13,35 +13,23 @@ const instanceFactory = () => {
     (response) => response,
     (error) => {
       if (typeof window !== 'undefined' && error.response?.status === 401) {
-        // Handle unauthorized access
-        window.location.href = '/sign-in';
+        // Handle unauthorized access - redirect to login
+        window.location.href = '/auth/login';
       }
       return Promise.reject(error);
     },
   );
   return instance;
 };
+
 const instance = instanceFactory();
 
-// TODO: when AUTH_ENABLED=true, use the authed API client
+// Authenticated API client (cookies are automatically included)
 export function useAuthedApiClient() {
-  const { getToken } = useAuth();
-
-  instance.interceptors.request.clear();
-  instance.interceptors.request.use(
-    async (config) => {
-      const token = await getToken();
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-      return config;
-    },
-    (error) => Promise.reject(error),
-  );
   return instance;
 }
 
-// For client-side usage
+// For client-side usage (same as authed since cookies are automatic)
 export function useApiClient() {
   return instance;
 }
