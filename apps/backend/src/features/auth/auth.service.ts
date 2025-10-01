@@ -79,15 +79,6 @@ export class AuthService {
     }
   }
 
-  // Expose TTLs in milliseconds for cookie configuration and other uses
-  public getAccessTtlMs(): number {
-    return this.parseTtlMs(this.accessTtl);
-  }
-
-  public getRefreshTtlMs(): number {
-    return this.parseTtlMs(this.refreshTtl);
-  }
-
   // Centralized helpers for httpOnly cookie handling
   public setAuthCookies(res: ExpressResponse, tokens: { accessToken: string; refreshToken: string }) {
     const secure = process.env.NODE_ENV === 'production';
@@ -96,14 +87,14 @@ export class AuthService {
       httpOnly: true,
       secure,
       sameSite,
-      maxAge: this.getAccessTtlMs(),
+      maxAge: this.parseTtlMs(this.accessTtl),
       path: '/',
     });
     res.cookie('refresh_token', tokens.refreshToken, {
       httpOnly: true,
       secure,
       sameSite,
-      maxAge: this.getRefreshTtlMs(),
+      maxAge: this.parseTtlMs(this.refreshTtl),
       path: '/',
     });
   }
