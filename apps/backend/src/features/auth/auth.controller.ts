@@ -23,18 +23,18 @@ export class AuthController {
 
   @Post('register')
   @UseGuards(ThrottlerGuard)
-  async register(@Body() dto: RegisterDto, @Res() res: Response): Promise<LoginResponseDto> {
+  async register(@Body() dto: RegisterDto, @Res() res: Response): Promise<void> {
     const result = await this.auth.register(dto);
     this.auth.setAuthCookies(res, result);
-    return result;
+    res.json(result);
   }
 
   @Post('login')
   @UseGuards(ThrottlerGuard)
-  async login(@Body() dto: LoginDto, @Res() res: Response): Promise<LoginResponseDto> {
+  async login(@Body() dto: LoginDto, @Res() res: Response): Promise<void> {
     const result = await this.auth.login(dto.email, dto.password);
     this.auth.setAuthCookies(res, result);
-    return result;
+    res.json(result);
   }
 
   @Post('refresh')
@@ -57,7 +57,7 @@ export class AuthController {
       await this.auth.logout(refreshToken);
     }
     this.auth.clearAuthCookies(res);
-    return { success: true };
+    res.json({ success: true });
   }
 
   @Get('profile')
