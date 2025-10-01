@@ -2,15 +2,19 @@
 
 ## Architecture Overview
 
-A NestJS backend serving as a proxy between OpenAI-compatible clients and GitHub Copilot, with a Next.js frontend for administration.
+A NestJS backend serving as a proxy between OpenAI-compatible clients and GitHub Copilot, with a Next.js frontend for administration and a Fastify gateway for routing.
 
 The backend uses:
 - NestJS modules with DI and feature boundaries
-- Prisma ORM for database access
-- JWT authentication (access + refresh tokens)
+- Prisma ORM for SQLite database access
+- JWT authentication (access + refresh tokens) with httpOnly cookies
+- Passport-based authentication strategies (JWT, Google OAuth)
 - class-validator/class-transformer for input validation
 - Global ValidationPipe for sanitization
 - Throttling for auth endpoints via @nestjs/throttler
+- Cookie-based session management with cookie-parser
+- SSE (Server-Sent Events) for real-time device flow updates
+- bcrypt for password hashing (12 rounds)
 
 ## Project Structure (Backend)
 
@@ -60,7 +64,8 @@ export interface ApiKeyResponse extends Omit<ApiKey, 'key'> {
 
 Prisma schema (implemented):
 - `enum Role { USER ADMIN }`
-- `model User { id, email, name?, passwordHash, role@default(USER), createdAt, updatedAt, apiKeys[], refreshTokens[] }`
+- `enum AuthProvider { EMAIL GOOGLE BOTH }`
+- `model User { id, email, name?, passwordHash?, googleId?, avatar?, authProvider@default(EMAIL), role@default(USER), createdAt, updatedAt, apiKeys[], refreshTokens[] }`
 - `model RefreshToken { id, tokenHash@unique, userId -> User, expiresAt, revokedAt?, createdAt }`
 - `model ApiKey { id, name, key@unique, createdAt, lastUsed?, usageCount@default(0), isDefault@default(false), meta?, userId?, user? }`
 - `model CopilotMeta { id, token, expiresAt, resetTime?, chatQuota?, completionsQuota?, apiKeyId@unique -> ApiKey }`
@@ -68,6 +73,9 @@ Prisma schema (implemented):
 Notes:
 - `ApiKey.userId` is nullable for backward compatibility (global keys).
 - Default-per-user enforcement is done in service layer (partial unique indexes are provider-specific).
+- `User.passwordHash` is nullable for OAuth-only users.
+- `User.googleId` provides unique Google account linking.
+- `AuthProvider` enum tracks user registration method (EMAIL, GOOGLE, or BOTH).
 
 ## Backend Modules
 
@@ -83,15 +91,20 @@ Notes:
   - `POST /api/auth/logout` — revoke refresh token and clear cookies
   - `GET /api/auth/profile` — current user profile
   - `PUT /api/auth/profile` — update profile (name)
+  - `GET /api/auth/google` — initiate Google OAuth flow
+  - `GET /api/auth/google/callback` — handle Google OAuth callback
 - Security & Implementation:
   - Passport-based strategies and guards:
     - `JwtStrategy` + `JwtAuthGuard` for access tokens (reads jwt.accessSecret)
     - `RefreshJwtStrategy` + `RefreshJwtAuthGuard` for refresh tokens (reads jwt.refreshSecret)
+    - `GoogleOauthStrategy` + `GoogleOauthGuard` for Google OAuth integration
   - Access tokens short-lived (default 15m), refresh tokens long-lived (default 7d)
   - Refresh tokens stored hashed (sha256) in DB and rotated on use
   - AuthService.refresh no longer verifies the token signature (delegated to guard); it rotates and issues new tokens
   - Password hashing via bcrypt (12 rounds)
-  - Throttling on register/login/refresh via @nestjs/throttler
+  - Throttling on register/login/refresh/Google callback via @nestjs/throttler
+  - Google OAuth integration with profile validation and user creation/linking
+  - Cookie-based authentication with secure httpOnly cookies
 
 ### Users Module
 - Endpoints:
@@ -167,6 +180,12 @@ Loaded via `ConfigModule` and `src/config/configuration.ts`.
   - `jwt.accessSecret`, `jwt.refreshSecret`
   - `jwt.accessTtl` (default `15m`), `jwt.refreshTtl` (default `7d`)
   - Tokens are delivered exclusively via httpOnly cookies; Authorization headers are not used for JWT
+- Google OAuth:
+  - `google.clientId`, `google.clientSecret`
+  - `google.callbackUrl` (auto-constructed from HOST/PORT)
+- Frontend integration:
+  - `frontend.url` (auto-constructed from FRONTEND_HOST/FRONTEND_PORT)
+  - `frontend.oauthSuccessPath`, `frontend.oauthErrorPath`
 - DB:
   - `DATABASE_URL` (SQLite by default; supports other providers)
 
@@ -191,6 +210,8 @@ Auth (public + JWT):
 - `POST /api/auth/logout`
 - `GET /api/auth/profile`
 - `PUT /api/auth/profile`
+- `GET /api/auth/google`
+- `GET /api/auth/google/callback`
 
 Users (JWT):
 - `GET /api/users/me`
@@ -217,7 +238,9 @@ Admin (JWT + role admin):
 - Existing API keys remain valid; `ApiKey.userId` is nullable (global keys).
 - Proxy endpoints continue to work without JWT and accept a default global API key when provided.
 - API key management endpoints are now JWT-protected and user-scoped; frontend must attach access tokens.
-- Prisma schema updated with `User`, `RefreshToken`, and optional `ApiKey.userId`.
+- Prisma schema updated with `User`, `RefreshToken`, `AuthProvider` enum, and optional `ApiKey.userId`.
+- Google OAuth users can be created without passwords (`passwordHash` nullable).
+- Mixed authentication: users can link both email/password and Google accounts (`AuthProvider.BOTH`).
 
 ## Testing
 - Unit tests exist for token resolution and storage mapping; more tests recommended:
@@ -231,7 +254,25 @@ Admin (JWT + role admin):
 - Console logger enabled; optional logging interceptor available
 - Admin `getRequestLogs` endpoint is stubbed and can be wired to telemetry/log store later
 
+## Implementation Notes
+
+### Current Stack
+- **NestJS Framework**: v11.x with modern decorators and DI
+- **Database**: SQLite via Prisma ORM with client v6.16.1
+- **Authentication**: Passport-based with JWT and Google OAuth strategies
+- **Validation**: class-validator/class-transformer with global ValidationPipe
+- **HTTP Client**: @nestjs/axios for external API calls
+- **Security**: bcrypt, throttling, httpOnly cookies, CORS enabled
+- **Real-time**: Server-Sent Events (SSE) for device flow status
+
+### Integration Points
+- **Gateway**: Fastify-based proxy handling routing between frontend/backend
+- **Frontend**: Next.js application with Clerk integration (auth redundancy)
+- **External APIs**: GitHub Copilot API, GitHub OAuth device flow
+
 ## Known Limitations / TODOs
 - Device-flow + SSE currently creates key on success for the authenticated user; error handling is basic
 - Per-user default key constraint is enforced in service layer only
 - Admin telemetry (stats/logs) is partial and will need integration with a metrics/logging backend
+- Dual authentication systems (NestJS JWT + Clerk) may need consolidation
+- OAuth error handling in callback could be more robust
