@@ -5,11 +5,11 @@ export default () => {
   const callbackPath = (process.env.GOOGLE_CALLBACK_PATH || '/api/auth/google/callback').startsWith('/')
     ? process.env.GOOGLE_CALLBACK_PATH || '/api/auth/google/callback'
     : `/${process.env.GOOGLE_CALLBACK_PATH}`;
+
+  // TODO: handle https
   const googleCallbackUrl = `http://${gatewayHost}:${gatewayPort}${callbackPath}`;
 
-  const frontendHost = process.env.FRONTEND_HOST || 'localhost';
-  const frontendPort = Number(process.env.FRONTEND_PORT ?? 3000);
-  const frontendUrl = `http://${frontendHost}:${frontendPort}`;
+  const frontendUrl = `http://${gatewayHost}:${gatewayPort}`;
 
   return {
     api: {
