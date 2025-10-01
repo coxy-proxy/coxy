@@ -117,7 +117,9 @@ function AppSidebar() {
         </SidebarGroup>
         <RecentChats />
       </SidebarContent>
-      <SidebarFooter>{process.env.NEXT_PUBLIC_AUTH_ENABLED === 'true' && <UserMenuItem />}</SidebarFooter>
+      <SidebarFooter>
+        <UserMenuItem />
+      </SidebarFooter>
     </UiSidebar>
   );
 }

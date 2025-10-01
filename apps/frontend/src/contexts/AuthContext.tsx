@@ -111,7 +111,7 @@ export function useAuth(): AuthContextType {
   return context;
 }
 
-// Compatibility hook to replace Clerk's useUser
+// Hook to get current user information
 export function useUser() {
   const { user, isLoading } = useAuth();
 

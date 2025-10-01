@@ -1,8 +1,6 @@
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
-const AUTH_ENABLED = process.env.AUTH_ENABLED === 'true';
-
 // Protected routes that require authentication
 const protectedRoutes = ['/chat', '/api-keys'];
 const publicRoutes = ['/auth/login', '/auth/register', '/auth/oauth-success', '/auth/oauth-error'];
@@ -38,7 +36,7 @@ async function checkAuth(req: NextRequest): Promise<boolean> {
   }
 }
 
-async function authMiddleware(req: NextRequest) {
+export default async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   // Skip middleware for static files and API routes (except auth API routes)
@@ -64,14 +62,6 @@ async function authMiddleware(req: NextRequest) {
 
   return NextResponse.next();
 }
-
-const middleware = AUTH_ENABLED
-  ? authMiddleware
-  : function middleware(req: NextRequest) {
-      return NextResponse.next();
-    };
-
-export default middleware;
 
 export const config = {
   matcher: ['/((?!.*\\..*|_next).*)', '/', '/(api|trpc)(.*)'],

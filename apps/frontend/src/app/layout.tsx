@@ -21,25 +21,14 @@ const ptSerif = PT_Serif({
 });
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  if (process.env.NEXT_PUBLIC_AUTH_ENABLED === 'true') {
-    return (
-      <AuthProvider>
-        <html lang="en">
-          <body className={`${nunito.variable} ${ptSans.variable} ${ptSerif.variable} antialiased relative bg-sidebar`}>
-            <div className="texture" />
-            {children}
-          </body>
-        </html>
-      </AuthProvider>
-    );
-  }
-
   return (
-    <html lang="en">
-      <body className={`${nunito.variable} ${ptSans.variable} ${ptSerif.variable} antialiased relative bg-sidebar`}>
-        <div className="texture" />
-        {children}
-      </body>
-    </html>
+    <AuthProvider>
+      <html lang="en">
+        <body className={`${nunito.variable} ${ptSans.variable} ${ptSerif.variable} antialiased relative bg-sidebar`}>
+          <div className="texture" />
+          {children}
+        </body>
+      </html>
+    </AuthProvider>
   );
 }
