@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '_/shared/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
+import type { Response as ExpressResponse } from 'express';
 import type { GoogleProfileDto } from './dto/google-profile.dto';
 import type { LoginResponseDto } from './dto/login-response.dto';
 import type { UpdateProfileDto } from './dto/update-profile.dto';
@@ -85,6 +86,33 @@ export class AuthService {
 
   public getRefreshTtlMs(): number {
     return this.parseTtlMs(this.refreshTtl);
+  }
+
+  // Centralized helpers for httpOnly cookie handling
+  public setAuthCookies(res: ExpressResponse, tokens: { accessToken: string; refreshToken: string }) {
+    const secure = process.env.NODE_ENV === 'production';
+    const sameSite: 'lax' | 'strict' | 'none' = 'lax';
+    res.cookie('access_token', tokens.accessToken, {
+      httpOnly: true,
+      secure,
+      sameSite,
+      maxAge: this.getAccessTtlMs(),
+      path: '/',
+    });
+    res.cookie('refresh_token', tokens.refreshToken, {
+      httpOnly: true,
+      secure,
+      sameSite,
+      maxAge: this.getRefreshTtlMs(),
+      path: '/',
+    });
+  }
+
+  public clearAuthCookies(res: ExpressResponse) {
+    const secure = process.env.NODE_ENV === 'production';
+    const sameSite: 'lax' | 'strict' | 'none' = 'lax';
+    res.clearCookie('access_token', { httpOnly: true, secure, sameSite, path: '/' });
+    res.clearCookie('refresh_token', { httpOnly: true, secure, sameSite, path: '/' });
   }
 
   async register(dto: { email: string; password: string; name?: string }): Promise<LoginResponseDto> {

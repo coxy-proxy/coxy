@@ -7,7 +7,6 @@ import { User as UserDecorator } from './decorators/user.decorator';
 import type { GoogleProfileDto } from './dto/google-profile.dto';
 import { LoginDto } from './dto/login.dto';
 import type { LoginResponseDto } from './dto/login-response.dto';
-import { RefreshDto } from './dto/refresh.dto';
 import { RegisterDto } from './dto/register.dto';
 
 import { UpdateProfileDto } from './dto/update-profile.dto';
@@ -24,26 +23,40 @@ export class AuthController {
 
   @Post('register')
   @UseGuards(ThrottlerGuard)
-  async register(@Body() dto: RegisterDto): Promise<LoginResponseDto> {
-    return this.auth.register(dto);
+  async register(@Body() dto: RegisterDto, @Res() res: Response): Promise<LoginResponseDto> {
+    const result = await this.auth.register(dto);
+    this.auth.setAuthCookies(res, result);
+    return result;
   }
 
   @Post('login')
   @UseGuards(ThrottlerGuard)
-  async login(@Body() dto: LoginDto): Promise<LoginResponseDto> {
-    return this.auth.login(dto.email, dto.password);
+  async login(@Body() dto: LoginDto, @Res() res: Response): Promise<LoginResponseDto> {
+    const result = await this.auth.login(dto.email, dto.password);
+    this.auth.setAuthCookies(res, result);
+    return result;
   }
 
   @Post('refresh')
   @UseGuards(ThrottlerGuard, RefreshJwtAuthGuard)
-  async refresh(@UserDecorator('id') userId: string, @Body() dto: RefreshDto) {
-    // Guard verifies token signature and revocation; service performs rotation and issuing
-    return this.auth.refresh(userId, dto.refreshToken);
+  async refresh(
+    @UserDecorator('id') userId: string,
+    @Req() req: Request,
+    @Res() res: Response,
+  ): Promise<{ user: any }> {
+    const refreshToken = (req.user as any)?.refreshToken;
+    const result = await this.auth.refresh(userId, refreshToken);
+    this.auth.setAuthCookies(res, result);
+    return result;
   }
 
   @Post('logout')
-  async logout(@Body() dto: RefreshDto) {
-    await this.auth.logout(dto.refreshToken);
+  async logout(@Req() req: Request, @Res() res: Response) {
+    const refreshToken = (req as any).cookies?.refresh_token || (req as any).cookies?.refreshToken;
+    if (refreshToken) {
+      await this.auth.logout(refreshToken);
+    }
+    this.auth.clearAuthCookies(res);
     return { success: true };
   }
 
@@ -68,7 +81,6 @@ export class AuthController {
     return this.auth.updateProfile(userId, dto);
   }
 
-  // Phase C: Google OAuth endpoints
   @Get('google')
   @UseGuards(GoogleOauthGuard)
   async googleAuth() {
@@ -91,18 +103,7 @@ export class AuthController {
       const base = this.config.get<string>('frontend.url')!;
       const successPath = this.config.get<string>('frontend.oauthSuccessPath') || '/auth/oauth-success';
 
-      const secure = process.env.NODE_ENV === 'production';
-      const sameSite: 'lax' | 'strict' | 'none' = 'lax';
-      const accessMaxAgeMs = this.auth.getAccessTtlMs();
-      const refreshMaxAgeMs = this.auth.getRefreshTtlMs();
-      res.cookie('access_token', accessToken, { httpOnly: true, secure, sameSite, maxAge: accessMaxAgeMs, path: '/' });
-      res.cookie('refresh_token', refreshToken, {
-        httpOnly: true,
-        secure,
-        sameSite,
-        maxAge: refreshMaxAgeMs,
-        path: '/',
-      });
+      this.auth.setAuthCookies(res, { accessToken, refreshToken });
 
       const url = new URL(successPath, base);
       return res.redirect(url.toString());

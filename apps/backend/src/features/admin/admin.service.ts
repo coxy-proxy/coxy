@@ -10,12 +10,13 @@ export class AdminService {
     private readonly prisma: PrismaService,
   ) {}
 
-  async login(email: string, password: string): Promise<{ access_token: string }> {
+  async login(email: string, password: string): Promise<{ success: true }> {
     // Reuse AuthService login and enforce ADMIN role
     const result = await this.auth.login(email, password);
     const role = (result.user as any)?.role || 'USER';
     if (role !== 'ADMIN') throw new UnauthorizedException('Admin access required');
-    return { access_token: result.accessToken };
+    // Tokens are now cookie-only; controller should set cookies if needed. For admin login, AuthController handles cookies.
+    return { success: true };
   }
 
   async getUsageStatistics(): Promise<any> {

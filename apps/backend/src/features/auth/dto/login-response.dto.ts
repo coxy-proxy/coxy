@@ -8,6 +8,6 @@ export class LoginResponseDto {
     authProvider: 'EMAIL' | 'GOOGLE' | 'BOTH';
     isGoogleLinked?: boolean;
   };
-  accessToken!: string;
-  refreshToken!: string;
+  accessToken: string;
+  refreshToken: string;
 }

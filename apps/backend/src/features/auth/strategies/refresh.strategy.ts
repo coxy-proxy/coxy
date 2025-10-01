@@ -14,40 +14,10 @@ export interface RefreshJwtPayload {
   exp?: number;
 }
 
-function bodyRefreshTokenExtractor(req: any): string | null {
-  return req?.body?.refreshToken ?? null;
-}
+const cookieRefreshTokenExtractor: JwtFromRequestFunction = (req: any) =>
+  req?.cookies?.refresh_token || req?.cookies?.refreshToken || null;
 
-function cookieRefreshTokenExtractor(req: any): string | null {
-  // Prefer parsed cookies if available
-  const byName = req?.cookies?.refreshToken || req?.cookies?.refresh_token;
-  if (byName) return byName;
-  // Fallback: parse Cookie header manually
-  const header: string | undefined = req?.headers?.cookie;
-  if (!header) return null;
-  const parts = header.split(';').map((c) => c.trim());
-  for (const p of parts) {
-    const [k, ...v] = p.split('=');
-    if (!k) continue;
-    if (k === 'refresh_token' || k === 'refreshToken') return decodeURIComponent(v.join('='));
-  }
-  return null;
-}
-
-const refreshExtractors: JwtFromRequestFunction[] = [
-  bodyRefreshTokenExtractor as unknown as JwtFromRequestFunction,
-  cookieRefreshTokenExtractor as unknown as JwtFromRequestFunction,
-  ExtractJwt.fromAuthHeaderAsBearerToken(),
-  ExtractJwt.fromUrlQueryParameter('refresh_token'),
-];
-
-function extractFromRequest(req: any): string | undefined {
-  for (const ex of refreshExtractors) {
-    const token = ex(req as any);
-    if (token) return token as string;
-  }
-  return undefined;
-}
+const refreshExtractors: JwtFromRequestFunction[] = [cookieRefreshTokenExtractor];
 
 @Injectable()
 export class RefreshJwtStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
@@ -64,7 +34,7 @@ export class RefreshJwtStrategy extends PassportStrategy(Strategy, 'jwt-refresh'
   }
 
   async validate(req: any, payload: RefreshJwtPayload) {
-    const rawToken = extractFromRequest(req);
+    const rawToken: string | null = req?.cookies?.refresh_token || req?.cookies?.refreshToken || null;
     if (!rawToken) throw new UnauthorizedException('No refresh token provided');
 
     const tokenHash = createHash('sha256').update(rawToken).digest('hex');

@@ -1,11 +1,7 @@
-/**
- * This is not a production server yet!
- * This is only a minimal backend to get started.
- */
-
 import { ConsoleLogger, Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
+import cookieParser from 'cookie-parser';
 import { AppModule } from './app/app.module';
 import { PrismaService } from './shared/prisma/prisma.service';
 
@@ -20,6 +16,7 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   const globalPrefix = configService.get<string>('api.prefix') ?? 'api';
   app.setGlobalPrefix(globalPrefix);
+  app.use(cookieParser());
   const port = configService.get<number>('BACKEND_PORT') ?? 3020;
   app.enableCors();
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }));
