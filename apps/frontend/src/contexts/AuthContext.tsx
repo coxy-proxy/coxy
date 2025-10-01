@@ -17,6 +17,7 @@ interface AuthContextType {
   isLoading: boolean;
   isAuthenticated: boolean;
   refreshUser: () => Promise<void>;
+  setUser: (user: User | null) => void;
   logout: () => Promise<void>;
 }
 
@@ -29,6 +30,7 @@ interface AuthProviderProps {
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isFetching, setIsFetching] = useState(false);
 
   const fetchUser = async (): Promise<User | null> => {
     try {
@@ -53,12 +55,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   const refreshUser = async () => {
+    // Prevent concurrent calls
+    if (isFetching) {
+      return;
+    }
+
+    setIsFetching(true);
     setIsLoading(true);
     try {
       const userData = await fetchUser();
       setUser(userData);
     } finally {
       setIsLoading(false);
+      setIsFetching(false);
     }
   };
 
@@ -87,6 +96,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     isLoading,
     isAuthenticated: !!user,
     refreshUser,
+    setUser,
     logout,
   };
 

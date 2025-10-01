@@ -18,7 +18,7 @@ export default function OAuthSuccessPage() {
         await refreshUser();
 
         // Redirect to dashboard after successful OAuth
-        router.push('/dashboard');
+        router.push('/api-keys');
       } catch (error) {
         console.error('Error handling OAuth success:', error);
         // Redirect to login on error

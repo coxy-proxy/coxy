@@ -13,20 +13,20 @@ function LoginContent() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const { refreshUser, isAuthenticated } = useAuth();
+  const { refreshUser, isAuthenticated, isLoading: authLoading, setUser } = useAuth();
   const apiClient = useApiClient();
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const redirectTo = searchParams.get('redirect') || '/dashboard';
+  const redirectTo = searchParams.get('redirect') || '/api-keys';
   const errorParam = searchParams.get('error');
 
   // Redirect if already authenticated
   useEffect(() => {
-    if (isAuthenticated) {
-      router.push(redirectTo);
+    if (isAuthenticated && !authLoading) {
+      router.replace(redirectTo);
     }
-  }, [isAuthenticated, router, redirectTo]);
+  }, [isAuthenticated, authLoading, router, redirectTo]);
 
   // Show error from URL params
   useEffect(() => {
@@ -65,9 +65,12 @@ function LoginContent() {
         });
 
         if (response.status === 200) {
-          // Refresh user data and redirect
-          await refreshUser();
-          router.push(redirectTo);
+          // Login successful - use returned user data
+          const userData = response.data.user;
+          if (userData) {
+            setUser(userData);
+          }
+          router.replace(redirectTo);
         }
       } catch (err: any) {
         const message = err.response?.data?.message || 'Login failed. Please check your credentials.';
@@ -76,7 +79,7 @@ function LoginContent() {
         setIsLoading(false);
       }
     },
-    [email, password, apiClient, refreshUser, router, redirectTo],
+    [email, password, apiClient, setUser, router, redirectTo],
   );
 
   const handleGoogleLogin = useCallback(() => {

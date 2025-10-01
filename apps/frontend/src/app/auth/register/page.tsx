@@ -15,16 +15,16 @@ export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const { refreshUser, isAuthenticated } = useAuth();
+  const { refreshUser, isAuthenticated, isLoading: authLoading, setUser } = useAuth();
   const apiClient = useApiClient();
   const router = useRouter();
 
   // Redirect if already authenticated
   useEffect(() => {
-    if (isAuthenticated) {
-      router.push('/dashboard');
+    if (isAuthenticated && !authLoading) {
+      router.replace('/api-keys');
     }
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated, authLoading, router]);
 
   const handleNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
@@ -69,9 +69,12 @@ export default function RegisterPage() {
         });
 
         if (response.status === 201) {
-          // Refresh user data and redirect
-          await refreshUser();
-          router.push('/dashboard');
+          // Registration successful - use returned user data
+          const userData = response.data.user;
+          if (userData) {
+            setUser(userData);
+          }
+          router.replace('/api-keys');
         }
       } catch (err: any) {
         const message = err.response?.data?.message || 'Registration failed. Please try again.';
@@ -80,7 +83,7 @@ export default function RegisterPage() {
         setIsLoading(false);
       }
     },
-    [email, password, name, confirmPassword, apiClient, refreshUser, router],
+    [email, password, name, confirmPassword, apiClient, setUser, router],
   );
 
   const handleGoogleLogin = useCallback(() => {
