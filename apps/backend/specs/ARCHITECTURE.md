@@ -78,9 +78,9 @@ Notes:
 ### Auth Module
 - Endpoints:
   - `POST /api/auth/register` — register with email/password (password policy enforced)
-  - `POST /api/auth/login` — login, returns access + refresh tokens
-  - `POST /api/auth/refresh` — rotate refresh token, returns new tokens
-  - `POST /api/auth/logout` — revoke refresh token
+  - `POST /api/auth/login` — login (sets httpOnly cookies)
+  - `POST /api/auth/refresh` — rotate refresh token (sets new httpOnly cookies)
+  - `POST /api/auth/logout` — revoke refresh token and clear cookies
   - `GET /api/auth/profile` — current user profile
   - `PUT /api/auth/profile` — update profile (name)
 - Security & Implementation:
@@ -120,7 +120,7 @@ Notes:
 
 ### Admin Module (Roles-based)
 - Endpoints:
-  - `POST /api/admin/login` — authenticates via AuthService and requires the user to be ADMIN; returns admin access token
+  - `POST /api/admin/login` — authenticates via AuthService and requires the user to be ADMIN; cookies are set by the common login flow
   - `GET /api/admin/stats` — system stats (protected)
   - `GET /api/admin/logs` — request logs (placeholder; protected)
   - `GET /api/admin/users` — list users (protected)
@@ -166,6 +166,7 @@ Loaded via `ConfigModule` and `src/config/configuration.ts`.
   - `jwt.secret` (fallback if specific secrets absent)
   - `jwt.accessSecret`, `jwt.refreshSecret`
   - `jwt.accessTtl` (default `15m`), `jwt.refreshTtl` (default `7d`)
+  - Tokens are delivered exclusively via httpOnly cookies; Authorization headers are not used for JWT
 - DB:
   - `DATABASE_URL` (SQLite by default; supports other providers)
 
