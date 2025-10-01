@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 const AUTH_ENABLED = process.env.AUTH_ENABLED === 'true';
 
 // Protected routes that require authentication
-const protectedRoutes = ['/dashboard', '/chat', '/api-keys'];
+const protectedRoutes = ['/chat', '/api-keys'];
 const publicRoutes = ['/auth/login', '/auth/register', '/auth/oauth-success', '/auth/oauth-error'];
 
 function isProtectedRoute(pathname: string): boolean {
@@ -24,7 +24,8 @@ async function checkAuth(req: NextRequest): Promise<boolean> {
     }
 
     // Verify token by calling backend profile endpoint
-    const response = await fetch(`${req.nextUrl.origin}/api/auth/profile`, {
+    const backendUrl = process.env.BACKEND_URL || 'http://localhost:3021';
+    const response = await fetch(`${backendUrl}/api/auth/profile`, {
       headers: {
         Cookie: req.headers.get('cookie') || '',
       },
