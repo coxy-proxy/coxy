@@ -10,9 +10,14 @@ export default function OAuthSuccessPage() {
   const { refreshUser } = useAuth();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
+  const [hasProcessed, setHasProcessed] = useState(false);
 
   useEffect(() => {
+    // Prevent multiple runs
+    if (hasProcessed) return;
+
     const handleOAuthSuccess = async () => {
+      setHasProcessed(true);
       try {
         // Refresh user data to get the newly authenticated user
         await refreshUser();
@@ -29,7 +34,8 @@ export default function OAuthSuccessPage() {
     };
 
     handleOAuthSuccess();
-  }, [refreshUser, router]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run once on mount
 
   if (isLoading) {
     return (

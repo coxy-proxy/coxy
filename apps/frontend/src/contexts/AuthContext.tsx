@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, type ReactNode, useContext, useEffect, useState } from 'react';
+import { createContext, type ReactNode, useCallback, useContext, useEffect, useState } from 'react';
 
 // User type matching the backend's profile endpoint response
 export interface User {
@@ -32,7 +32,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [isFetching, setIsFetching] = useState(false);
 
-  const fetchUser = async (): Promise<User | null> => {
+  const fetchUser = useCallback(async (): Promise<User | null> => {
     try {
       const response = await fetch('/api/auth/profile', {
         credentials: 'include', // Include cookies
@@ -52,9 +52,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       console.error('Error fetching user:', error);
       return null;
     }
-  };
+  }, []);
 
-  const refreshUser = async () => {
+  const refreshUser = useCallback(async () => {
     // Prevent concurrent calls
     if (isFetching) {
       return;
@@ -69,9 +69,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setIsLoading(false);
       setIsFetching(false);
     }
-  };
+  }, [fetchUser, isFetching]);
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     try {
       await fetch('/api/auth/logout', {
         method: 'POST',
@@ -84,7 +84,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       // Redirect to login page
       window.location.href = '/auth/login';
     }
-  };
+  }, []);
 
   // Initial user fetch on mount
   useEffect(() => {
