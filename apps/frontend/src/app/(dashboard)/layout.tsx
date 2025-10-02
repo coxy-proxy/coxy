@@ -69,7 +69,7 @@ function UserMenuItem() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link href="https://github.com/coxy-proxy/coxy/issues" target="_blank">
+          <Link href="https://github.com/coxy-proxy/coxy/issues/new" target="_blank">
             Get Help
           </Link>
         </DropdownMenuItem>
