@@ -3,11 +3,11 @@
   "version": "0.0.4",
   "license": "MIT",
   "scripts": {
-    "build": "nx run-many --target=build --all",
+    "build": "nx run-many --target=build -p gateway frontend backend",
     "build:frontend": "nx build frontend",
     "build:backend": "nx build backend",
     "build:gateway": "nx build gateway",
-    "dev": "nx run-many --target=serve --all",
+    "dev": "nx run-many --target=serve -p gateway frontend backend",
     "dev:frontend": "nx serve frontend",
     "dev:backend": "nx serve backend",
     "dev:gateway": "nx serve gateway",
