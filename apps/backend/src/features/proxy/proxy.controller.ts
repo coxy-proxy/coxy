@@ -17,4 +17,9 @@ export class ProxyController {
   async getModels(@Req() req: Request, @Res() res: Response) {
     return this.proxyService.proxyRequest(req, res);
   }
+
+  @Post('responses')
+  async responses(@Req() req: Request, @Res() res: Response) {
+    return this.proxyService.proxyResponsesRequest(req, res);
+  }
 }
